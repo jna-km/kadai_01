@@ -10,4 +10,9 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    server: {
+        host: true,
+        port: 5173,
+        strictPort: true, // ポートが空いていないときに別のポートに自動変更しない
+    },
 });
