@@ -49,6 +49,9 @@ docker compose exec app npm run dev -- --host
 ## 📄 ドキュメント一覧（docs/）
 
 - [ユースケース（予約作成）](docs/usecase_reserve.md)
+- [機能一覧](docs/function_list.md)
+- [画面一覧](docs/screen_list.md)
+- [機能と画面の対応表](docs/function_screen_map.md)
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
 
