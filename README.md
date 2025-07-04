@@ -46,6 +46,18 @@ docker compose exec app npm run dev -- --host
 | Mailpit      | http://localhost:8025   | メール確認UI    |
 | React Dev    | http://localhost:5173   | Vite 開発サーバー |
 
+## 📄 ドキュメント一覧（docs/）
+
+- [ユースケース（予約作成）](docs/usecase_reserve.md)
+- [画面遷移図（PDF）](docs/画面遷移図.pdf)
+- [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
+
+## 🆕 最近の変更点（2025/07/04）
+
+- `docs/usecase_reserve.md` を新規追加：予約作成のユースケースを文書化
+- `docs/画面遷移図.pdf` を追加：一般ユーザー・管理者両方の画面遷移図
+- `docs/ワイヤーフレーム.pdf` を追加：共通レイアウト用の簡易ワイヤーを作成
+
 ### 🧾 その他補足
 
 - `.env.example` を元に各自 `.env` を作成してください
