@@ -46,8 +46,39 @@ docker compose exec app npm run dev -- --host
 | Mailpit      | http://localhost:8025   | メール確認UI    |
 | React Dev    | http://localhost:5173   | Vite 開発サーバー |
 
+## 📄 ドキュメント一覧（docs/）
+
+- [ユースケース（予約作成）](docs/usecase_reserve.md)
+- [機能一覧](docs/function_list.md)
+- [画面一覧](docs/screen_list.md)
+- [機能と画面の対応表](docs/function_screen_map.md)
+- [画面遷移図（PDF）](docs/画面遷移図.pdf)
+- [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
+
+## 🆕 最近の変更点（2025/07/04）
+
+- `docs/usecase_reserve.md` を新規追加：予約作成のユースケースを文書化
+- `docs/画面遷移図.pdf` を追加：一般ユーザー・管理者両方の画面遷移図
+- `docs/ワイヤーフレーム.pdf` を追加：共通レイアウト用の簡易ワイヤーを作成
+
 ### 🧾 その他補足
 
 - `.env.example` を元に各自 `.env` を作成してください
 - PR単位で進捗をレビュー・管理する運用です
 - React 開発時は `npm run dev -- --host` で Vite サーバーを起動してください
+
+## 🧩 実装予定の主な機能（予約くん）
+小規模店舗向けのオンライン予約受付・管理システムです。
+
+### 管理者機能
+- 管理者ログイン（認証機能）
+- 予約の一覧／削除
+- 営業時間・定休日の設定
+- 臨時休業／休憩時間の指定
+- 予約可能枠の管理
+
+### 一般ユーザー機能
+- 予約フォーム（日時選択・名前・メール）
+- 空き枠カレンダー表示
+- 予約完了通知メール送信
+- キャンセル機能（メールからリンク）
