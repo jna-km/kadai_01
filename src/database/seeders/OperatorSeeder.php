@@ -20,8 +20,5 @@ class OperatorSeeder extends Seeder
             'password' => bcrypt('password'),
             'role' => 'manager',
         ]);
-
-        // ランダムなオペレーターを追加
-        Operator::factory()->count(5)->create();
     }
 }

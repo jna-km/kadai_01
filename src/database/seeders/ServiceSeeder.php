@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Service;
+use App\Models\Operator;
 
 class ServiceSeeder extends Seeder
 {
@@ -13,6 +14,12 @@ class ServiceSeeder extends Seeder
      */
     public function run(): void
     {
-        Service::factory()->count(10)->create();
+        $admin = Operator::where('email', 'admin@example.com')->first();
+
+        if ($admin) {
+            Service::factory()->count(5)->create([
+                'operator_id' => $admin->id,
+            ]);
+        }
     }
 }
