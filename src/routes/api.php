@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReservationController;
 
 Route::apiResource('reservations', ReservationController::class)->only([
-    'store', 'update'
+   'index', 'store', 'show' ,'update', 'destroy'
 ]);
 
 Route::post('/ping', function () {

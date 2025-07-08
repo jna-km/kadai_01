@@ -29,7 +29,7 @@ class UpdateReservationRequest extends FormRequest
             'date' => 'required|date',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
-            'status' => 'nullable|in:reserved,cancelled',
+            'status' => 'nullable|in:reserved,cancelled,confirmed',
             'notes' => 'nullable|string|max:1000',
         ];
     }

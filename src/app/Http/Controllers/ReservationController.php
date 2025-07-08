@@ -13,9 +13,14 @@ class ReservationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $reservations = Reservation::with(['user', 'operator'])->get();
+
+        return response()->json([
+            'message' => '予約一覧を取得しました。',
+            'data' => $reservations
+        ]);
     }
 
     /**
@@ -34,9 +39,14 @@ class ReservationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        $reservation = Reservation::with(['user', 'operator'])->findOrFail($id);
+
+        return response()->json([
+            'message' => '予約詳細を取得しました。',
+            'data' => $reservation
+        ]);
     }
 
     /**
@@ -55,8 +65,13 @@ class ReservationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        //
+        $reservation = Reservation::findOrFail($id);
+        $reservation->delete();
+
+        return response()->json([
+            'message' => '予約を削除しました。'
+        ]);
     }
 }
