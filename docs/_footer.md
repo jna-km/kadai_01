@@ -12,8 +12,11 @@
 - [機能要件]({{prefix}}functional_requirements.md)
 - [コーディングルール]({{prefix}}coding-rules.md)
 - [ショートカット]({{prefix}}shortcuts.md)
-- [作業ログ（2025-07-07）]({{prefix}}logs/2025-07-07.md)
 - [画面遷移図（PDF）]({{prefix}}画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）]({{prefix}}ワイヤーフレーム.pdf)
+
+### 作業ログ
+- [2025-07-07]({{prefix}}logs/2025-07-07.md)
+- [2025-07-08]({{prefix}}logs/2025-07-08.md)
 
 --- フッター終了 ---

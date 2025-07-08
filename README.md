@@ -114,8 +114,11 @@ docker compose exec app npm run dev -- --host
 - [機能要件](docs/functional_requirements.md)
 - [コーディングルール](docs/coding-rules.md)
 - [ショートカット](docs/shortcuts.md)
-- [作業ログ（2025-07-07）](docs/logs/2025-07-07.md)
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
+
+### 作業ログ
+- [2025-07-07](docs/logs/2025-07-07.md)
+- [2025-07-08](docs/logs/2025-07-08.md)
 
 --- フッター終了 ---
