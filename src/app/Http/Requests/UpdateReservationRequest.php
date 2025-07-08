@@ -26,7 +26,7 @@ class UpdateReservationRequest extends FormRequest
             'operator_id' => 'nullable|exists:operators,id',
             'service_name' => 'required|string|max:255',
             'duration' => 'required|integer|min:1',
-            'date' => 'required|date',
+            'date' => 'required|date|after_or_equal:today',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
             'status' => 'nullable|in:reserved,cancelled,confirmed',

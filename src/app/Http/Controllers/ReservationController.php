@@ -55,10 +55,9 @@ class ReservationController extends Controller
     public function update(UpdateReservationRequest $request, Reservation $reservation): JsonResponse
     {
         $reservation->update($request->validated());
-
         return response()->json([
             'message' => '予約が更新されました。',
-            'data' => $reservation
+            'data' => $reservation,
         ]);
     }
 
