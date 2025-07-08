@@ -77,6 +77,14 @@ docker compose exec app npm run dev -- --host
 - `docs/画面遷移図.pdf` を追加：一般ユーザー・管理者両方の画面遷移図
 - `docs/ワイヤーフレーム.pdf` を追加：共通レイアウト用の簡易ワイヤーを作成
 
+### 🆕 最近の変更点（2025/07/08）
+
+- `.env.testing` を追加し、テスト用DB環境を構築（laravel_test）
+- `phpunit` → `Pest` に移行、`pest-plugin-laravel` を導入しユニットテスト基盤を整備
+- Featureテスト：`ReservationControllerTest.php` を新規作成し、CRUD動作の検証
+- `Reservation` モデルの `$fillable` および `casts` の整備、リレーションの確認
+- テスト実行環境と`docker-compose.yml`調整、PHPバージョン8.3に対応済み
+
 ### 🧾 その他補足
 
 - `.env.example` を元に各自 `.env` を作成してください
@@ -114,8 +122,11 @@ docker compose exec app npm run dev -- --host
 - [機能要件](docs/functional_requirements.md)
 - [コーディングルール](docs/coding-rules.md)
 - [ショートカット](docs/shortcuts.md)
-- [作業ログ（2025-07-07）](docs/logs/2025-07-07.md)
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
+
+### 作業ログ
+- [2025-07-07](docs/logs/2025-07-07.md)
+- [2025-07-08](docs/logs/2025-07-08.md)
 
 --- フッター終了 ---
