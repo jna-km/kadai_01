@@ -62,4 +62,26 @@ class StoreReservationRequest extends FormRequest
             'notes.max' => '備考は1000文字以内で入力してください。',
         ];
     }
+
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'user_id' => 'ユーザーID',
+            'operator_id' => '担当者',
+            'service_name' => 'サービス名',
+            'duration' => '所要時間',
+            'date' => '予約日',
+            'start_time' => '開始時刻',
+            'end_time' => '終了時刻',
+            'status' => 'ステータス',
+            'notes' => '備考',
+        ];
+    }
+
 }
