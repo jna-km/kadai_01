@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreNoticeRequest;
+use App\Http\Requests\UpdateNoticeRequest;
 use App\Models\Notice;
 
 class NoticeController extends Controller
@@ -18,7 +19,7 @@ class NoticeController extends Controller
     /**
      * 新しいお知らせを登録する
      */
-    public function store(Request $request)
+    public function store(StoreNoticeRequest $request)
     {
         $notice = Notice::create($request->all());
         return response()->json($notice, 201);
@@ -36,7 +37,7 @@ class NoticeController extends Controller
     /**
      * 指定したお知らせ情報を更新する
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateNoticeRequest $request, string $id)
     {
         $notice = Notice::findOrFail($id);
         $notice->update($request->all());

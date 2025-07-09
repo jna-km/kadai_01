@@ -121,6 +121,7 @@ docker compose exec app npm run dev -- --host
 - [ユースケース定義](docs/usecase_reserve.md)
 - [機能要件](docs/functional_requirements.md)
 - [コーディングルール](docs/coding-rules.md)
+- [APIレスポンス設計ガイドライン](docs/api_response.md)
 - [ショートカット](docs/shortcuts.md)
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)

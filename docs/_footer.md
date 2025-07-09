@@ -11,6 +11,7 @@
 - [ユースケース定義]({{prefix}}usecase_reserve.md)
 - [機能要件]({{prefix}}functional_requirements.md)
 - [コーディングルール]({{prefix}}coding-rules.md)
+- [APIレスポンス設計ガイドライン]({{prefix}}api_response.md)
 - [ショートカット]({{prefix}}shortcuts.md)
 - [画面遷移図（PDF）]({{prefix}}画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）]({{prefix}}ワイヤーフレーム.pdf)

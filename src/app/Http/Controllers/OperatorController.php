@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreOperatorRequest;
+use App\Http\Requests\UpdateOperatorRequest;
 use App\Models\Operator;
 
 class OperatorController extends Controller
@@ -18,7 +19,7 @@ class OperatorController extends Controller
     /**
      * 新しいオペレーターを登録する
      */
-    public function store(Request $request)
+    public function store(StoreOperatorRequest $request)
     {
         $operator = Operator::create($request->all());
         return response()->json($operator, 201);
@@ -36,7 +37,7 @@ class OperatorController extends Controller
     /**
      * 指定したオペレーター情報を更新する
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateOperatorRequest $request, string $id)
     {
         $operator = Operator::findOrFail($id);
         $operator->update($request->all());

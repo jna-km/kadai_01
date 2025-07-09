@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 
 class UserController extends Controller
@@ -18,7 +19,7 @@ class UserController extends Controller
     /**
      * 新しいユーザーを登録する
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
         $user = User::create($request->all());
         return response()->json($user, 201);
@@ -36,7 +37,7 @@ class UserController extends Controller
     /**
      * 指定したユーザー情報を更新する
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateUserRequest $request, string $id)
     {
         $user = User::findOrFail($id);
         $user->update($request->all());

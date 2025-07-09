@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreServiceRequest;
+use App\Http\Requests\UpdateServiceRequest;
 use App\Models\Service;
 
 class ServiceController extends Controller
@@ -18,9 +19,9 @@ class ServiceController extends Controller
     /**
      * 新しいサービスを登録する
      */
-    public function store(Request $request)
+    public function store(StoreServiceRequest $request)
     {
-        $service = Service::create($request->all());
+        $service = Service::create($request->validated());
         return response()->json($service, 201);
     }
 
@@ -36,10 +37,10 @@ class ServiceController extends Controller
     /**
      * 指定したサービス情報を更新する
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateServiceRequest $request, string $id)
     {
         $service = Service::findOrFail($id);
-        $service->update($request->all());
+        $service->update($request->validated());
         return response()->json($service);
     }
 

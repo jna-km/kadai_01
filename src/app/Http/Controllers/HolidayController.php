@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreHolidayRequest;
+use App\Http\Requests\UpdateHolidayRequest;
 use App\Models\Holiday;
 
 class HolidayController extends Controller
@@ -18,9 +19,9 @@ class HolidayController extends Controller
     /**
      * 新しい祝日を登録する
      */
-    public function store(Request $request)
+    public function store(StoreHolidayRequest $request)
     {
-        $holiday = Holiday::create($request->all());
+        $holiday = Holiday::create($request->validated());
         return response()->json($holiday, 201);
     }
 
@@ -36,10 +37,10 @@ class HolidayController extends Controller
     /**
      * 指定した祝日情報を更新する
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateHolidayRequest $request, string $id)
     {
         $holiday = Holiday::findOrFail($id);
-        $holiday->update($request->all());
+        $holiday->update($request->validated());
         return response()->json($holiday);
     }
 
