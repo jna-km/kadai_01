@@ -3,6 +3,7 @@
 use App\Models\User;
 use App\Models\Operator;
 use App\Models\Reservation;
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
 use function Pest\Laravel\deleteJson;
@@ -10,6 +11,19 @@ use function Pest\Laravel\getJson;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->user = User::factory()->create();
+    $this->operator = Operator::factory()->create();
+    actingAs($this->user);
+});
+
+test('未ログインユーザーは予約一覧画面にアクセスできない（401）', function () {
+    auth()->logout(); // ← actingAs を解除
+
+    $response = getJson('/api/reservations');
+    $response->assertStatus(401);
+});
 
 test('無効なデータでは予約が作成できない', function () {
     $response = postJson('/api/reservations', [

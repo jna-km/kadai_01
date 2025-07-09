@@ -23,8 +23,8 @@ class ReservationFactory extends Factory
         $end = (clone $start)->modify("+{$duration} minutes");
 
         return [
-            'user_id' => User::inRandomOrder()->first()?->id ?? 1,
-            'operator_id' => Operator::inRandomOrder()->first()?->id ?? 1,
+            'user_id' => User::factory(),
+            'operator_id' => Operator::factory(),
             'service_name' => fake()->word() . 'サービス',
             'duration' => $duration,
             'date' => $start->format('Y-m-d'),

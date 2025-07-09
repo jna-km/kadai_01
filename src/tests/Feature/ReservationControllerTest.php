@@ -10,22 +10,34 @@ use function Pest\Laravel\post;
 use function Pest\Laravel\put;
 use function Pest\Laravel\putJson;
 use function Pest\Laravel\delete;
+use function Pest\Laravel\getJson;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->user = User::factory()->create();
     $this->operator = Operator::factory()->create();
-    actingAs($this->user);
 });
 
-test('予約一覧画面にアクセスできる', function () {
-    $response = get('/api/reservations');
+test('未ログインユーザーは予約一覧画面にアクセスできない（401）', function () {
+    $response = getJson('/api/reservations');
+    $response->assertStatus(401);
+});
 
+test('ユーザーは予約一覧画面にアクセスできる', function () {
+    actingAs($this->user);
+    $response = get('/api/reservations');
+    $response->assertStatus(200);
+});
+
+test('管理者は予約一覧画面にアクセスできる', function () {
+    actingAs($this->operator, 'operator');
+    $response = get('/api/reservations');
     $response->assertStatus(200);
 });
 
 test('予約を作成できる', function () {
+    actingAs($this->user);
     $payload = [
         'user_id' => $this->user->id,
         'operator_id' => $this->operator->id,
@@ -45,6 +57,7 @@ test('予約を作成できる', function () {
 });
 
 test('予約を更新できる', function () {
+    actingAs($this->user);
     $reservation = Reservation::factory()->create([
         'user_id' => $this->user->id,
         'operator_id' => $this->operator->id,
@@ -74,6 +87,7 @@ test('予約を更新できる', function () {
 });
 
 test('予約を削除できる', function () {
+    actingAs($this->user);
     $reservation = Reservation::factory()->create([
         'user_id' => $this->user->id,
         'operator_id' => $this->operator->id,
