@@ -71,11 +71,11 @@ docker compose exec app npm run dev -- --host
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
 
-## 🆕 最近の変更点（2025/07/04）
+### 🆕 最近の変更点（2025/07/09）
 
-- `docs/usecase_reserve.md` を新規追加：予約作成のユースケースを文書化
-- `docs/画面遷移図.pdf` を追加：一般ユーザー・管理者両方の画面遷移図
-- `docs/ワイヤーフレーム.pdf` を追加：共通レイアウト用の簡易ワイヤーを作成
+- READMEのログ記述位置を時系列順に修正
+- `StoreReservationRequest` のフォームリクエストとテスト整備（`StoreReservationRequestTest`）
+- テスト基盤に `.env.testing` を導入し、バリデーションテスト項目を追加
 
 ### 🆕 最近の変更点（2025/07/08）
 
@@ -84,6 +84,12 @@ docker compose exec app npm run dev -- --host
 - Featureテスト：`ReservationControllerTest.php` を新規作成し、CRUD動作の検証
 - `Reservation` モデルの `$fillable` および `casts` の整備、リレーションの確認
 - テスト実行環境と`docker-compose.yml`調整、PHPバージョン8.3に対応済み
+
+## 🆕 最近の変更点（2025/07/04）
+
+- `docs/usecase_reserve.md` を新規追加：予約作成のユースケースを文書化
+- `docs/画面遷移図.pdf` を追加：一般ユーザー・管理者両方の画面遷移図
+- `docs/ワイヤーフレーム.pdf` を追加：共通レイアウト用の簡易ワイヤーを作成
 
 ### 🧾 その他補足
 
@@ -121,6 +127,7 @@ docker compose exec app npm run dev -- --host
 - [ユースケース定義](docs/usecase_reserve.md)
 - [機能要件](docs/functional_requirements.md)
 - [コーディングルール](docs/coding-rules.md)
+- [APIレスポンス設計ガイドライン](docs/api_response.md)
 - [ショートカット](docs/shortcuts.md)
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
@@ -128,5 +135,6 @@ docker compose exec app npm run dev -- --host
 ### 作業ログ
 - [2025-07-07](docs/logs/2025-07-07.md)
 - [2025-07-08](docs/logs/2025-07-08.md)
+- [2025-07-09](docs/logs/2025-07-09.md)
 
 --- フッター終了 ---

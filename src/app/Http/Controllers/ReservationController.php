@@ -6,7 +6,6 @@ use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
 use App\Models\Reservation;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {

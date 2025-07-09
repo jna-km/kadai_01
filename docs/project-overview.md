@@ -36,6 +36,7 @@
 - [ユースケース定義](usecase_reserve.md)
 - [機能要件](functional_requirements.md)
 - [コーディングルール](coding-rules.md)
+- [APIレスポンス設計ガイドライン](api_response.md)
 - [ショートカット](shortcuts.md)
 - [画面遷移図（PDF）](画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](ワイヤーフレーム.pdf)
@@ -43,5 +44,6 @@
 ### 作業ログ
 - [2025-07-07](logs/2025-07-07.md)
 - [2025-07-08](logs/2025-07-08.md)
+- [2025-07-09](logs/2025-07-09.md)
 
 --- フッター終了 ---

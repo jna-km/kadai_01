@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
 use App\Models\Reservation;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * Operator（管理者）モデル
@@ -12,19 +13,27 @@ use App\Models\Reservation;
  * @property string $name
  * @property string $email
  */
-class Operator extends Model
+class Operator extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory;
 
-    /**
-     * モデルの一括代入可能な属性
-     *
-     * @var array
-     */
     protected $fillable = [
-        'name',      // オペレーターの氏名
-        'email',     // メールアドレス
+        'name',
+        'email',
+        'password',
     ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+        ];
+    }
 
     /**
      * リレーション：このオペレーターが担当する予約一覧
