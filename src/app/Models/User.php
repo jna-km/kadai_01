@@ -8,14 +8,19 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Reservation;
 use Laravel\Sanctum\HasApiTokens;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * ユーザー（User）モデル
  *
+ * @property int $id
  * @property string $name
  * @property string $email
  * @property string $password
- * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property Carbon|null $email_verified_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 class User extends Authenticatable
 {
@@ -58,10 +63,8 @@ class User extends Authenticatable
 
     /**
      * リレーション：このユーザーが行った予約一覧
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function reservations()
+    public function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);
     }

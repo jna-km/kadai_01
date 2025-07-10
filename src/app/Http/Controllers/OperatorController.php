@@ -13,7 +13,10 @@ class OperatorController extends Controller
      */
     public function index()
     {
-        return response()->json(Operator::all());
+        return response()->json([
+            'message' => 'オペレーター一覧を取得しました。',
+            'data' => Operator::all()
+        ], 200);
     }
 
     /**
@@ -22,7 +25,10 @@ class OperatorController extends Controller
     public function store(StoreOperatorRequest $request)
     {
         $operator = Operator::create($request->all());
-        return response()->json($operator, 201);
+        return response()->json([
+            'message' => 'オペレーターを登録しました。',
+            'data' => $operator
+        ], 201);
     }
 
     /**
@@ -31,7 +37,10 @@ class OperatorController extends Controller
     public function show(string $id)
     {
         $operator = Operator::findOrFail($id);
-        return response()->json($operator);
+        return response()->json([
+            'message' => 'オペレーター詳細を取得しました。',
+            'data' => $operator
+        ], 200);
     }
 
     /**
@@ -41,7 +50,10 @@ class OperatorController extends Controller
     {
         $operator = Operator::findOrFail($id);
         $operator->update($request->all());
-        return response()->json($operator);
+        return response()->json([
+            'message' => 'オペレーター情報を更新しました。',
+            'data' => $operator
+        ], 200);
     }
 
     /**

@@ -4,9 +4,30 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Operator;
 
+/**
+ * 予約（Reservation）
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $operator_id
+ * @property string $service_name
+ * @property int $duration
+ * @property Carbon $date
+ * @property Carbon $start_time
+ * @property Carbon $end_time
+ * @property string $status
+ * @property string|null $notes
+ * @property Carbon|null $cancelled_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * ユーザーとオペレーターに紐づく予約情報を管理するモデル。
+ */
 class Reservation extends Model
 {
     use HasFactory;
@@ -36,20 +57,16 @@ class Reservation extends Model
 
     /**
      * リレーション：この予約を行ったユーザー
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     /**
      * リレーション：この予約を受けるオペレーター（管理者）
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function operator()
+    public function operator(): BelongsTo
     {
         return $this->belongsTo(Operator::class);
     }

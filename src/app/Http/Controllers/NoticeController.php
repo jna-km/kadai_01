@@ -13,7 +13,10 @@ class NoticeController extends Controller
      */
     public function index()
     {
-        return response()->json(Notice::all());
+        return response()->json([
+            'message' => 'お知らせ一覧を取得しました。',
+            'data' => Notice::all()
+        ], 200);
     }
 
     /**
@@ -22,7 +25,10 @@ class NoticeController extends Controller
     public function store(StoreNoticeRequest $request)
     {
         $notice = Notice::create($request->all());
-        return response()->json($notice, 201);
+        return response()->json([
+            'message' => 'お知らせを登録しました。',
+            'data' => $notice
+        ], 201);
     }
 
     /**
@@ -31,7 +37,10 @@ class NoticeController extends Controller
     public function show(string $id)
     {
         $notice = Notice::findOrFail($id);
-        return response()->json($notice);
+        return response()->json([
+            'message' => 'お知らせ詳細を取得しました。',
+            'data' => $notice
+        ], 200);
     }
 
     /**
@@ -41,7 +50,10 @@ class NoticeController extends Controller
     {
         $notice = Notice::findOrFail($id);
         $notice->update($request->all());
-        return response()->json($notice);
+        return response()->json([
+            'message' => 'お知らせ情報を更新しました。',
+            'data' => $notice
+        ], 200);
     }
 
     /**

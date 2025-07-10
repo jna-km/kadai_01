@@ -13,7 +13,10 @@ class HolidayController extends Controller
      */
     public function index()
     {
-        return response()->json(Holiday::all());
+        return response()->json([
+            'message' => '祝日一覧を取得しました。',
+            'data' => Holiday::all()
+        ], 200);
     }
 
     /**
@@ -22,7 +25,10 @@ class HolidayController extends Controller
     public function store(StoreHolidayRequest $request)
     {
         $holiday = Holiday::create($request->validated());
-        return response()->json($holiday, 201);
+        return response()->json([
+            'message' => '祝日を登録しました。',
+            'data' => $holiday
+        ], 201);
     }
 
     /**
@@ -31,7 +37,10 @@ class HolidayController extends Controller
     public function show(string $id)
     {
         $holiday = Holiday::findOrFail($id);
-        return response()->json($holiday);
+        return response()->json([
+            'message' => '祝日詳細を取得しました。',
+            'data' => $holiday
+        ], 200);
     }
 
     /**
@@ -41,7 +50,10 @@ class HolidayController extends Controller
     {
         $holiday = Holiday::findOrFail($id);
         $holiday->update($request->validated());
-        return response()->json($holiday);
+        return response()->json([
+            'message' => '祝日情報を更新しました。',
+            'data' => $holiday
+        ], 200);
     }
 
     /**

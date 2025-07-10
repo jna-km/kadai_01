@@ -13,7 +13,10 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        return response()->json(Service::all());
+        return response()->json([
+            'message' => 'サービス一覧を取得しました。',
+            'data' => Service::all()
+        ], 200);
     }
 
     /**
@@ -22,7 +25,10 @@ class ServiceController extends Controller
     public function store(StoreServiceRequest $request)
     {
         $service = Service::create($request->validated());
-        return response()->json($service, 201);
+        return response()->json([
+            'message' => 'サービスを登録しました。',
+            'data' => $service
+        ], 201);
     }
 
     /**
@@ -31,7 +37,10 @@ class ServiceController extends Controller
     public function show(string $id)
     {
         $service = Service::findOrFail($id);
-        return response()->json($service);
+        return response()->json([
+            'message' => 'サービス詳細を取得しました。',
+            'data' => $service
+        ], 200);
     }
 
     /**
@@ -41,7 +50,10 @@ class ServiceController extends Controller
     {
         $service = Service::findOrFail($id);
         $service->update($request->validated());
-        return response()->json($service);
+        return response()->json([
+            'message' => 'サービス情報を更新しました。',
+            'data' => $service
+        ], 200);
     }
 
     /**

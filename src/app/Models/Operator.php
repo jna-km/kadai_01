@@ -5,13 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Reservation;
+use App\Models\Service;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Carbon\Carbon;
 
 /**
- * Operator（管理者）モデル
+ * 管理者（Operator）モデル
  *
+ * @property int $id
  * @property string $name
  * @property string $email
+ * @property string $password
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * 予約やサービスを管理する管理者アカウント情報を保持。
  */
 class Operator extends Authenticatable
 {
@@ -36,12 +45,22 @@ class Operator extends Authenticatable
     }
 
     /**
-     * リレーション：このオペレーターが担当する予約一覧
+     * このオペレーターが担当する予約一覧
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
+    }
+
+    /**
+     * このオペレーターが提供するサービス一覧
+     *
+     * @return HasMany
+     */
+    public function services(): HasMany
+    {
+        return $this->hasMany(Service::class);
     }
 }

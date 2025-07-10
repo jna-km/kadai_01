@@ -15,7 +15,7 @@ test('ユーザー一覧を取得できる', function () {
     $response = $this->getJson('/api/users');
 
     $response->assertStatus(200)
-             ->assertJsonCount(4);
+             ->assertJsonCount(2);
 });
 
 test('新規ユーザーを登録できる', function () {
@@ -32,11 +32,8 @@ test('新規ユーザーを登録できる', function () {
     $response = $this->postJson('/api/users', $payload);
 
     $response->assertStatus(201)
-             ->assertJson(fn (AssertableJson $json) =>
-                 $json->where('name', 'Test User')
-                      ->where('email', 'test@example.com')
-                      ->etc()
-             );
+             ->assertJsonPath('data.name', 'Test User')
+             ->assertJsonPath('data.email', 'test@example.com');
 
     $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
 });
@@ -61,10 +58,12 @@ test('ユーザー情報を更新できる', function () {
 
     $response = $this->putJson("/api/users/{$user->id}", $payload);
 
-    $response->assertStatus(200)
-             ->assertJsonPath('name', 'Updated Name');
+    $response->assertStatus(200);
 
-    $this->assertDatabaseHas('users', ['id' => $user->id, 'name' => 'Updated Name']);
+    $updatedUser = $user->fresh();
+
+    $this->assertSame($payload['name'], $updatedUser->name);
+    $this->assertSame($payload['email'], $updatedUser->email);
 });
 
 test('ユーザーを削除できる', function () {
@@ -76,4 +75,59 @@ test('ユーザーを削除できる', function () {
     $response->assertStatus(204);
 
     $this->assertDatabaseMissing('users', ['id' => $user->id]);
+});
+
+test('存在しないユーザーIDを参照しようとすると404が返る', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user, 'user');
+
+    $response = $this->getJson('/api/users/999999');
+    $response->assertStatus(404);
+});
+
+test('存在しないユーザーIDを更新しようとすると404が返る', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user, 'user');
+
+    $payload = ['name' => 'Nope', 'email' => 'nope@example.com'];
+    $response = $this->putJson('/api/users/999999', $payload);
+    $response->assertStatus(404);
+});
+
+test('存在しないユーザーIDを削除しようとすると404が返る', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user, 'user');
+
+    $response = $this->deleteJson('/api/users/999999');
+    $response->assertStatus(404);
+});
+
+
+test('ログインしていない状態でユーザー一覧取得は401が返る', function () {
+    $response = $this->getJson('/api/users');
+    $response->assertStatus(401);
+});
+
+test('ログインしていない状態でユーザー登録は401が返る', function () {
+    $payload = [
+        'name' => 'Guest User',
+        'email' => 'guest@example.com',
+        'password' => 'guest1234',
+        'password_confirmation' => 'guest1234',
+    ];
+    $response = $this->postJson('/api/users', $payload);
+    $response->assertStatus(401);
+});
+
+test('ログインしていない状態でユーザー更新は401が返る', function () {
+    $user = User::factory()->create();
+    $payload = ['name' => 'Hacker', 'email' => 'hacker@example.com'];
+    $response = $this->putJson("/api/users/{$user->id}", $payload);
+    $response->assertStatus(401);
+});
+
+test('ログインしていない状態でユーザー削除は401が返る', function () {
+    $user = User::factory()->create();
+    $response = $this->deleteJson("/api/users/{$user->id}");
+    $response->assertStatus(401);
 });

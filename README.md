@@ -39,12 +39,13 @@ docker compose exec app npm run dev -- --host
 
 ### 🔍 開発用URL一覧
 
-| サービス     | URL                     | 備考            |
-|--------------|--------------------------|-----------------|
-| アプリ       | http://localhost:88     | Laravel画面     |
-| phpMyAdmin   | http://localhost:8081   | user / password |
-| Mailpit      | http://localhost:8025   | メール確認UI    |
-| React Dev    | http://localhost:5173   | Vite 開発サーバー |
+| サービス     | URL                      | 備考                |
+|--------------|---------------------------|---------------------|
+| アプリ       | http://localhost:88      | Laravel画面         |
+| phpMyAdmin   | http://localhost:8081    | user / password     |
+| Mailpit      | http://localhost:8025    | メール確認UI        |
+| React Dev    | http://localhost:5173    | Vite 開発サーバー   |
+| Swagger UI   | http://localhost:88/swagger/ | APIドキュメント確認用 |
 
 
 ## 🛠 開発補助スクリプト（scripts/）
@@ -98,6 +99,16 @@ docker compose exec app npm run dev -- --host
 - React 開発時は `npm run dev -- --host` で Vite サーバーを起動してください
 
 ## 🧩 実装予定の主な機能（予約くん）
+ 
+### APIドキュメント (Swagger)
+
+本プロジェクトでは、REST API のインターフェースを確認するために Swagger UI を使用しています。
+
+- Swagger UI アクセス: [http://localhost:88/swagger/](http://localhost:88/swagger/)
+- 定義ファイル: `public/swagger/openapi.yaml`
+
+API仕様は `openapi.yaml` に記述されており、変更は直接このファイルを編集することで反映されます。
+※フロントやバックエンドの実装変更時は、API定義ファイルも忘れずに更新してください。
 小規模店舗向けのオンライン予約受付・管理システムです。
 
 ### 管理者機能
@@ -112,6 +123,7 @@ docker compose exec app npm run dev -- --host
 - 空き枠カレンダー表示
 - 予約完了通知メール送信
 - キャンセル機能（メールからリンク）
+
 
 <!-- 共通フッター（自動更新されます） -->
 --- フッター開始 ---
@@ -136,5 +148,6 @@ docker compose exec app npm run dev -- --host
 - [2025-07-07](docs/logs/2025-07-07.md)
 - [2025-07-08](docs/logs/2025-07-08.md)
 - [2025-07-09](docs/logs/2025-07-09.md)
+- [2025-07-10](docs/logs/2025-07-10.md)
 
 --- フッター終了 ---

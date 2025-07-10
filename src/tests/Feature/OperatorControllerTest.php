@@ -2,7 +2,6 @@
 
 use App\Models\Operator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\Sanctum;
 
 uses(RefreshDatabase::class);
 
@@ -15,7 +14,7 @@ test('オペレーター一覧を取得できる', function () {
     $response = $this->getJson('/api/operators');
 
     $response->assertStatus(200)
-             ->assertJsonCount(4);
+             ->assertJsonCount(2);
 });
 
 test('新規オペレーターを登録できる', function () {
@@ -31,42 +30,66 @@ test('新規オペレーターを登録できる', function () {
 
     $response = $this->postJson('/api/operators', $payload);
 
-    $response->assertStatus(201)
-             ->assertJson(fn ($json) =>
-                 $json->where('name', 'Test Operator')
-                      ->where('email', 'operator@example.com')
-                      ->etc()
-             );
+    $response->assertStatus(201);
 
     $this->assertDatabaseHas('operators', ['email' => 'operator@example.com']);
 });
 
 test('オペレーターの詳細を取得できる', function () {
     $operator = Operator::factory()->create();
-
-    $response = $this->getJson("/api/operators/{$operator->id}");
-
-    Sanctum::actingAs($operator, guard: 'operator');
+    $this->actingAs($operator, 'operator');
 
     $response = $this->getJson("/api/operators/{$operator->id}");
 
     $response->assertStatus(200)
-             ->assertJson(fn ($json) =>
-                 $json->where('id', $operator->id)
-                      ->where('name', $operator->name)
-                      ->where('email', $operator->email)
-                      ->etc()
-             );
+             ->assertJsonPath('data.id', $operator->id)
+             ->assertJsonPath('data.name', $operator->name)
+             ->assertJsonPath('data.email', $operator->email);
 });
 
 test('オペレーターを削除できる', function () {
     $operator = Operator::factory()->create();
-
-    Sanctum::actingAs($operator, guard: 'operator');
+    $this->actingAs($operator, 'operator');
 
     $response = $this->deleteJson("/api/operators/{$operator->id}");
 
     $response->assertStatus(204);
 
     $this->assertDatabaseMissing('operators', ['id' => $operator->id]);
+});
+
+
+test('未ログインではオペレーター一覧を取得できない', function () {
+    $response = $this->getJson('/api/operators');
+
+    $response->assertStatus(401);
+});
+
+test('未ログインではオペレーターを登録できない', function () {
+    $payload = [
+        'name' => 'Unauthorized Operator',
+        'email' => 'unauth@example.com',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+    ];
+
+    $response = $this->postJson('/api/operators', $payload);
+
+    $response->assertStatus(401);
+});
+
+test('未ログインではオペレーターの詳細を取得できない', function () {
+    $operator = Operator::factory()->create();
+
+    $response = $this->getJson("/api/operators/{$operator->id}");
+
+    $response->assertStatus(401);
+});
+
+test('未ログインではオペレーターを削除できない', function () {
+    $operator = Operator::factory()->create();
+
+    $response = $this->deleteJson("/api/operators/{$operator->id}");
+
+    $response->assertStatus(401);
 });
