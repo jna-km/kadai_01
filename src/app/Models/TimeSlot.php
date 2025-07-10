@@ -4,12 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Reservation;
 
 /**
  * 時間枠（TimeSlot）モデル
  *
- * @property \Carbon\Carbon $start_time
- * @property \Carbon\Carbon $end_time
+ * @property int $id
+ * @property Carbon $start_time
+ * @property Carbon $end_time
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * 他モデルとのリレーションを持たない時間枠の定義モデル。
  */
 class TimeSlot extends Model
 {
@@ -34,4 +42,12 @@ class TimeSlot extends Model
         'start_time' => 'datetime:H:i:s',
         'end_time' => 'datetime:H:i:s',
     ];
+
+    /**
+     * この時間枠に紐づく予約一覧
+     */
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(Reservation::class);
+    }
 }
