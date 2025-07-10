@@ -13,7 +13,10 @@ class WorkingHourController extends Controller
      */
     public function index()
     {
-        return WorkingHour::all();
+        return response()->json([
+            'message' => '勤務時間一覧を取得しました。',
+            'data' => WorkingHour::all()
+        ], 200);
     }
 
     /**
@@ -22,7 +25,10 @@ class WorkingHourController extends Controller
     public function store(StoreWorkingHourRequest $request)
     {
         $workingHour = WorkingHour::create($request->validated());
-        return response()->json($workingHour, 201);
+        return response()->json([
+            'message' => '勤務時間を登録しました。',
+            'data' => $workingHour
+        ], 201);
     }
 
     /**
@@ -31,7 +37,10 @@ class WorkingHourController extends Controller
     public function show(string $id)
     {
         $workingHour = WorkingHour::findOrFail($id);
-        return response()->json($workingHour);
+        return response()->json([
+            'message' => '勤務時間詳細を取得しました。',
+            'data' => $workingHour
+        ], 200);
     }
 
     /**
@@ -41,7 +50,10 @@ class WorkingHourController extends Controller
     {
         $workingHour = WorkingHour::findOrFail($id);
         $workingHour->update($request->validated());
-        return response()->json($workingHour);
+        return response()->json([
+            'message' => '勤務時間情報を更新しました。',
+            'data' => $workingHour
+        ], 200);
     }
 
     /**

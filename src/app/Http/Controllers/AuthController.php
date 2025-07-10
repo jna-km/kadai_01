@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -36,7 +35,7 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'ログアウトしました']);
+        return response()->json(['message' => 'ログアウトしました'], 200);
     }
 
     /**
@@ -44,6 +43,9 @@ class AuthController extends Controller
      */
     public function me(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json([
+            'message' => 'ログインユーザー情報を取得しました。',
+            'data' => $request->user()
+        ], 200);
     }
 }

@@ -13,7 +13,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response()->json(User::all());
+        return response()->json([
+            'message' => 'ユーザー一覧を取得しました。',
+            'data' => User::all()
+        ], 200);
     }
 
     /**
@@ -22,7 +25,10 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $user = User::create($request->all());
-        return response()->json($user, 201);
+        return response()->json([
+            'message' => 'ユーザーを登録しました。',
+            'data' => $user
+        ], 201);
     }
 
     /**
@@ -41,7 +47,10 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $user->update($request->all());
-        return response()->json($user);
+        return response()->json([
+            'message' => 'ユーザー情報を更新しました。',
+            'data' => $user
+        ], 200);
     }
 
     /**

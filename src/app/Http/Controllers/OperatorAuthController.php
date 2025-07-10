@@ -45,8 +45,8 @@ class OperatorAuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'ログアウトしました'
-        ]);
+            'message' => 'ログアウトしました。'
+        ], 200);
     }
 
     /**
@@ -55,7 +55,8 @@ class OperatorAuthController extends Controller
     public function me(Request $request): JsonResponse
     {
         return response()->json([
-            'operator' => $request->user(),
-        ]);
+            'message' => 'ログイン中のオペレーター情報を取得しました。',
+            'data' => $request->user()
+        ], 200);
     }
 }
