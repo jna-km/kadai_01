@@ -1,53 +1,50 @@
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
-function Login({ setUser }) {
+const Login: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { setUser } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const email = (e.target as any).email.value;
-    const password = (e.target as any).password.value;
+    setError('');
 
     try {
-      // CSRF保護用のCookieを先に取得
-      await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
-
-      // ログイン処理
-      const response = await axios.post('/api/login', {
-        email,
-        password
-      }, {
-        withCredentials: true
-      });
-
-
-
-
-      alert('ログイン成功');
-      console.log(response.data);
-      setUser && setUser(response.data.user);
-
-                    const cc = await axios.get('http://localhost:88/api/usera', {
-                withCredentials: true,
-              });
-      console.log(cc);      
-
-      alert('ログイン成功');
-      navigate('/dashboard');
-    } catch (error: any) {
-      console.error('ログイン失敗:', error);
-      alert('ログイン失敗');
+      await axios.get('/sanctum/csrf-cookie');
+      const response = await axios.post('/api/login', { email, password });
+      
+      if (response.data.data.user) {
+        setUser(response.data.data.user);
+        navigate('/dashboard');
+      }
+    } catch (err: any) {
+      console.error('Login failed:', err);
+      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     }
   };
 
   return (
-    <form onSubmit={handleLogin}>
-      <input name="email" placeholder="メールアドレス" />
-      <input name="password" type="password" placeholder="パスワード" />
-      <button type="submit">ログイン</button>
-    </form>
+    <div>
+      <h2>Login</h2>
+      <form onSubmit={handleLogin}>
+        <div>
+          <label>Email</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        </div>
+        <div>
+          <label>Password</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        </div>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <button type="submit">Login</button>
+      </form>
+    </div>
   );
-}
+};
 
 export default Login;

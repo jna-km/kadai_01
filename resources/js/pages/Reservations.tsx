@@ -1,45 +1,52 @@
 // resources/js/pages/Reservations.tsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
-type Reservation = {
-  id: number;
-  service_name: string;
-  date: string;
-};
+import { Link } from 'react-router-dom';
+import { Reservation } from '../types';
 
 const Reservations: React.FC = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchReservations = async () => {
-            try {
-                await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
+  useEffect(() => {
+    const fetchReservations = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('/api/reservations');
+        setReservations(response.data.data);
+      } catch (err: any) {
+        setError('データの取得に失敗しました');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchReservations();
+  }, []);
 
-                const response = await axios.get('/api/my-reservations', {
-                    withCredentials: true
-                });
-                console.log(response.data);
-                setReservations(response.data);
-            } catch (error) {
-                console.log("aaa");
-                console.error(error);
-            }
-        };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-        fetchReservations();
-    }, []);
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div>
       <h2>予約一覧</h2>
+      <Link to="/dashboard/reservations/new">
+        <button>新規予約</button>
+      </Link>
       <table>
         <thead>
           <tr>
             <th>ID</th>
             <th>サービス名</th>
             <th>日付</th>
+            <th>開始時間</th>
           </tr>
         </thead>
         <tbody>
@@ -48,6 +55,7 @@ const Reservations: React.FC = () => {
               <td>{r.id}</td>
               <td>{r.service_name}</td>
               <td>{r.date}</td>
+              <td>{r.start_time}</td>
             </tr>
           ))}
         </tbody>

@@ -4,6 +4,7 @@ import App from './app';
 import axios from 'axios'; // ← 追加
 
 axios.defaults.withCredentials = true;
+axios.defaults.withXSRFToken = true;
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);

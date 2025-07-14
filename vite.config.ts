@@ -10,4 +10,12 @@ export default defineConfig({
     }),
     react(),
   ],
+  // ↓↓↓ この server セクションを追記します ↓↓↓
+  server: {
+    host: true, // コンテナの外からのアクセスを許可するために '0.0.0.0' をリッスンする
+    port: 5173, // コンテナ内でリッスンするポート
+    hmr: {
+      host: 'localhost', // ブラウザが接続しにくるホスト名
+    },
+  },
 });

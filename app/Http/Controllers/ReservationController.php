@@ -79,9 +79,9 @@ class ReservationController extends Controller
     {
         // $user = Auth::user();
         $user = $request->user();
-            if (!$user) {
-        return response()->json(['message' => 'Unauthorized'], 401);
-    }
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
         $reservations = Reservation::where('user_id', $user->id)->get();
 
         return response()->json(

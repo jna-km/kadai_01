@@ -24,13 +24,6 @@ use App\Http\Controllers\WorkingHourController;
 Route::post('/login', [AuthController::class, 'login']);
 // Route::middleware('web')->post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->get('/usera', function (Request $request) {
-    return response()->json([
-        'user' => 'aaa',
-        'role' => 'aa',
-    ]);
-});
-
 Route::middleware('auth:sanctum')->get('/reservations', [ReservationController::class, 'index']);
 Route::middleware('auth:sanctum,user')->get('/my-reservations', [ReservationController::class, 'myReservations']);
 
