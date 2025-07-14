@@ -1,9 +1,24 @@
 import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import axios from 'axios';
 
 const DashboardLayout: React.FC = () => {
-  const { user } = useAuth();
+  // ↓↓↓ userと一緒にsetUserも取り出すように修正 ↓↓↓
+  const { user, setUser } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await axios.post('/api/logout');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      // これでsetUserが使えるようになります
+      setUser(null);
+      navigate('/login');
+    }
+  };
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
@@ -13,7 +28,8 @@ const DashboardLayout: React.FC = () => {
           <ul style={{ listStyle: 'none', padding: 0 }}>
             <li><Link to="/dashboard">Dashboard</Link></li>
             <li><Link to="/dashboard/reservations">My Reservations</Link></li>
-            <li><Link to="/logout">Logout</Link></li>
+            {/* ↓↓↓ ログアウトはLinkではなくbuttonに変更すると、よりセマンティックです ↓↓↓ */}
+            <li><button onClick={handleLogout} style={{all: 'unset', cursor: 'pointer', textDecoration: 'underline', color: 'blue'}}>Logout</button></li>
           </ul>
         </nav>
       </aside>
