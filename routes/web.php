@@ -1,16 +1,24 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-// use App\Http\Controllers\ReservationController;
 
-// Route::get('/reservations', [ReservationController::class, 'index']);
-// Route::post('/reservations', [ReservationController::class, 'store']);
-// Route::put('/reservations/{id}', [ReservationController::class, 'update']);
-// Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
+use App\Http\Controllers\AuthController;
 
-Route::get('/', function () {
-    return view('welcome');
+// Route::post('/api/login', [AuthController::class, 'login']);
+
+// Reactアプリを返すルート（ユーザーログイン画面）
+Route::get('/login', function () {
+    return view('app'); // resources/views/app.blade.php
 });
+
+// Reactアプリを返すルート（オペレーターログイン画面）
+Route::get('/operator/login', function () {
+    return view('app'); // 同上（フロント側で出し分け）
+});
+
+Route::get('/{any}', function () {
+    return view('index');
+})->where('any', '.*');
 
 Route::view('/dashboard', 'dashboard.index')->name('dashboard.index');
 Route::view('/users', 'users.index')->name('users.index');

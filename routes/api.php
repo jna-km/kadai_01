@@ -1,7 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\Operator;
+use App\Http\Controllers\CheckLoginController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
@@ -19,6 +22,7 @@ use App\Http\Controllers\WorkingHourController;
 
 // ログイン（ユーザー）
 Route::post('/login', [AuthController::class, 'login']);
+// Route::middleware('web')->post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:user')->group(function () {
     // ログアウト／自分情報
@@ -55,6 +59,39 @@ Route::middleware('auth:operator')->group(function () {
     ]);
 });
 
+
+// ========================
+// ログイン状態確認ルート
+// ========================
+// 現在のログイン状態を確認するためのルート
+// Route::get('/check-login', function (Request $request) {
+//     $user = $request->user('user') ?? $request->user('operator');
+
+//     return response()->json([
+//         'user' => $user,
+//         'role' => $request->user('user') ? 'user' : ($request->user('operator') ? 'operator' : null),
+//     ]);
+// });
+
+// Route::get('/check-login', function () {
+//     if (auth()->check()) {
+//         $user = auth()->user();
+
+//         return response()->json([
+//             'status' => 'success',
+//             'user' => $user,
+//             'role' => $user->role,
+//         ]);
+//     }
+
+//     return response()->json([
+//         'status' => 'guest',
+//         'user' => null,
+//         'role' => null,
+//     ]);
+// });
+
+Route::get('/check-login', [CheckLoginController::class, 'check']);
 // ========================
 // 共通ルート
 // ========================

@@ -1,16 +1,12 @@
 #!/bin/bash
 
-# .env設定が必要ならコピー
-if [ ! -f .env ]; then
-  cp .env.example .env
-fi
+# .env 設定が必要ならコピー
+[ ! -f .env ] && cp .env.example .env
 
-# composer install（vendorが無ければ）
-if [ ! -d vendor ]; then
-  composer install
-fi
+# Composer install（vendorが無ければ）
+[ ! -d vendor ] && composer install
 
-# DBが起動するのを待つ（最大30秒）
+# MySQL の起動を待つ
 echo "Waiting for MySQL..."
 for i in {1..30}; do
   if php artisan migrate:status > /dev/null 2>&1; then
@@ -21,18 +17,21 @@ for i in {1..30}; do
   sleep 1
 done
 
-# マイグレーションが未実行なら実行（sessions テーブルを例に確認）
-if ! php artisan db:table sessions > /dev/null 2>&1; then
-  echo "Running migration..."
+# マイグレーション未実行なら実行（sessions テーブルを判定）
+if ! php artisan migrate:status | grep -q 'sessions'; then
+  echo "Running migrations..."
   php artisan migrate --force
 fi
 
-# npm install（node_modulesが無ければ）
-if [ ! -d node_modules ]; then
-  npm install
+# npm install（node_modules 無ければ）
+[ ! -d node_modules ] && npm install
+
+# Viteビルド（初回のみ）
+if [ ! -d public/build ]; then
+  npm run build
 fi
 
-# Vite開発サーバー起動（バックグラウンド）
+# バックグラウンドでViteの開発サーバーを起動
 npm run dev -- --host &
 
 # PHP-FPMをフォアグラウンドで起動
