@@ -18,8 +18,8 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $token = $user->createToken('auth_token')->plainTextToken;
-            $request->session()->regenerate();
-            
+            // $request->session()->regenerate();
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'ログインしました',

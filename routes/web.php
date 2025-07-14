@@ -1,15 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 
 // Route::post('/api/login', [AuthController::class, 'login']);
 
 // Reactアプリを返すルート（ユーザーログイン画面）
 Route::get('/login', function () {
-    return view('app'); // resources/views/app.blade.php
-});
+    return response()->json(['message' => 'ログインしてください'], 401);
+})->name('login');
 
 // Reactアプリを返すルート（オペレーターログイン画面）
 Route::get('/operator/login', function () {
@@ -26,3 +26,6 @@ Route::view('/services', 'services.index')->name('services.index');
 Route::view('/timeslots', 'timeslots.index')->name('timeslots.index');
 Route::view('/working-hours', 'working_hours.index')->name('working_hours.index');
 Route::view('/notices', 'notices.index')->name('notices.index');
+Route::middleware('web')->get('/ping', function () {
+    return 'pong';
+});

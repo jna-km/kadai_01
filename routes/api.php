@@ -24,6 +24,16 @@ use App\Http\Controllers\WorkingHourController;
 Route::post('/login', [AuthController::class, 'login']);
 // Route::middleware('web')->post('/login', [AuthController::class, 'login']);
 
+Route::middleware('auth:sanctum')->get('/usera', function (Request $request) {
+    return response()->json([
+        'user' => 'aaa',
+        'role' => 'aa',
+    ]);
+});
+
+Route::middleware('auth:sanctum')->get('/reservations', [ReservationController::class, 'index']);
+Route::middleware('auth:sanctum,user')->get('/my-reservations', [ReservationController::class, 'myReservations']);
+
 Route::middleware('auth:user')->group(function () {
     // ログアウト／自分情報
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -91,7 +101,13 @@ Route::middleware('auth:operator')->group(function () {
 //     ]);
 // });
 
+// Reactからセッションでログインチェックする用
+// Route::middleware('auth:sanctum')->get('/check-login', [CheckLoginController::class, 'check']);
 Route::get('/check-login', [CheckLoginController::class, 'check']);
+// Route::middleware('web')->get('/check-login', [CheckLoginController::class, 'check']);
+// Swagger等トークン認証でログインチェック（必要なら別エンドポイントに）
+Route::middleware('auth:api')->get('/token-check', [CheckLoginController::class, 'check']);
+
 // ========================
 // 共通ルート
 // ========================

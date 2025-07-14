@@ -7,7 +7,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./:/var/www
-    command: [ "sh", "./docker/entrypoint.sh" ]
+    command: [ "sh", "/var/www/docker/entrypoint.sh" ]
     ports:
       - "9000:9000"
       - "5173:5173"
