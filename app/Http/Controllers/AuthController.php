@@ -11,17 +11,21 @@ class AuthController extends Controller
     /**
      * ユーザー認証を行い、アクセストークンを発行する
      */
-    public function login(Request $request): JsonResponse
+    public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
+            $token = $user->createToken('auth_token')->plainTextToken;
             $request->session()->regenerate();
+            
             return response()->json([
                 'status' => 'success',
                 'message' => 'ログインしました',
                 'data' => [
+                    'access_token' => $token,
+                    'token_type' => 'Bearer',
                     'user' => $user,
                 ]
             ]);
@@ -32,7 +36,6 @@ class AuthController extends Controller
             'message' => '認証に失敗しました',
         ], 401);
     }
-
     /**
      * 現在のアクセストークンを無効化し、ログアウト処理を行う
      */
