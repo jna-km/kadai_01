@@ -1,7 +1,21 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-})
+  plugins: [
+    laravel({
+      input: ['resources/js/main.tsx'],
+      refresh: true,
+    }),
+    react(),
+  ],
+  // ↓↓↓ この server セクションを追記します ↓↓↓
+  server: {
+    host: true, // コンテナの外からのアクセスを許可するために '0.0.0.0' をリッスンする
+    port: 5173, // コンテナ内でリッスンするポート
+    hmr: {
+      host: 'localhost', // ブラウザが接続しにくるホスト名
+    },
+  },
+});

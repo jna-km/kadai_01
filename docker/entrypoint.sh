@@ -1,39 +1,21 @@
-#!/bin/bash
+#!/bin/sh
+set -e
 
-# .env設定が必要ならコピー
-if [ ! -f .env ]; then
-  cp .env.example .env
-fi
+# composer install や npm install は初回に手動実行を推奨
 
-# composer install（vendorが無ければ）
-if [ ! -d vendor ]; then
-  composer install
-fi
-
-# DBが起動するのを待つ（最大30秒）
-echo "Waiting for MySQL..."
-for i in {1..30}; do
-  if php artisan migrate:status > /dev/null 2>&1; then
-    echo "MySQL is up!"
-    break
-  fi
-  echo "..."
-  sleep 1
+# MySQLの起動を待つ
+echo "Waiting for MySQL to be ready..."
+until php -r "try { new PDO('mysql:host=db;dbname=laravel', 'user', 'password'); } catch (PDOException \$e) { exit(1); }"
+do
+    echo "MySQL is unavailable - sleeping"
+    sleep 1
 done
+echo "MySQL is up!"
 
-# マイグレーションが未実行なら実行（sessions テーブルを例に確認）
-if ! php artisan db:table sessions > /dev/null 2>&1; then
-  echo "Running migration..."
-  php artisan migrate --force
-fi
+# artisan migrate も初回に手動実行を推奨
 
-# npm install（node_modulesが無ければ）
-if [ ! -d node_modules ]; then
-  npm install
-fi
+# storageとbootstrap/cacheのパーミッションを設定
+chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Vite開発サーバー起動（バックグラウンド）
-npm run dev -- --host &
-
-# PHP-FPMをフォアグラウンドで起動
-exec php-fpm
+# Supervisorを起動するCMDに処理を渡す
+exec "$@"

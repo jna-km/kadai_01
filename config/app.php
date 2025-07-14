@@ -65,7 +65,9 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    // 'timezone' => 'UTC',
+    // 'locale' => 'ja',
+    'timezone' => 'Asia/Tokyo',
 
     /*
     |--------------------------------------------------------------------------
@@ -78,7 +80,8 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    // 'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'ja'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 

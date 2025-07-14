@@ -15,13 +15,27 @@ return [
     |
     */
 
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
-        Sanctum::currentApplicationUrlWithPort(),
-        // Sanctum::currentRequestHost(),
-    ))),
-
+    // 'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
+    //     '%s%s',
+    //     'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
+    //     Sanctum::currentApplicationUrlWithPort(),
+    //     // Sanctum::currentRequestHost(),
+    // ))),
+    // 'stateful' => explode(',', implode(',', array_merge([
+    //     'localhost',
+    //     'localhost:3000',
+    //     'localhost:88',
+    //     '127.0.0.1',
+    //     '127.0.0.1:8000',
+    //     '127.0.0.1:88',
+    //     '::1',
+    // ], [
+    //     Laravel\Sanctum\Sanctum::currentApplicationUrlWithPort(),
+    //     // Laravel\Sanctum\Sanctum::currentRequestHost(),
+    // ]))),
+    // 'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost,127.0.0.1,localhost:88')),
+    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost,127.0.0.1,::1')),
+    // 'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', parse_url(env('APP_URL'), PHP_URL_HOST))),
     /*
     |--------------------------------------------------------------------------
     | Sanctum Guards

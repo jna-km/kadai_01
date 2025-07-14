@@ -167,6 +167,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: "ログインAPIで取得したアクセストークンを 'Bearer ' に続けて入力してください。例: 'Bearer 1|xxxxxxxx'"
   schemas:
     LoginRequest:
       type: object

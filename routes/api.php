@@ -1,7 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\Operator;
+use App\Http\Controllers\CheckLoginController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
@@ -19,6 +22,10 @@ use App\Http\Controllers\WorkingHourController;
 
 // ログイン（ユーザー）
 Route::post('/login', [AuthController::class, 'login']);
+// Route::middleware('web')->post('/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->get('/reservations', [ReservationController::class, 'index']);
+Route::middleware('auth:sanctum,user')->get('/my-reservations', [ReservationController::class, 'myReservations']);
 
 Route::middleware('auth:user')->group(function () {
     // ログアウト／自分情報
@@ -54,6 +61,45 @@ Route::middleware('auth:operator')->group(function () {
         'index', 'store', 'show', 'update', 'destroy'
     ]);
 });
+
+
+// ========================
+// ログイン状態確認ルート
+// ========================
+// 現在のログイン状態を確認するためのルート
+// Route::get('/check-login', function (Request $request) {
+//     $user = $request->user('user') ?? $request->user('operator');
+
+//     return response()->json([
+//         'user' => $user,
+//         'role' => $request->user('user') ? 'user' : ($request->user('operator') ? 'operator' : null),
+//     ]);
+// });
+
+// Route::get('/check-login', function () {
+//     if (auth()->check()) {
+//         $user = auth()->user();
+
+//         return response()->json([
+//             'status' => 'success',
+//             'user' => $user,
+//             'role' => $user->role,
+//         ]);
+//     }
+
+//     return response()->json([
+//         'status' => 'guest',
+//         'user' => null,
+//         'role' => null,
+//     ]);
+// });
+
+// Reactからセッションでログインチェックする用
+// Route::middleware('auth:sanctum')->get('/check-login', [CheckLoginController::class, 'check']);
+Route::get('/check-login', [CheckLoginController::class, 'check']);
+// Route::middleware('web')->get('/check-login', [CheckLoginController::class, 'check']);
+// Swagger等トークン認証でログインチェック（必要なら別エンドポイントに）
+Route::middleware('auth:api')->get('/token-check', [CheckLoginController::class, 'check']);
 
 // ========================
 // 共通ルート

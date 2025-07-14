@@ -113,6 +113,38 @@ docker compose exec app npm run dev -- --host
 - PR単位で進捗をレビュー・管理する運用です
 - React 開発時は `npm run dev -- --host` で Vite サーバーを起動してください
 
+### 🧪 Python仮想環境の利用（local-tests専用）
+
+Pythonベースのテスト（例：Selenium）を `local-tests` ディレクトリで実行するための仮想環境を用意しています。
+
+#### ✅ 初回セットアップ手順
+
+```bash
+cd local-tests
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements-local.txt
+```
+
+#### 🔁 毎回の作業時
+
+```bash
+cd local-tests
+source venv/bin/activate
+```
+
+#### 🛠 自動有効化したい場合（任意）
+
+```bash
+brew install direnv
+echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
+cd local-tests
+echo 'source venv/bin/activate' > .envrc
+direnv allow
+```
+
+※ `.envrc` は `.gitignore` に含めてください（共有不要）
+
 ## 🧩 実装予定の主な機能（予約くん）
  
 ### APIドキュメント (Swagger)
