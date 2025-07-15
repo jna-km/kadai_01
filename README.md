@@ -71,6 +71,14 @@ docker compose exec app npm run dev -- --host
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
 
+### 🆕 最近の変更点（2025/07/15）
+
+- 予約管理機能のユーザー向けUIをReactで実装（一覧・新規作成・削除）
+- Laravel API連携を完了（`/api/my-reservations`、`POST /api/reservations`、`DELETE /api/reservations/{id}`）
+- 状態管理を改善し、削除後の即時UI更新を実装
+- UIデザインを微修正（テーブル表示、ボタン配置）
+- コードクリーンアップ（不要ログ削除、import整理）
+
 ### 🆕 最近の変更点（2025/07/11）
 
 - 一時的に vendor ディレクトリを含めた状態でGitにpushし、依存パッケージの差異による挙動確認を実施
