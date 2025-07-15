@@ -28,6 +28,30 @@ test('ログインできる', function () {
              );
 });
 
+test('「ログイン状態を保持する」でログインできる', function () {
+    $operator = Operator::factory()->create([
+        'email' => 'remember@example.com',
+        'password' => bcrypt('password'),
+    ]);
+
+    $response = $this->withHeaders([
+        'Referer' => config('app.url'),
+    ])->postJson('/api/operator/login', [
+        'email' => 'remember@example.com',
+        'password' => 'password',
+        'remember' => true,
+    ]);
+
+    $response->assertStatus(200);
+
+    $cookieName = collect($response->headers->getCookies())->first(function ($cookie) {
+        return str_starts_with($cookie->getName(), 'remember_operator_');
+    })?->getName();
+
+    $this->assertNotNull($cookieName, 'Remember cookie not found on the response.');
+    $response->assertCookieNotExpired($cookieName);
+});
+
 test('ログインに失敗する（パスワード不一致）', function () {
     $operator = Operator::factory()->create([
         'email' => 'fail@example.com',

@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(false);
   const [error, setError] = useState('');
   const { setUserAndRole } = useAuth();
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const Login: React.FC = () => {
 
     try {
       await axios.get('/sanctum/csrf-cookie');
-      const response = await axios.post('/api/login', { email, password });
+      const response = await axios.post('/api/login', { email, password, remember });
       
       if (response.data.data.user) {
         setUserAndRole(response.data.data.user, 'user');
@@ -39,6 +40,12 @@ const Login: React.FC = () => {
         <div>
           <label>Password</label>
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
+            ログイン状態を保持する
+          </label>
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit">Login</button>
