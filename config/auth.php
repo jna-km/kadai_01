@@ -50,7 +50,7 @@ return [
             'provider' => 'users',
         ],
         'operator' => [
-            'driver' => 'sanctum',
+            'driver' => 'session',
             'provider' => 'operators',
         ],
     ],

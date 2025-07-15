@@ -4,22 +4,24 @@ import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
 
 const Logout = () => {
-  const { setUser } = useAuth();
+  const { role, setUserAndRole } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const performLogout = async () => {
+      // roleに応じてログアウトAPIを決定
+      const logoutUrl = role === 'operator' ? '/api/operator/logout' : '/api/logout';
       try {
-        await axios.post('/api/logout');
+        await axios.post(logoutUrl);
       } catch (error) {
         console.error('Logout failed:', error);
       } finally {
-        setUser(null);
+        setUserAndRole(null, null);
         navigate('/login');
       }
     };
     performLogout();
-  }, [setUser, navigate]);
+  }, [role, setUserAndRole, navigate]);
 
   return <div>Logging out...</div>;
 };

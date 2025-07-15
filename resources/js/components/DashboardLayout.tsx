@@ -5,17 +5,18 @@ import axios from 'axios';
 
 const DashboardLayout: React.FC = () => {
   // ↓↓↓ userと一緒にsetUserも取り出すように修正 ↓↓↓
-  const { user, setUser } = useAuth();
+  const { user, role, setUserAndRole } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
+    const logoutUrl = role === 'operator' ? '/api/operator/logout' : '/api/logout';
     try {
-      await axios.post('/api/logout');
+      await axios.post(logoutUrl);
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
       // これでsetUserが使えるようになります
-      setUser(null);
+      setUserAndRole(null, null);
       navigate('/login');
     }
   };

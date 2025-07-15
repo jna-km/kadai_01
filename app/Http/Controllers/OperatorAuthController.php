@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Operator;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 
 class OperatorAuthController extends Controller
@@ -20,20 +19,27 @@ class OperatorAuthController extends Controller
             'password' => ['required'],
         ]);
 
-        $operator = Operator::where('email', $request->email)->first();
-
-        if (! $operator || ! Hash::check($request->password, $operator->password)) {
+        $remember = $request->boolean('remember');
+        // 'operator' ガードを指定して認証を試みる
+        if (! Auth::guard('operator')->attempt($request->only('email', 'password'), $remember)) {
             throw ValidationException::withMessages([
-                'email' => ['ログイン情報が正しくありません。'],
+                'email' => ['認証情報が正しくありません。'],
             ]);
         }
 
+        /** @var \App\Models\Operator $operator */
+        $operator = Auth::guard('operator')->user();
         $token = $operator->createToken('operator-token')->plainTextToken;
 
+        // AuthControllerとレスポンス形式を合わせる
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'operator' => $operator,
+            'status' => 'success',
+            'message' => 'オペレーターとしてログインしました',
+            'data' => [
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'user' => $operator, // フロントエンドのために 'user' キーで返す
+            ]
         ]);
     }
 

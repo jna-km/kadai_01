@@ -21,9 +21,9 @@ test('ログインできる', function () {
 
     $response->assertStatus(200)
              ->assertJson(fn (AssertableJson $json) =>
-                $json->has('access_token')
-                     ->has('user')
-                     ->where('user.email', 'login@example.com')
+                $json->has('data.access_token')
+                     ->has('data.user')
+                     ->where('data.user.email', 'login@example.com')
                      ->etc()
              );
 });

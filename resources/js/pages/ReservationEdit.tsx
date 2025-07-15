@@ -1,7 +1,6 @@
-// resources/js/pages/ReservationCreate.tsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 interface Operator {
@@ -9,33 +8,57 @@ interface Operator {
   name: string;
 }
 
-const ReservationCreate: React.FC = () => {
+const ReservationEdit: React.FC = () => {
+  const { reservationId } = useParams<{ reservationId: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
   const [service_name, setServiceName] = useState('');
   const [operators, setOperators] = useState<Operator[]>([]);
   const [operator_id, setOperatorId] = useState<number | null>(null);
   const [duration, setDuration] = useState<number | null>(null);
-  const { user } = useAuth();
   const [date, setDate] = useState('');
   const [start_time, setStartTime] = useState('');
   const [notes, setNotes] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchOperators = async () => {
+    const fetchReservationData = async () => {
+      if (!reservationId) {
+        setError('予約IDが指定されていません。');
+        setLoading(false);
+        return;
+      }
       try {
-        const response = await axios.get('/api/operators'); // Assuming you have an endpoint to get operators
-        setOperators(response.data.data);
-      } catch (error) {
-        console.error('Failed to fetch operators:', error);
-        setError('オペレーターの取得に失敗しました'); // "Failed to get operators"
+        // 既存の予約データと担当者リストを並行して取得
+        const [reservationRes, operatorsRes] = await Promise.all([
+          axios.get(`/api/reservations/${reservationId}`),
+          axios.get('/api/operators'),
+        ]);
+
+        // 取得した予約データをフォームの初期値として設定
+        const reservation = reservationRes.data.data;
+        setServiceName(reservation.service_name);
+        setOperatorId(reservation.operator_id);
+        setDuration(reservation.duration);
+        setDate(reservation.date.split('T')[0]); // 'YYYY-MM-DD' 形式にフォーマット
+        setStartTime(reservation.start_time.substring(0, 5)); // 'HH:mm' 形式にフォーマット
+        setNotes(reservation.notes || '');
+
+        // 担当者リストを設定
+        setOperators(operatorsRes.data.data);
+
+      } catch (err) {
+        console.error('Failed to fetch reservation data:', err);
+        setError('予約情報の取得に失敗しました。');
       } finally {
         setLoading(false);
       }
     };
-    fetchOperators();
-  }, []);
+
+    fetchReservationData();
+  }, [reservationId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +77,7 @@ const ReservationCreate: React.FC = () => {
     const calculatedEndTime = `${endHours}:${endMinutes}`;
 
     try {
-      const response = await axios.post('/api/reservations', {
+      const response = await axios.put(`/api/reservations/${reservationId}`, {
         user_id: user?.id,
         operator_id,
         service_name,
@@ -64,24 +87,24 @@ const ReservationCreate: React.FC = () => {
         end_time: calculatedEndTime,
         notes,
       });
-      if (response.status === 201) {
-        alert('予約が完了しました'); // "Reservation completed"
+
+      if (response.status === 200) {
+        alert('予約を更新しました');
         navigate('/dashboard/reservations');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || '予約に失敗しました'); // "Reservation failed"
+      setError(err.response?.data?.message || '予約の更新に失敗しました');
       console.error(err);
     }
   };
 
   if (loading) {
     return <div>Loading...</div>;
-  } else if (error) {
-    return <div>{error}</div>;
-  } else {
-    return (
-      <div>
-      <h2>新規予約</h2>
+  }
+
+  return (
+    <div>
+      <h2>予約編集</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="service_name">サービス名:</label>
@@ -89,23 +112,16 @@ const ReservationCreate: React.FC = () => {
         </div>
         <div>
           <label htmlFor="operator">担当者:</label>
-          <select
-            id="operator"
-            value={operator_id !== null ? operator_id : ''}
-            onChange={(e) => setOperatorId(Number(e.target.value))}
-            required
-          >
-            <option value="">担当者を選択してください</option>  {/* "Please select an operator" */}
+          <select id="operator" value={operator_id ?? ''} onChange={(e) => setOperatorId(Number(e.target.value))} required >
+            <option value="">担当者を選択してください</option>
             {operators.map((operator) => (
-              <option key={operator.id} value={operator.id}>
-                {operator.name}
-              </option>
+              <option key={operator.id} value={operator.id}>{operator.name}</option>
             ))}
           </select>
         </div>
         <div>
           <label htmlFor="duration">所要時間（分）:</label>
-          <input type="number" id="duration" value={duration !== null ? duration : ''} onChange={(e) => setDuration(Number(e.target.value))} required />
+          <input type="number" id="duration" value={duration ?? ''} onChange={(e) => setDuration(Number(e.target.value))} required />
           <label htmlFor="date">日付:</label>
           <input type="date" id="date" value={date} onChange={(e) => setDate(e.target.value)} required />
         </div>
@@ -118,11 +134,10 @@ const ReservationCreate: React.FC = () => {
           <textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">予約する</button>
+        <button type="submit">更新する</button>
       </form>
-      </div>
-    );
-  }
+    </div>
+  );
 };
 
-export default ReservationCreate;
+export default ReservationEdit;

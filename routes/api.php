@@ -57,9 +57,7 @@ Route::middleware('auth:operator')->group(function () {
     Route::get('/operator/me', [OperatorAuthController::class, 'me']);
 
     // オペレーター用 APIリソース
-    Route::apiResource('operators', OperatorController::class)->only([
-        'index', 'store', 'show', 'update', 'destroy'
-    ]);
+    Route::apiResource('operators', OperatorController::class);
 });
 
 

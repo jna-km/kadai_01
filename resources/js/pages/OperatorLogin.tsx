@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
-const Login: React.FC = () => {
+const OperatorLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,21 +16,21 @@ const Login: React.FC = () => {
 
     try {
       await axios.get('/sanctum/csrf-cookie');
-      const response = await axios.post('/api/login', { email, password });
-      
+      const response = await axios.post('/api/operator/login', { email, password });
+
       if (response.data.data.user) {
-        setUserAndRole(response.data.data.user, 'user');
-        navigate('/dashboard');
+        setUserAndRole(response.data.data.user, 'operator');
+        navigate('/admin/dashboard'); // 管理者用ダッシュボードにリダイレクト
       }
     } catch (err: any) {
-      console.error('Login failed:', err);
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      console.error('Operator login failed:', err);
+      setError(err.response?.data?.message || 'ログインに失敗しました。資格情報を確認してください。');
     }
   };
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2>オペレーターログイン</h2>
       <form onSubmit={handleLogin}>
         <div>
           <label>Email</label>
@@ -41,10 +41,10 @@ const Login: React.FC = () => {
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">Login</button>
+        <button type="submit">ログイン</button>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default OperatorLogin;
