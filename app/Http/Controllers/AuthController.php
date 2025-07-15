@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 
@@ -14,8 +15,9 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
+        $remember = $request->boolean('remember');
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
             $token = $user->createToken('auth_token')->plainTextToken;
             // $request->session()->regenerate();
@@ -31,10 +33,9 @@ class AuthController extends Controller
             ]);
         }
 
-        return response()->json([
-            'status' => 'error',
-            'message' => '認証に失敗しました',
-        ], 401);
+        throw ValidationException::withMessages([
+            'email' => ['認証情報が正しくありません。'],
+        ]);
     }
     /**
      * 現在のアクセストークンを無効化し、ログアウト処理を行う

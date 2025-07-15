@@ -51,7 +51,7 @@ test('正常なデータで予約を作成できる', function () {
         'operator_id' => $operator->id,
         'service_name' => 'カット＆シャンプー',
         'duration' => 60,
-        'date' => '2025-07-15',
+        'date' => '2030-07-15',
         'start_time' => '10:00',
         'end_time' => '11:00',
         'status' => 'reserved',

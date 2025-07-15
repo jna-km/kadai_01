@@ -21,11 +21,35 @@ test('ログインできる', function () {
 
     $response->assertStatus(200)
              ->assertJson(fn (AssertableJson $json) =>
-                $json->has('access_token')
-                     ->has('user')
-                     ->where('user.email', 'login@example.com')
+                $json->has('data.access_token')
+                     ->has('data.user')
+                     ->where('data.user.email', 'login@example.com')
                      ->etc()
              );
+});
+
+test('「ログイン状態を保持する」でログインできる', function () {
+    $user = User::factory()->create([
+        'email' => 'remember@example.com',
+        'password' => bcrypt('password'),
+    ]);
+
+    $response = $this->withHeaders([
+        'Referer' => config('app.url'),
+    ])->postJson('/api/login', [
+        'email' => 'remember@example.com',
+        'password' => 'password',
+        'remember' => true,
+    ]);
+
+    $response->assertStatus(200);
+
+    $cookieName = collect($response->headers->getCookies())->first(function ($cookie) {
+        return str_starts_with($cookie->getName(), 'remember_web_');
+    })?->getName();
+
+    $this->assertNotNull($cookieName, 'Remember cookie not found on the response.');
+    $response->assertCookieNotExpired($cookieName);
 });
 
 test('ログインに失敗する（パスワード不一致）', function () {
@@ -39,7 +63,8 @@ test('ログインに失敗する（パスワード不一致）', function () {
         'password' => 'wrong-password',
     ]);
 
-    $response->assertStatus(401);
+    $response->assertStatus(422)
+             ->assertJsonValidationErrors(['email']);
 });
 
 test('ログアウトできる', function () {

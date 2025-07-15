@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
-import { User, AuthContextType } from '../types';
+import { User, Operator, AuthContextType } from '../types';
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -9,17 +9,32 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | Operator | null>(null);
+  const [role, setRole] = useState<'user' | 'operator' | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const setUserAndRole = (userData: User | Operator | null, userRole: 'user' | 'operator' | null) => {
+    setUser(userData);
+    setRole(userRole);
+  };
 
   useEffect(() => {
     const checkLoginStatus = async () => {
+      setIsLoading(true);
       try {
+        // まず一般ユーザーとしてログインしているか確認
         const { data } = await axios.get('/api/me');
-        setUser(data.data);
+        setUserAndRole(data.data, 'user');
       } catch (error) {
-        console.log('Not authenticated');
-        setUser(null);
+        // 一般ユーザーでなければ、オペレーターとしてログインしているか確認
+        try {
+          const { data } = await axios.get('/api/operator/me');
+          setUserAndRole(data.data, 'operator');
+        } catch (operatorError) {
+          // どちらでもなければ未ログイン
+          console.log('Not authenticated as user or operator');
+          setUserAndRole(null, null);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -28,7 +43,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, isLoading }}>
+    <AuthContext.Provider value={{ user, role, setUserAndRole, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

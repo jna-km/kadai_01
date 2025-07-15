@@ -8,6 +8,8 @@ servers:
   - url: http://localhost:88/api
     description: ローカル開発環境（テスト用ポート88）
 
+security:
+  - bearerAuth: []  # API全体で認証を必須にする
 paths:
   /login:
     post:
@@ -62,8 +64,6 @@ paths:
       summary: 予約一覧の取得
       tags:
         - 予約
-      security:
-        - bearerAuth: []
       responses:
         '200':
           description: 予約一覧を取得しました
@@ -78,8 +78,6 @@ paths:
       summary: 新規予約の作成
       tags:
         - 予約
-      security:
-        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -101,8 +99,6 @@ paths:
       summary: 予約詳細の取得
       tags:
         - 予約
-      security:
-        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -121,8 +117,6 @@ paths:
       summary: 予約情報の更新
       tags:
         - 予約
-      security:
-        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -149,8 +143,6 @@ paths:
       summary: 予約の削除
       tags:
         - 予約
-      security:
-        - bearerAuth: []
       parameters:
         - name: id
           in: path

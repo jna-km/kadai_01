@@ -52,11 +52,11 @@ response_element = login_section.find_element(By.CSS_SELECTOR, ".responses-wrapp
 response_text = response_element.text.strip()
 print("✅ レスポンス取得")
 print("----- レスポンス内容 -----")
-print(response_text)
+print(response_text)  # レスポンス全体を出力して確認
 
 # JSONとして読み込み
 response_json = json.loads(response_text)
-access_token = response_json["access_token"]
+access_token = response_json["data"]["access_token"]
 print("✅ トークン取得:", access_token)
 
 # Authorizeボタンをクリック
@@ -159,7 +159,14 @@ print(response_text)
 print("✅ /reservations 作成 成功")
 
 
-# ----------------------------------------
+# --- 認証エラーチェック ---
+if "Unauthenticated" in response_text:
+    print("❌ 認証エラーが発生しました。")
+    print("  API呼び出しの前に、認証が成功しているか確認してください。")
+    driver.quit()
+    exit(1)
+
+# ----------------------------------------------------
 # 作成済み予約のIDを使って予約詳細を確認 → 更新 → 削除
 # ----------------------------------------
 
@@ -179,7 +186,7 @@ detail_section = driver.find_element(By.ID, "operations-予約-get_reservations_
 detail_summary = detail_section.find_element(By.CLASS_NAME, "opblock-summary-control")
 detail_summary.click()
 time.sleep(1)
-print("✅ /reservations/{id} を展開（詳細）")
+print(f"✅ /reservations/{reservation_id} を展開（詳細）")
 
 detail_section.find_element(By.CLASS_NAME, "try-out__btn").click()
 time.sleep(0.5)
@@ -192,16 +199,17 @@ driver.execute_script("arguments[0].scrollIntoView();", id_input)
 id_input.clear()
 id_input.send_keys(str(reservation_id))
 detail_section.find_element(By.CLASS_NAME, "execute").click()
-time.sleep(2)
-print("✅ /reservations/{id} を実行（詳細取得）")
+time.sleep(3)
+print(f"✅ /reservations/{reservation_id} を実行（詳細取得）")
 print("✅ 予約詳細取得 成功")
 
+time.sleep(1)
 # --- PUT /reservations/{id} ---
 update_section = driver.find_element(By.ID, "operations-予約-put_reservations__id_")
 update_summary = update_section.find_element(By.CLASS_NAME, "opblock-summary-control")
 update_summary.click()
 time.sleep(1)
-print("✅ /reservations/{id} を展開（更新）")
+print(f"✅ /reservations/{reservation_id} を展開（更新）")
 
 update_section.find_element(By.CLASS_NAME, "try-out__btn").click()
 time.sleep(0.5)
