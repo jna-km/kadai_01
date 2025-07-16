@@ -1,14 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './app';
-import axios from 'axios'; // ← 追加
+import App from './app'; // app.tsx を読み込む
 
-axios.defaults.withCredentials = true;
-axios.defaults.withXSRFToken = true;
-axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
+import 'react-datepicker/dist/react-datepicker.css'; // ← react-datepickerのCSSを先にインポート
+import '../css/app.css';                             // ← あなたのカスタムCSSを後にインポート
 
-const root = ReactDOM.createRoot(document.getElementById('root')!);
-root.render(
+
+// DOMの #root に React アプリをマウント
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>

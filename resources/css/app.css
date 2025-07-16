@@ -1,3 +1,17 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/theme";
+@import "tailwindcss/utilities";
+
+@layer components {
+  .react-datepicker {
+    @apply bg-white border border-gray-300 rounded-lg shadow-md;
+  }
+  .react-datepicker__header {
+    @apply bg-indigo-500 text-white rounded-t-lg;
+  }
+  .react-datepicker__day {
+    @apply w-8 h-8 flex items-center justify-center rounded hover:bg-indigo-100;
+  }
+  .react-datepicker__day--selected {
+    @apply bg-indigo-500 text-white;
+  }
+}

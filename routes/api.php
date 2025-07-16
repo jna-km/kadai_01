@@ -70,6 +70,7 @@ Route::middleware('auth:api')->get('/token-check', [CheckLoginController::class,
 // ========================
 
 Route::middleware(['auth:user,operator'])->group(function () {
+    Route::get('/operators', [OperatorController::class, 'index'])->name('operators.index');
     Route::apiResource('reservations', ReservationController::class)->only([
         'index', 'store', 'show', 'update', 'destroy'
     ]);

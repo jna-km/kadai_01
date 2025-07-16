@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   @viteReactRefresh
-  @vite('resources/js/main.tsx') {{-- Vite経由で読み込む --}}
+  @vite('resources/js/main.tsx')
 </head>
 <body>
   <div id="root"></div> {{-- ← ここを app → root に修正 --}}

@@ -10,7 +10,7 @@ services:
     # commandディレクティブを削除。コンテナ起動時のコマンドはDockerfileのENTRYPOINTとCMDで制御します。
     ports:
       - "9000:9000"
-      - "5173:5173"
+      - "${VITE_PORT:-5173}:5173"
     depends_on:
       - db
     extra_hosts:

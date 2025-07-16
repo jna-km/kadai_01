@@ -62,6 +62,11 @@ const Reservations: React.FC = () => {
             新規予約
           </button>
         </Link>
+        <Link to="/dashboard/reservations/create">
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            新規予約
+          </button>
+        </Link>
       </div>
 
       {reservations.length > 0 ? (
