@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>ログイン</title>
     @viteReactRefresh
-    @vite('resources/js/main.tsx')
+    {{-- ★★★ ここを変更 ★★★ --}}
+    @vite(['resources/css/app.css', 'resources/js/main.tsx']) {{-- CSSファイルを配列に追加 --}}
 </head>
 <body>
     <div id="root"></div>

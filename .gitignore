@@ -34,3 +34,10 @@ dist-ssr
 
 archive/*
 local-tests/venv/*
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Vite
+/node_modules/.vite/
+/public/build/

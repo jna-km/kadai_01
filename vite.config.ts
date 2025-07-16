@@ -10,12 +10,19 @@ export default defineConfig({
     }),
     react(),
   ],
-  // ↓↓↓ この server セクションを追記します ↓↓↓
   server: {
-    host: true, // コンテナの外からのアクセスを許可するために '0.0.0.0' をリッスンする
-    port: 5173, // コンテナ内でリッスンするポート
+    host: '0.0.0.0', // Docker対応
+    port: 5173, // .envから制御
+    strictPort: false, // 競合時は自動でフォールバック
     hmr: {
-      host: 'localhost', // ブラウザが接続しにくるホスト名
+      host: 'localhost',
+    },
+    watch: {
+      usePolling: true,
     },
   },
+  optimizeDeps: {
+    include: ['react-datepicker', 'date-fns'], // 依存CSS読み込みエラー防止
+  },
+  
 });
