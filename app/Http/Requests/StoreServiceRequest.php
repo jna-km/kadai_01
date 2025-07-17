@@ -24,8 +24,9 @@ class StoreServiceRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|integer|min:0',
             'duration' => 'required|integer|min:1|max:300',
+            'price' => 'required|integer|min:0',
+            'operator_id' => 'nullable|exists:operators,id',
         ];
     }
 }

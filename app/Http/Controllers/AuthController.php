@@ -62,10 +62,15 @@ class AuthController extends Controller
      */
     public function me(Request $request)
     {
+        $user = $request->user();
+
+        // ユーザーに紐づく予約と、その予約のサービス情報をロード
+        $user->load(['reservations.service']);
+
         return response()->json([
             'status' => 'success',
             'message' => 'ログインユーザー情報を取得しました。',
-            'data' => $request->user(),
+            'data' => $user,
         ]);
     }
 }

@@ -8,7 +8,7 @@ const OperatorLogin: React.FC = () => {
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState('');
-  const { setUserAndRole } = useAuth();
+  const { setAuthState } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -19,9 +19,10 @@ const OperatorLogin: React.FC = () => {
       await axios.get('/sanctum/csrf-cookie');
       const response = await axios.post('/api/operator/login', { email, password, remember });
 
-      if (response.data.data.user) {
-        setUserAndRole(response.data.data.user, 'operator');
-        navigate('/admin/dashboard'); // 管理者用ダッシュボードにリダイレクト
+      if (response.data?.data?.user) {
+        // operator情報をAuthContextに設定
+        setAuthState(null, response.data.data.user, 'operator');
+        navigate('/operator/dashboard'); // オペレーター用ダッシュボードにリダイレクト
       }
     } catch (err: any) {
       console.error('Operator login failed:', err);

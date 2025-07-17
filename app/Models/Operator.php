@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Reservation;
 use App\Models\Service;
+use App\Models\WorkingHour;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Carbon\Carbon;
@@ -62,5 +63,10 @@ class Operator extends Authenticatable
     public function services(): HasMany
     {
         return $this->hasMany(Service::class);
+    }
+
+    public function workingHours(): HasMany
+    {
+        return $this->hasMany(WorkingHour::class);
     }
 }

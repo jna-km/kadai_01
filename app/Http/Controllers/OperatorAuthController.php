@@ -60,9 +60,15 @@ class OperatorAuthController extends Controller
      */
     public function me(Request $request): JsonResponse
     {
+        /** @var \App\Models\Operator $operator */
+        $operator = $request->user(); // Sanctum認証済みオペレーター
+
+        // 予約（ユーザー・サービス情報付き）＋提供サービス一覧をロード
+        $operator->load(['reservations.user', 'reservations.service', 'services']);
+
         return response()->json([
             'message' => 'ログイン中のオペレーター情報を取得しました。',
-            'data' => $request->user()
+            'data' => $operator,
         ], 200);
     }
 }

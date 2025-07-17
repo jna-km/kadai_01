@@ -35,7 +35,7 @@ Route::middleware('auth:user')->group(function () {
 
     // ユーザー用 APIリソース
     Route::apiResource('users', UserController::class);
-    Route::apiResource('services', ServiceController::class);
+    // Route::apiResource('services', ServiceController::class);
     Route::apiResource('notices', NoticeController::class);
     Route::apiResource('holidays', HolidayController::class);
     Route::apiResource('time-slots', TimeSlotController::class);
@@ -56,6 +56,10 @@ Route::middleware('auth:operator')->group(function () {
 
     // オペレーター用 APIリソース
     Route::apiResource('operators', OperatorController::class);
+    Route::post('/services', [ServiceController::class, 'store']);
+    Route::delete('/services/{service}', [ServiceController::class, 'destroy']);
+    Route::put('/services/{id}', [ServiceController::class, 'update']);
+    // Route::apiResource('services', ServiceController::class);
 });
 
 // Reactからセッションでログインチェックする用
@@ -79,3 +83,6 @@ Route::middleware(['auth:user,operator'])->group(function () {
 Route::post('/ping', function () {
     return response()->json(['pong' => true]);
 });
+
+Route::get('/public/operators/{id}', [OperatorController::class, 'showPublic']);
+Route::get('/public/operators/', [OperatorController::class, 'publicIndex']);

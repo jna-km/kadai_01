@@ -24,7 +24,7 @@ class StoreReservationRequest extends FormRequest
         return [
             'user_id' => 'required|exists:users,id',
             'operator_id' => 'nullable|exists:operators,id',
-            'service_name' => 'required|string|max:255',
+            'service_id' => 'required|exists:services,id',
             'duration' => 'required|integer|min:1',
             'date' => 'required|date|after_or_equal:today',
             'start_time' => 'required|date_format:H:i',
@@ -44,10 +44,9 @@ class StoreReservationRequest extends FormRequest
         return [
             'user_id.required' => 'ユーザーIDは必須です。',
             'user_id.exists' => '選択されたユーザーが存在しません。',
-            'operator_id.exists' => '選択された担当者が存在しません。',
-            'service_name.required' => 'サービス名を入力してください。',
-            'service_name.max' => 'サービス名は255文字以内で入力してください。',
-            'duration.required' => '所要時間を入力してください。',
+            'operator_id.exists' => '選択された担当者は存在しません。',
+            'service_id.required' => 'サービスを選択してください。',
+            'service_id.exists' => '選択されたサービスが存在しません。',            'duration.required' => '所要時間を入力してください。',
             'duration.integer' => '所要時間は整数で入力してください。',
             'duration.min' => '所要時間は1分以上である必要があります。',
             'date.required' => '予約日を入力してください。',
@@ -74,7 +73,7 @@ class StoreReservationRequest extends FormRequest
         return [
             'user_id' => 'ユーザーID',
             'operator_id' => '担当者',
-            'service_name' => 'サービス名',
+            'service_id' => 'サービス',
             'duration' => '所要時間',
             'date' => '予約日',
             'start_time' => '開始時刻',

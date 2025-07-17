@@ -2,11 +2,12 @@
 
 use App\Models\User;
 use App\Models\Operator;
+use App\Models\Service;
 use App\Models\Reservation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Laravel\post;
+use function Pest\Laravel\postJson;
 use function Pest\Laravel\put;
 use function Pest\Laravel\putJson;
 use function Pest\Laravel\delete;
@@ -38,10 +39,11 @@ test('管理者は予約一覧画面にアクセスできる', function () {
 
 test('予約を作成できる', function () {
     actingAs($this->user);
+    $service = Service::factory()->create();
     $payload = [
         'user_id' => $this->user->id,
         'operator_id' => $this->operator->id,
-        'service_name' => 'カット',
+        'service_id' => $service->id,
         'duration' => 60,
         'date' => '2025-07-20',
         'start_time' => '10:00',
@@ -50,24 +52,26 @@ test('予約を作成できる', function () {
         'notes' => '',
     ];
 
-    $response = post('/api/reservations', $payload);
+    $response = postJson('/api/reservations', $payload);
 
-    $response->assertRedirect(); // 一般的なControllerのPOSTはリダイレクト
-    $this->assertDatabaseHas('reservations', ['service_name' => 'カット']);
+    $response->assertStatus(201);
+    $this->assertDatabaseHas('reservations', ['service_id' => $service->id]);
 });
 
 test('予約を更新できる', function () {
     actingAs($this->user);
+    $service1 = Service::factory()->create();
+    $service2 = Service::factory()->create(['name' => 'カラー']);
     $reservation = Reservation::factory()->create([
         'user_id' => $this->user->id,
         'operator_id' => $this->operator->id,
-        'service_name' => '初期',
+        'service_id' => $service1->id,
     ]);
 
     $payload = [
         'user_id' => $this->user->id,
         'operator_id' => $this->operator->id,
-        'service_name' => 'カラー',
+        'service_id' => $service2->id,
         'duration' => 45,
         'date' => '2025-07-20',
         'start_time' => '10:00',
@@ -79,10 +83,11 @@ test('予約を更新できる', function () {
     $response = putJson("/api/reservations/{$reservation->id}", $payload);
 
     $response->assertStatus(200);
-    $response->assertJsonFragment(['service_name' => 'カラー']);
+    $response->assertJsonFragment(['service_id' => $service2->id]);
     // $reservation = $reservation->fresh();
     $this->assertDatabaseHas('reservations', [
-        'service_name' => 'カラー',
+        'id' => $reservation->id,
+        'service_id' => $service2->id,
     ]);
 });
 

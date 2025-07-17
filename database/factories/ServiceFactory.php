@@ -21,6 +21,7 @@ class ServiceFactory extends Factory
             'name' => fake()->word() . 'サービス',
             'description' => fake()->sentence(),
             'duration' => fake()->numberBetween(15, 90), // 分
+            'price' => fake()->numberBetween(1000, 10000), // 料金（円）
             'operator_id' => Operator::inRandomOrder()->first()?->id ?? 1,
         ];
     }

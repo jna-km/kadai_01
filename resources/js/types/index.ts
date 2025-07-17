@@ -1,20 +1,14 @@
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  // 他のユーザー特有のプロパティがあればここに追加
-}
-
-export interface Operator {
-  id: number;
-  name: string;
-  email: string;
-  // 他のオペレーター特有のプロパティがあればここに追加
-}
+import { User } from './user';
+import { Operator } from './operator';
 
 export interface AuthContextType {
-  user: User | Operator | null;
+  user: User | null;
+  operator: Operator | null;
   role: 'user' | 'operator' | null;
-  setUserAndRole: (user: User | Operator | null, role: 'user' | 'operator' | null) => void;
   isLoading: boolean;
+  setAuthState: (
+    user: User | null,
+    operator: Operator | null,
+    role: 'user' | 'operator' | null
+  ) => void;
 }

@@ -65,4 +65,37 @@ class OperatorController extends Controller
         $operator->delete();
         return response()->json(null, 204);
     }
+
+    /*
+    * 公開用オペレーター情報を取得する
+    */
+    public function showPublic($id)
+    {
+        $operator = Operator::with([
+            'services:id,operator_id,name,duration',
+            'workingHours:id,operator_id,day_of_week,start_time,end_time'
+            ])
+            ->select('id', 'name')
+            ->findOrFail($id);
+
+        return response()->json([
+            'message' => 'オペレーター情報を取得しました。',
+            'data' => $operator
+        ], 200);
+    }
+
+    /**
+     * 公開用オペレーター一覧を取得する
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function publicIndex()
+    {
+        $operators = Operator::select('id', 'name')->get();
+
+        return response()->json([
+            'message' => '公開用オペレーター一覧を取得しました。',
+            'data' => $operators
+        ], 200);
+    }
 }

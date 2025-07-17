@@ -24,8 +24,9 @@ class UpdateServiceRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'duration_minutes' => 'required|integer|min:1',
+            'duration' => 'required|integer|min:1|max:300',
+            'price' => 'required|integer|min:0',
+            'operator_id' => 'nullable|exists:operators,id',
         ];
     }
 }
