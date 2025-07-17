@@ -24,6 +24,9 @@ import OperatorServicesPage from './pages/operator/OperatorServicesPage';
 import OperatorHolidaysPage from './pages/operator/OperatorHolidaysPage';
 import OperatorNoticesPage from './pages/operator/OperatorNoticesPage';
 
+import OperatorListPage from './pages/OperatorListPage';
+import OperatorDetailPage from './pages/OperatorDetailPage';
+
 const router = createBrowserRouter([
   // パブリックルート
   { path: '/', element: <Home /> },
@@ -31,6 +34,9 @@ const router = createBrowserRouter([
   { path: '/operator/login', element: <OperatorLogin /> },
   { path: '/logout', element: <Logout /> },
   { path: '/admin/dashboard', element: <AdminDashboard /> },
+
+  { path: '/operators', element: <OperatorListPage /> },
+  { path: '/operators/:id', element: <OperatorDetailPage /> },
 
   // ユーザー用ダッシュボード（認証必須）
   {

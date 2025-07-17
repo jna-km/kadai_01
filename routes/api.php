@@ -85,3 +85,4 @@ Route::post('/ping', function () {
 });
 
 Route::get('/public/operators/{id}', [OperatorController::class, 'showPublic']);
+Route::get('/public/operators/', [OperatorController::class, 'publicIndex']);

@@ -73,7 +73,7 @@ class OperatorController extends Controller
     {
         $operator = Operator::with([
             'services:id,operator_id,name,duration',
-            'workingHours:id,operator_id,day,start_time,end_time'
+            'workingHours:id,operator_id,day_of_week,start_time,end_time'
             ])
             ->select('id', 'name')
             ->findOrFail($id);
@@ -84,4 +84,18 @@ class OperatorController extends Controller
         ], 200);
     }
 
+    /**
+     * 公開用オペレーター一覧を取得する
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function publicIndex()
+    {
+        $operators = Operator::select('id', 'name')->get();
+
+        return response()->json([
+            'message' => '公開用オペレーター一覧を取得しました。',
+            'data' => $operators
+        ], 200);
+    }
 }

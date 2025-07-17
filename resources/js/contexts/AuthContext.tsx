@@ -28,18 +28,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setRole(userRole);
   };
 
+  const setUserAndRole = (userData: User | null, userRole: 'user' | 'operator') => {
+    if (userRole === 'user') {
+      setAuthState(userData, null, 'user');
+    } else {
+      setAuthState(null, operator, 'operator');
+    }
+  };
+
   useEffect(() => {
     const checkLoginStatus = async () => {
       setIsLoading(true);
       try {
-        await axios.get('/sanctum/csrf-cookie');
+        await http.get('/sanctum/csrf-cookie');
         // ✅ まずオペレーター確認
-        const { data: opData } = await axios.get('/api/operator/me');
+        const { data: opData } = await http.get('/api/operator/me');
         setAuthState(null, opData.data ?? opData, 'operator');
       } catch (operatorError) {
         try {
           // ✅ 次にユーザー確認
-          const { data: userData } = await axios.get('/api/me');
+          const { data: userData } = await http.get('/api/me');
           setAuthState(userData.data ?? userData, null, 'user');
         } catch (userError) {
           console.log('Not authenticated as user or operator');
@@ -53,7 +61,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, operator, role, isLoading, setAuthState }}>
+    <AuthContext.Provider value={{ user, operator, role, isLoading, setAuthState, setUserAndRole }}>
       {children}
     </AuthContext.Provider>
   );
