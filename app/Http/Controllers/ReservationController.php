@@ -16,7 +16,7 @@ class ReservationController extends Controller
      */
     public function index(): JsonResponse
     {
-        $reservations = Reservation::with(['user', 'operator'])->get();
+        $reservations = Reservation::with(['user', 'operator', 'service'])->get();
 
         return response()->json([
             'message' => '予約一覧を取得しました。',
@@ -29,7 +29,9 @@ class ReservationController extends Controller
      */
     public function store(StoreReservationRequest $request): JsonResponse
     {
-        $reservation = Reservation::create($request->validated());
+        $validatedData = $request->validated();
+
+        $reservation = Reservation::create($validatedData);
 
         return response()->json([
             'message' => '予約が作成されました。',
@@ -42,7 +44,7 @@ class ReservationController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        $reservation = Reservation::with(['user', 'operator'])->findOrFail($id);
+        $reservation = Reservation::with(['user', 'operator', 'service'])->findOrFail($id);
 
         return response()->json([
             'message' => '予約詳細を取得しました。',
@@ -55,7 +57,8 @@ class ReservationController extends Controller
      */
     public function update(UpdateReservationRequest $request, Reservation $reservation): JsonResponse
     {
-        $reservation->update($request->validated());
+        $reservation->update($request->validated() );
+
         return response()->json([
             'message' => '予約が更新されました。',
             'data' => $reservation,

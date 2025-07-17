@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Operator;
+use App\Models\Service;
 
 /**
  * 予約（Reservation）
@@ -15,7 +16,7 @@ use App\Models\Operator;
  * @property int $id
  * @property int $user_id
  * @property int $operator_id
- * @property string $service_name
+ * @property int $service_id
  * @property int $duration
  * @property Carbon $date
  * @property Carbon $start_time
@@ -37,7 +38,7 @@ class Reservation extends Model
     protected $fillable = [
         'user_id',         // 予約を行ったユーザーID
         'operator_id',     // 対応するオペレーターID（管理者）
-        'service_name',    // サービス名（IDではなく文字列）
+        'service_id',    // サービスID
         'duration',        // 所要時間（分などの整数）
         'date',            // 予約日
         'start_time',      // 開始時間
@@ -69,5 +70,13 @@ class Reservation extends Model
     public function operator(): BelongsTo
     {
         return $this->belongsTo(Operator::class);
+    }
+
+    /**
+     * リレーション：この予約に紐づくサービス
+     */
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class);
     }
 }

@@ -5,6 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
 use App\Models\Operator;
+use App\Models\Service;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Reservation>
@@ -25,7 +26,7 @@ class ReservationFactory extends Factory
         return [
             'user_id' => User::factory(),
             'operator_id' => Operator::factory(),
-            'service_name' => fake()->word() . 'サービス',
+            'service_id' => Service::factory(),
             'duration' => $duration,
             'date' => $start->format('Y-m-d'),
             'start_time' => $start->format('H:i:s'),

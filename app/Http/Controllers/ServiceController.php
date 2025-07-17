@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreServiceRequest;
 use App\Http\Requests\UpdateServiceRequest;
 use App\Models\Service;
+use Illuminate\Support\Facades\Auth;
 
 class ServiceController extends Controller
 {
@@ -59,10 +61,24 @@ class ServiceController extends Controller
     /**
      * 指定したサービスを削除する
      */
-    public function destroy(string $id)
+    public function destroy(Service $service)
     {
-        $service = Service::findOrFail($id);
+        // 認可チェック: このサービスが、現在認証されているユーザー（オペレーター）のものであるか確認
+        // Auth::id() は、認証済みユーザーのIDを返す
+        if ($service->operator_id !== Auth::id()) {
+            return response()->json(['message' => '権限がありません。'], 403);
+        }
+
+        // 予約で使用されているかチェック
+        if ($service->reservations()->count() > 0) {
+            return response()->json([
+                'message' => 'このサービスは予約で使用されているため削除できません。'
+            ], 409); // 409 Conflict: リソースの現在の状態と競合するため、リクエストを完了できない
+        }
+
         $service->delete();
-        return response()->json(null, 204);
+
+        // 成功時は204 No Contentを返すのが一般的
+        return response()->noContent(); 
     }
 }

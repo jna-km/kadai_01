@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
+use App\Models\Reservation;
+use App\Models\Operator;
 
 /**
  * サービス（Service）モデル
@@ -16,6 +18,7 @@ use Carbon\Carbon;
  * @property string $description
  * @property int $duration
  * @property int $price
+ * @property int $operator_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -33,6 +36,7 @@ class Service extends Model
         'description', // サービスの説明
         'duration',    // 提供時間（分）
         'price',       // 価格（整数）
+        'operator_id',     // 対応するオペレーターID（管理者）
     ];
 
     /**

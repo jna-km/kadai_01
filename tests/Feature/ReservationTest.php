@@ -3,6 +3,7 @@
 use App\Models\User;
 use App\Models\Operator;
 use App\Models\Reservation;
+use App\Models\Service;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
@@ -34,7 +35,7 @@ test('無効なデータでは予約が作成できない', function () {
     $response->assertStatus(422);
     $response->assertJsonValidationErrors([
         'user_id',
-        'service_name',
+        'service_id',
         'duration',
         'date',
         'start_time',
@@ -46,10 +47,14 @@ test('無効なデータでは予約が作成できない', function () {
 test('正常なデータで予約を作成できる', function () {
     $user = User::factory()->create();
     $operator = Operator::factory()->create();
+    $service = Service::factory()->create([
+        'operator_id' => $operator->id
+    ]);
+
     $payload = [
         'user_id' => $user->id,
         'operator_id' => $operator->id,
-        'service_name' => 'カット＆シャンプー',
+        'service_id' => $service->id,
         'duration' => 60,
         'date' => '2030-07-15',
         'start_time' => '10:00',
@@ -61,7 +66,7 @@ test('正常なデータで予約を作成できる', function () {
     $response = postJson('/api/reservations', $payload);
 
     $response->assertStatus(201);
-    $response->assertJsonFragment(['service_name' => 'カット＆シャンプー']);
+    $response->assertJsonFragment(['service_id' => $service->id]);
 });
 
 test('存在しない予約IDを更新しようとすると404が返る', function () {
@@ -70,7 +75,7 @@ test('存在しない予約IDを更新しようとすると404が返る', functi
     $response = putJson('/api/reservations/99999', [
         'user_id' => $user->id,
         'operator_id' => $operator->id,
-        'service_name' => '更新',
+        'service_id' => 99999,
         'duration' => 45,
         'date' => '2025-07-15',
         'start_time' => '11:00',

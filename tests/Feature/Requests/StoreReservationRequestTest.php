@@ -3,6 +3,7 @@
 use App\Http\Requests\StoreReservationRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use App\Models\Service;
 use App\Models\Operator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -11,6 +12,7 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     $this->user = User::factory()->create();
     $this->operator = Operator::factory()->create();
+    $this->service = Service::factory()->create();
 });
 
 function validate(array $data)
@@ -31,7 +33,7 @@ dataset('reservation_validation', [
         fn () => [
             'user_id' => test()->user->id,
             'operator_id' => test()->operator->id,
-            'service_name' => 'カットコース',
+            'service_id' => test()->service->id,
             'duration' => 45,
             'date' => now()->addDay()->format('Y-m-d'),
             'start_time' => '11:00',
@@ -40,12 +42,12 @@ dataset('reservation_validation', [
             'notes' => '特になし',
         ]
     ],
-    'service_name が空' => [
+    'service_id が空' => [
         false,
         fn () => [
             'user_id' => test()->user->id,
             'operator_id' => test()->operator->id,
-            'service_name' => '',
+            'service_id' => '',
             'duration' => 45,
             'date' => now()->addDay()->format('Y-m-d'),
             'start_time' => '11:00',
@@ -59,7 +61,7 @@ dataset('reservation_validation', [
         fn () => [
             'user_id' => test()->user->id,
             'operator_id' => test()->operator->id,
-            'service_name' => 'カットコース',
+            'service_id' => test()->service->id,
             'duration' => 45,
             'date' => now()->addDay()->format('Y-m-d'),
             'start_time' => '11:00',
