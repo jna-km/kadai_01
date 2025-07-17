@@ -5,6 +5,7 @@ import { Operator } from '../types/operator';
 import { AuthContextType } from '../types';
 
 axios.defaults.withCredentials = true; // ✅ Cookieを送信する
+axios.defaults.withXSRFToken = true;
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -40,15 +41,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const checkLoginStatus = async () => {
       setIsLoading(true);
       try {
-        await http.get('/sanctum/csrf-cookie');
+        await axios.get('/sanctum/csrf-cookie');
         // ✅ まずオペレーター確認
-        const { data: opData } = await http.get('/api/operator/me');
-        setAuthState(null, opData.data ?? opData, 'operator');
+        const opRes = await axios.get('/api/operator/me');
+        if (opRes.data?.data) {
+          setAuthState(null, opRes.data.data, 'operator');
+          return;
+        }
       } catch (operatorError) {
         try {
           // ✅ 次にユーザー確認
-          const { data: userData } = await http.get('/api/me');
-          setAuthState(userData.data ?? userData, null, 'user');
+          const userRes = await axios.get('/api/me');
+          if (userRes.data?.data) {
+            setAuthState(userRes.data.data, null, 'user');
+            return;
+          }
         } catch (userError) {
           console.log('Not authenticated as user or operator');
           setAuthState(null, null, null);
