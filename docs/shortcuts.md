@@ -49,5 +49,6 @@ alias fresh="docker compose exec app php artisan migrate:fresh --seed"
 - [2025-07-11](logs/2025-07-11.md)
 - [2025-07-15](logs/2025-07-15.md)
 - [2025-07-17](logs/2025-07-17.md)
+- [2025-07-18](logs/2025-07-18.md)
 
 --- フッター終了 ---

@@ -27,6 +27,8 @@ import OperatorNoticesPage from './pages/operator/OperatorNoticesPage';
 import OperatorListPage from './pages/OperatorListPage';
 import OperatorDetailPage from './pages/OperatorDetailPage';
 
+import TestApi from './test/TestApi';
+
 const router = createBrowserRouter([
   // パブリックルート
   { path: '/', element: <Home /> },
@@ -34,6 +36,8 @@ const router = createBrowserRouter([
   { path: '/operator/login', element: <OperatorLogin /> },
   { path: '/logout', element: <Logout /> },
   { path: '/admin/dashboard', element: <AdminDashboard /> },
+
+  { path: '/test-api', element: <TestApi /> },
 
   { path: '/operators', element: <OperatorListPage /> },
   { path: '/operators/:id', element: <OperatorDetailPage /> },

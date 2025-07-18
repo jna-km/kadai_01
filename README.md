@@ -36,6 +36,18 @@ docker compose exec app npm install
 docker compose exec app npm run dev -- --host
 ```
 
+#### 🔐 Sanctum認証の設定
+- `.env` に以下を追加してください：
+```
+SESSION_DOMAIN=localhost
+SANCTUM_STATEFUL_DOMAINS=localhost:5173
+```
+- NginxでSPAリロード対応のため `try_files $uri /index.html;` を設定。
+
+#### ✅ Reactビルドと配信
+- 開発時: `http://localhost:5173`  
+- 本番: `npm run build` → `public/build` 配下に出力、Nginx経由で配信。
+
 ### 🔍 開発用URL一覧
 
 | サービス     | URL                      | 備考                |
@@ -46,6 +58,10 @@ docker compose exec app npm run dev -- --host
 | React Dev    | http://localhost:5173    | Vite 開発サーバー   |
 | Swagger UI   | http://localhost:88/swagger/ | APIドキュメント確認用 |
 
+### Reactで確認できる主要ページ
+- `/dashboard/reservations` … 予約一覧
+- `/dashboard/reservations/create` … 予約作成
+- `/dashboard/reservations/edit/{id}` … 予約編集
 
 ## 🛠 開発補助スクリプト（scripts/）
 
@@ -70,6 +86,14 @@ docker compose exec app npm run dev -- --host
 - [機能と画面の対応表](docs/function_screen_map.md)
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
+
+### 🆕 最近の変更点（2025/07/18）
+- v0.5対応を完了：
+  - SPAリロード時404対策（Nginx設定）
+  - Reactでの予約CRUD UIを実装（新規作成・編集・削除）
+  - オペレーターとサービスの動的連携フォーム対応
+  - AxiosによるAPI認証テスト完了
+  - Tailwind CSS導入でUI改善
 
 ### 🆕 最近の変更点（2025/07/15）
 
@@ -120,6 +144,8 @@ docker compose exec app npm run dev -- --host
 - `.env.example` を元に各自 `.env` を作成してください
 - PR単位で進捗をレビュー・管理する運用です
 - React 開発時は `npm run dev -- --host` で Vite サーバーを起動してください
+- UIはTailwind CSSを採用
+- v0.6以降でフォーム共通化やUI改善を予定
 
 ### 🧪 Python仮想環境の利用（local-tests専用）
 
@@ -166,6 +192,10 @@ API仕様は `openapi.yaml` に記述されており、変更は直接このフ�
 ※フロントやバックエンドの実装変更時は、API定義ファイルも忘れずに更新してください。
 小規模店舗向けのオンライン予約受付・管理システムです。
 
+#### APIテスト補足
+- Swaggerで認証テストする場合は `/operator/login` → `Bearer Token` を付与。
+- Axiosテスト用スクリプトは `resources/js/testAxios.js` または `local-tests/test_swagger_auth.py` を参照。
+
 ### 管理者機能
 - 管理者ログイン（認証機能）
 - 予約の一覧／削除
@@ -208,5 +238,6 @@ API仕様は `openapi.yaml` に記述されており、変更は直接このフ�
 - [2025-07-11](docs/logs/2025-07-11.md)
 - [2025-07-15](docs/logs/2025-07-15.md)
 - [2025-07-17](docs/logs/2025-07-17.md)
+- [2025-07-18](docs/logs/2025-07-18.md)
 
 --- フッター終了 ---

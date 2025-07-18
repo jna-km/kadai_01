@@ -198,9 +198,9 @@ components:
         operator_id:
           type: integer
           example: 1
-        service_name:
-          type: string
-          example: カウンセリング予約
+        service_id:
+          type: integer
+          example: 1
         duration:
           type: integer
           example: 45
@@ -226,7 +226,7 @@ components:
       required:
         - user_id
         - operator_id
-        - service_name
+        - service_id
         - duration
         - date
         - start_time
@@ -236,8 +236,8 @@ components:
           type: integer
         operator_id:
           type: integer
-        service_name:
-          type: string
+        service_id:
+          type: integer
         duration:
           type: integer
         date:

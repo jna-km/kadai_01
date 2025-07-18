@@ -85,7 +85,7 @@ class ReservationController extends Controller
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-        $reservations = Reservation::where('user_id', $user->id)->get();
+        $reservations = Reservation::with('service')->where('user_id', $user->id)->get();
 
         return response()->json(
             [
@@ -94,5 +94,23 @@ class ReservationController extends Controller
             ],
             200
         );
+    }
+
+    /**
+     * オペレーター用：予約一覧を取得
+     */
+    public function operatorReservations(Request $request): JsonResponse
+    {
+        $operator = $request->user();
+        if (!$operator) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $reservations = Reservation::with('service')->where('operator_id', $operator->id)->get();
+
+        return response()->json([
+            'message' => 'オペレーターの予約一覧を取得しました。',
+            'data' => $reservations
+        ], 200);
     }
 }
