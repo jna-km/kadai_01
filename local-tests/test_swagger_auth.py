@@ -56,7 +56,7 @@ print(response_text)  # レスポンス全体を出力して確認
 
 # JSONとして読み込み
 response_json = json.loads(response_text)
-access_token = response_json["data"]["access_token"]
+access_token = response_json.get("access_token") or response_json.get("data", {}).get("access_token")
 print("✅ トークン取得:", access_token)
 
 # Authorizeボタンをクリック
@@ -108,8 +108,13 @@ print("----- 予約一覧レスポンス（最新5件） -----")
 try:
     reservations_response_json = json.loads(reservations_text)
 except Exception:
-    reservations_response_json = {}
-all_data = reservations_response_json.get("data", [])
+    reservations_response_json = []
+
+if isinstance(reservations_response_json, list):
+    all_data = reservations_response_json
+else:
+    all_data = reservations_response_json.get("data", [])
+
 print(f"予約件数: {len(all_data)} 件")
 for reservation in all_data[-3:]:
     print(json.dumps(reservation, indent=2, ensure_ascii=False))
@@ -134,7 +139,7 @@ textarea.send_keys(f'''
 {{
   "user_id": 1,
   "operator_id": 1,
-  "service_name": "カウンセリング",
+  "service_id": 1,
   "duration": 30,
   "date": "{str(today)}",
   "start_time": "13:00",
@@ -203,7 +208,6 @@ time.sleep(3)
 print(f"✅ /reservations/{reservation_id} を実行（詳細取得）")
 print("✅ 予約詳細取得 成功")
 
-time.sleep(1)
 # --- PUT /reservations/{id} ---
 update_section = driver.find_element(By.ID, "operations-予約-put_reservations__id_")
 update_summary = update_section.find_element(By.CLASS_NAME, "opblock-summary-control")
@@ -223,7 +227,7 @@ textarea.send_keys(f'''
 {{
   "user_id": 1,
   "operator_id": 1,
-  "service_name": "カウンセリング（更新）",
+  "service_id": 1,
   "duration": 45,
   "date": "{str(tomorrow)}",
   "start_time": "14:00",

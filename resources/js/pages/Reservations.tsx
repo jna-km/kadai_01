@@ -14,6 +14,7 @@ const Reservations: React.FC = () => {
       try {
         setIsLoading(true);
         const response = await axios.get('/api/my-reservations');
+        console.log(response.data.data)
         setReservations(response.data.data); // dataプロパティを指定
         setError(null);
       } catch (err) {
@@ -57,11 +58,6 @@ const Reservations: React.FC = () => {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">予約一覧</h2>
-        <Link to="/dashboard/reservations/new">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            新規予約
-          </button>
-        </Link>
         <Link to="/dashboard/reservations/create">
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             新規予約
@@ -86,7 +82,9 @@ const Reservations: React.FC = () => {
               {reservations.map((reservation) => (
                 <tr key={reservation.id} className="hover:bg-gray-100">
                   <td className="py-2 px-4 border-b text-center">{reservation.id}</td>
-                  <td className="py-2 px-4 border-b">{reservation.service_name}</td>
+                  <td className="py-2 px-4 border-b">
+                    {reservation.service ? reservation.service.name : '未設定'}
+                  </td>
                   <td className="py-2 px-4 border-b">{format(parseISO(reservation.date), 'yyyy-MM-dd')}</td>
                   <td className="py-2 px-4 border-b">{reservation.start_time.substring(0, 5)} - {reservation.end_time.substring(0, 5)}</td>
                   <td className="py-2 px-4 border-b">{reservation.notes}</td>

@@ -59,6 +59,7 @@ Route::middleware('auth:operator')->group(function () {
     Route::post('/services', [ServiceController::class, 'store']);
     Route::delete('/services/{service}', [ServiceController::class, 'destroy']);
     Route::put('/services/{id}', [ServiceController::class, 'update']);
+    Route::get('/operator/reservations', [ReservationController::class, 'operatorReservations']);
     // Route::apiResource('services', ServiceController::class);
 });
 
