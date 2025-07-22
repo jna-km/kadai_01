@@ -87,6 +87,12 @@ SANCTUM_STATEFUL_DOMAINS=localhost:5173
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
 
+-### 🆕 最近の変更点（2025/07/22）
+- サービス層の実装を完了（Reservation, TimeSlot, WorkingHour, Notice, Holiday）
+- 各Repositoryとインターフェースを定義・実装し、バインド設定を整備
+- Reservation関連のCRUDテストを修正し、全件通過
+- findByIdメソッドをfindメソッドに統一し、コード整合性を確保
+
 ### 🆕 最近の変更点（2025/07/18）
 - v0.5対応を完了：
   - SPAリロード時404対策（Nginx設定）
