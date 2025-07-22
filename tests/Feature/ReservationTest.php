@@ -4,6 +4,7 @@ use App\Models\User;
 use App\Models\Operator;
 use App\Models\Reservation;
 use App\Models\Service;
+use Carbon\Carbon;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
@@ -56,7 +57,7 @@ test('正常なデータで予約を作成できる', function () {
         'operator_id' => $operator->id,
         'service_id' => $service->id,
         'duration' => 60,
-        'date' => '2030-07-15',
+        'date' => Carbon::today()->format('Y-m-d'),
         'start_time' => '10:00',
         'end_time' => '11:00',
         'status' => 'reserved',
@@ -72,12 +73,15 @@ test('正常なデータで予約を作成できる', function () {
 test('存在しない予約IDを更新しようとすると404が返る', function () {
     $user = User::factory()->create();
     $operator = Operator::factory()->create();
+    $service = Service::factory()->create([
+        'operator_id' => $operator->id
+    ]);
     $response = putJson('/api/reservations/99999', [
         'user_id' => $user->id,
         'operator_id' => $operator->id,
-        'service_id' => 99999,
+        'service_id' => $service->id,
         'duration' => 45,
-        'date' => '2025-07-15',
+        'date' => Carbon::today()->format('Y-m-d'),
         'start_time' => '11:00',
         'end_time' => '11:45',
         'status' => 'reserved',

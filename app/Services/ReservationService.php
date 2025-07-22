@@ -35,7 +35,7 @@ class ReservationService
      */
     public function getAllReservations()
     {
-        return $this->reservationRepository->getAll();
+        return $this->reservationRepository->all();
     }
 
     /**
@@ -46,7 +46,7 @@ class ReservationService
      */
     public function getReservation(int $id)
     {
-        return $this->reservationRepository->findById($id);
+        return $this->reservationRepository->find($id);
     }
 
     /**

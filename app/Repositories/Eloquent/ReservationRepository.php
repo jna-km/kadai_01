@@ -18,7 +18,7 @@ class ReservationRepository implements ReservationRepositoryInterface
     /**
      * 全ての予約を取得
      */
-    public function getAll(): Collection
+    public function all(): Collection
     {
         return $this->model->all();
     }
@@ -26,7 +26,7 @@ class ReservationRepository implements ReservationRepositoryInterface
     /**
      * IDで予約を取得（存在しない場合は例外を投げる）
      */
-    public function findById(int $id): Reservation
+    public function find(int $id): Reservation
     {
         return $this->model->findOrFail($id);
     }
@@ -44,7 +44,7 @@ class ReservationRepository implements ReservationRepositoryInterface
      */
     public function update(int $id, array $data): Reservation
     {
-        $reservation = $this->findById($id);
+        $reservation = $this->find($id);
         $reservation->update($data);
         return $reservation;
     }

@@ -71,9 +71,15 @@ class ReservationController extends Controller
     /**
      * 予約を更新
      */
-    public function update(UpdateReservationRequest $request, string $id): JsonResponse
+    public function update(UpdateReservationRequest $request, int $id): JsonResponse
     {
-        $reservation = $this->reservationService->updateReservation((int)$id, $request->validated());
+        
+        $reservation = $this->reservationService->getReservation($id);
+        if (!$reservation) {
+            return response()->json(['message' => '予約が見つかりません'], 404);
+        }
+
+        $reservation = $this->reservationService->updateReservation($id, $request->validated());
 
         return response()->json([
             'message' => '予約が更新されました。',

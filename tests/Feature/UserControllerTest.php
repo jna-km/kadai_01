@@ -45,8 +45,8 @@ test('ユーザーの詳細を取得できる', function () {
 
     $response->assertStatus(200)
              ->assertJson(fn (AssertableJson $json) =>
-                 $json->where('id', $user->id)
-                      ->where('name', $user->name)
+                 $json->where('data.id', $user->id)
+                      ->where('data.name', $user->name)
                       ->etc()
              );
 });

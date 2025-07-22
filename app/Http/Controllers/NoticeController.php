@@ -4,18 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreNoticeRequest;
 use App\Http\Requests\UpdateNoticeRequest;
-use App\Models\Notice;
+use App\Services\NoticeService;
 
 class NoticeController extends Controller
 {
+    protected NoticeService $noticeService;
+
+    public function __construct(NoticeService $noticeService)
+    {
+        $this->noticeService = $noticeService;
+    }
+
     /**
      * お知らせ一覧を取得する
      */
     public function index()
     {
+        $notices = $this->noticeService->getAll();
         return response()->json([
             'message' => 'お知らせ一覧を取得しました。',
-            'data' => Notice::all()
+            'data' => $notices
         ], 200);
     }
 
@@ -24,7 +32,7 @@ class NoticeController extends Controller
      */
     public function store(StoreNoticeRequest $request)
     {
-        $notice = Notice::create($request->all());
+        $notice = $this->noticeService->create($request->validated());
         return response()->json([
             'message' => 'お知らせを登録しました。',
             'data' => $notice
@@ -36,7 +44,10 @@ class NoticeController extends Controller
      */
     public function show(string $id)
     {
-        $notice = Notice::findOrFail($id);
+        $notice = $this->noticeService->getById((int)$id);
+        if (!$notice) {
+            return response()->json(['message' => '指定されたお知らせは見つかりません。'], 404);
+        }
         return response()->json([
             'message' => 'お知らせ詳細を取得しました。',
             'data' => $notice
@@ -48,11 +59,14 @@ class NoticeController extends Controller
      */
     public function update(UpdateNoticeRequest $request, string $id)
     {
-        $notice = Notice::findOrFail($id);
-        $notice->update($request->all());
+        $notice = $this->noticeService->getById((int)$id);
+        if (!$notice) {
+            return response()->json(['message' => '指定されたお知らせは見つかりません。'], 404);
+        }
+        $updatedNotice = $this->noticeService->update((int)$id, $request->validated());
         return response()->json([
             'message' => 'お知らせ情報を更新しました。',
-            'data' => $notice
+            'data' => $updatedNotice
         ], 200);
     }
 
@@ -61,8 +75,11 @@ class NoticeController extends Controller
      */
     public function destroy(string $id)
     {
-        $notice = Notice::findOrFail($id);
-        $notice->delete();
+        $notice = $this->noticeService->getById((int)$id);
+        if (!$notice) {
+            return response()->json(['message' => '指定されたお知らせは見つかりません。'], 404);
+        }
+        $this->noticeService->delete((int)$id);
         return response()->json(null, 204);
     }
 }
