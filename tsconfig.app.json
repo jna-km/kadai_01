@@ -16,6 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["resources/js"],
+  "include": ["resources/js", "scripts/testAxios.js"],
   "exclude": ["node_modules"]
 }

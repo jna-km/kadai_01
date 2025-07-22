@@ -5,33 +5,49 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
-use App\Models\Reservation;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
+use App\Services\ReservationService;
 
+/**
+ * ReservationController
+ *
+ * 予約のCRUD操作およびユーザー・オペレーター別の予約取得を管理するコントローラ。
+ */
 class ReservationController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @var ReservationService
+     * 予約サービスクラス
+     */
+    protected $reservationService;
+
+    /**
+     * コンストラクタ：サービスクラスを注入
+     *
+     * @param ReservationService $reservationService
+     */
+    public function __construct(ReservationService $reservationService)
+    {
+        $this->reservationService = $reservationService;
+    }
+
+    /**
+     * 予約一覧を取得
      */
     public function index(): JsonResponse
     {
-        $reservations = Reservation::with(['user', 'operator', 'service'])->get();
-
         return response()->json([
             'message' => '予約一覧を取得しました。',
-            'data' => $reservations
+            'data' => $this->reservationService->getAllReservations()
         ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 新規予約を作成
      */
     public function store(StoreReservationRequest $request): JsonResponse
     {
-        $validatedData = $request->validated();
-
-        $reservation = Reservation::create($validatedData);
+        $reservation = $this->reservationService->createReservation($request->validated());
 
         return response()->json([
             'message' => '予約が作成されました。',
@@ -40,11 +56,11 @@ class ReservationController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * 指定IDの予約詳細を取得
      */
     public function show(string $id): JsonResponse
     {
-        $reservation = Reservation::with(['user', 'operator', 'service'])->findOrFail($id);
+        $reservation = $this->reservationService->getReservation((int)$id);
 
         return response()->json([
             'message' => '予約詳細を取得しました。',
@@ -53,47 +69,52 @@ class ReservationController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * 予約を更新
      */
-    public function update(UpdateReservationRequest $request, Reservation $reservation): JsonResponse
+    public function update(UpdateReservationRequest $request, int $id): JsonResponse
     {
-        $reservation->update($request->validated() );
+        
+        $reservation = $this->reservationService->getReservation($id);
+        if (!$reservation) {
+            return response()->json(['message' => '予約が見つかりません'], 404);
+        }
+
+        $reservation = $this->reservationService->updateReservation($id, $request->validated());
 
         return response()->json([
             'message' => '予約が更新されました。',
-            'data' => $reservation,
+            'data' => $reservation
         ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * 予約を削除
      */
     public function destroy(string $id): JsonResponse
     {
-        $reservation = Reservation::findOrFail($id);
-        $reservation->delete();
+        $this->reservationService->deleteReservation((int)$id);
 
         return response()->json([
             'message' => '予約を削除しました。'
         ]);
     }
 
-    public function myReservations(Request $request)
+    /**
+     * ログインユーザーの予約一覧を取得
+     */
+    public function myReservations(Request $request): JsonResponse
     {
-        // $user = Auth::user();
         $user = $request->user();
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-        $reservations = Reservation::with('service')->where('user_id', $user->id)->get();
 
-        return response()->json(
-            [
-                'message' => '予約一覧を取得しました。',
-                'data' => $reservations,
-            ],
-            200
-        );
+        $reservations = $this->reservationService->getMyReservations($user->id);
+
+        return response()->json([
+            'message' => '予約一覧を取得しました。',
+            'data' => $reservations
+        ], 200);
     }
 
     /**
@@ -106,7 +127,7 @@ class ReservationController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $reservations = Reservation::with('service')->where('operator_id', $operator->id)->get();
+        $reservations = $this->reservationService->getOperatorReservations($operator->id);
 
         return response()->json([
             'message' => 'オペレーターの予約一覧を取得しました。',

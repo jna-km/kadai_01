@@ -4,38 +4,48 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTimeSlotRequest;
 use App\Http\Requests\UpdateTimeSlotRequest;
-use App\Models\TimeSlot;
+use App\Services\TimeSlotService;
+use Illuminate\Http\JsonResponse;
 
 class TimeSlotController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    protected TimeSlotService $timeSlotService;
+
+    public function __construct(TimeSlotService $timeSlotService)
     {
+        $this->timeSlotService = $timeSlotService;
+    }
+
+    /**
+     * 時間枠一覧を取得
+     */
+    public function index(): JsonResponse
+    {
+        $timeSlots = $this->timeSlotService->getAll();
         return response()->json([
             'message' => '時間枠一覧を取得しました。',
-            'data' => TimeSlot::all()
+            'data' => $timeSlots
         ], 200);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 新しい時間枠を登録
      */
-    public function store(StoreTimeSlotRequest $request)
+    public function store(StoreTimeSlotRequest $request): JsonResponse
     {
-        $timeslot = TimeSlot::create($request->validated());
+        $timeSlot = $this->timeSlotService->create($request->validated());
         return response()->json([
             'message' => '時間枠を登録しました。',
-            'data' => $timeslot
+            'data' => $timeSlot
         ], 201);
     }
 
     /**
-     * Display the specified resource.
+     * 指定した時間枠を取得
      */
-    public function show(TimeSlot $timeSlot)
+    public function show(int $id): JsonResponse
     {
+        $timeSlot = $this->timeSlotService->getById($id);
         return response()->json([
             'message' => '時間枠詳細を取得しました。',
             'data' => $timeSlot
@@ -43,24 +53,23 @@ class TimeSlotController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * 指定した時間枠を更新
      */
-    public function update(UpdateTimeSlotRequest $request, string $id)
+    public function update(UpdateTimeSlotRequest $request, int $id): JsonResponse
     {
-        $timeslot = TimeSlot::findOrFail($id);
-        $timeslot->update($request->validated());
+        $updated = $this->timeSlotService->update($id, $request->validated());
         return response()->json([
             'message' => '時間枠情報を更新しました。',
-            'data' => $timeslot
+            'data' => $updated
         ], 200);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * 指定した時間枠を削除
      */
-    public function destroy(TimeSlot $timeSlot)
+    public function destroy(int $id): JsonResponse
     {
-        $timeSlot->delete();
+        $this->timeSlotService->delete($id);
         return response()->json(null, 204);
     }
 }
