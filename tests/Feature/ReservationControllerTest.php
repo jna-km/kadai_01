@@ -4,6 +4,7 @@ use App\Models\User;
 use App\Models\Operator;
 use App\Models\Service;
 use App\Models\Reservation;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -45,7 +46,7 @@ test('予約を作成できる', function () {
         'operator_id' => $this->operator->id,
         'service_id' => $service->id,
         'duration' => 60,
-        'date' => '2025-07-20',
+        'date' => Carbon::today()->format('Y-m-d'),
         'start_time' => '10:00',
         'end_time' => '11:00',
         'status' => 'reserved',
@@ -73,7 +74,7 @@ test('予約を更新できる', function () {
         'operator_id' => $this->operator->id,
         'service_id' => $service2->id,
         'duration' => 45,
-        'date' => '2025-07-20',
+        'date' => Carbon::today()->addDay()->format('Y-m-d'),
         'start_time' => '10:00',
         'end_time' => '10:45',
         'status' => 'reserved',
@@ -102,4 +103,43 @@ test('予約を削除できる', function () {
 
     // $response->assertRedirect();
     $this->assertDatabaseMissing('reservations', ['id' => $reservation->id]);
+});
+
+test('予約詳細を取得できる', function () {
+    actingAs($this->user);
+    $reservation = Reservation::factory()->create([
+        'user_id' => $this->user->id,
+        'operator_id' => $this->operator->id,
+    ]);
+
+    $response = getJson("/api/reservations/{$reservation->id}");
+
+    $response->assertStatus(200)
+             ->assertJsonFragment(['id' => $reservation->id]);
+});
+
+test('ログインユーザーの予約一覧を取得できる', function () {
+    actingAs($this->user);
+    $reservations = Reservation::factory()->count(2)->create([
+        'user_id' => $this->user->id,
+        'operator_id' => $this->operator->id,
+    ]);
+
+    $response = getJson('/api/my-reservations');
+
+    $response->assertStatus(200)
+             ->assertJsonCount(2, 'data');
+});
+
+test('オペレーターの予約一覧を取得できる', function () {
+    actingAs($this->operator, 'operator');
+    $reservations = Reservation::factory()->count(3)->create([
+        'operator_id' => $this->operator->id,
+        'user_id' => $this->user->id,
+    ]);
+
+    $response = getJson('/api/operator/reservations');
+
+    $response->assertStatus(200)
+             ->assertJsonCount(3, 'data');
 });
