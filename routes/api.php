@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use App\Http\Controllers\CheckLoginController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
@@ -62,13 +61,6 @@ Route::middleware('auth:operator')->group(function () {
     Route::get('/operator/reservations', [ReservationController::class, 'operatorReservations']);
     // Route::apiResource('services', ServiceController::class);
 });
-
-// Reactからセッションでログインチェックする用
-// Route::middleware('auth:sanctum')->get('/check-login', [CheckLoginController::class, 'check']);
-Route::get('/check-login', [CheckLoginController::class, 'check']);
-// Route::middleware('web')->get('/check-login', [CheckLoginController::class, 'check']);
-// Swagger等トークン認証でログインチェック（必要なら別エンドポイントに）
-Route::middleware('auth:api')->get('/token-check', [CheckLoginController::class, 'check']);
 
 // ========================
 // 共通ルート

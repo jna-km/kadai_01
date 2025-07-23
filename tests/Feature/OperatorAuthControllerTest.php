@@ -63,8 +63,11 @@ test('ログインに失敗する（パスワード不一致）', function () {
         'password' => 'wrong-password',
     ]);
 
-    $response->assertStatus(422) // ValidationExceptionは422を返す
-             ->assertJsonValidationErrors(['email']);
+    $response->assertStatus(401)
+             ->assertJson([
+                 'status' => 'error',
+                 'message' => '認証情報が正しくありません。',
+             ]);
 });
 
 test('ログアウトできる', function () {
@@ -92,4 +95,42 @@ test('認証済みオペレーター情報を取得できる', function () {
 
     $response->assertStatus(200)
              ->assertJsonPath('data.email', 'info@example.com');
+});
+
+test('未認証でoperator/meにアクセスすると401を返す', function () {
+    $response = $this->getJson('/api/operator/me');
+    $response->assertStatus(401);
+});
+
+test('未認証でoperator/logoutにアクセスすると401を返す', function () {
+    $response = $this->postJson('/api/operator/logout');
+    $response->assertStatus(401);
+});
+
+test('オペレーターのログインでバリデーションエラー（email必須）', function () {
+    $response = $this->postJson('/api/operator/login', [
+        'password' => 'password123'
+    ]);
+
+    $response->assertStatus(422)
+             ->assertJsonValidationErrors(['email']);
+});
+
+test('オペレーターのログインでバリデーションエラー（password必須）', function () {
+    $response = $this->postJson('/api/operator/login', [
+        'email' => 'operator@example.com'
+    ]);
+
+    $response->assertStatus(422)
+             ->assertJsonValidationErrors(['password']);
+});
+
+test('オペレーターのログインでバリデーションエラー（passwordが短すぎる）', function () {
+    $response = $this->postJson('/api/operator/login', [
+        'email' => 'operator@example.com',
+        'password' => 'short'
+    ]);
+
+    $response->assertStatus(422)
+             ->assertJsonValidationErrors(['password']);
 });

@@ -2,71 +2,76 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Services\Auth\OperatorAuthService;
 
 class OperatorAuthController extends Controller
 {
+    public function __construct(
+        protected OperatorAuthService $authService
+    ) {}
+
     /**
      * オペレーターのログイン処理。成功時にアクセストークンを返す。
+     *
+     * @param LoginRequest $request
+     * @return JsonResponse
      */
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
-
+        $validated = $request->validated();
         $remember = $request->boolean('remember');
-        // 'operator' ガードを指定して認証を試みる
-        if (! Auth::guard('operator')->attempt($request->only('email', 'password'), $remember)) {
-            throw ValidationException::withMessages([
-                'email' => ['認証情報が正しくありません。'],
-            ]);
+
+        $result = $this->authService->loginOperator($validated, $remember);
+
+        if (!$result) {
+            return response()->json([
+                'status' => 'error',
+                'message' => '認証情報が正しくありません。',
+            ], 401);
         }
 
-        /** @var \App\Models\Operator $operator */
-        $operator = Auth::guard('operator')->user();
-        $token = $operator->createToken('operator-token')->plainTextToken;
-
-        // AuthControllerとレスポンス形式を合わせる
         return response()->json([
             'status' => 'success',
             'message' => 'オペレーターとしてログインしました',
-            'data' => [
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'user' => $operator, // フロントエンドのために 'user' キーで返す
-            ]
+            'data' => $result,
         ]);
     }
 
     /**
-     * ログアウト処理。現在のアクセストークンを削除する。
+     * オペレーターのログアウト処理。
+     *
+     * @return JsonResponse
      */
-    public function logout(Request $request): JsonResponse
+    public function logout(): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        $this->authService->logoutOperator();
 
         return response()->json([
-            'message' => 'ログアウトしました。'
+            'status' => 'success',
+            'message' => 'ログアウトしました。',
         ], 200);
     }
 
     /**
-     * ログイン中のオペレーター情報を取得する。
+     * 認証中のオペレーター情報を取得。
+     *
+     * @return JsonResponse
      */
-    public function me(Request $request): JsonResponse
+    public function me(): JsonResponse
     {
-        /** @var \App\Models\Operator $operator */
-        $operator = $request->user(); // Sanctum認証済みオペレーター
+        $operator = $this->authService->getAuthenticatedOperatorWithRelations();
 
-        // 予約（ユーザー・サービス情報付き）＋提供サービス一覧をロード
-        $operator->load(['reservations.user', 'reservations.service', 'services']);
+        if (!$operator) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'オペレーター情報を取得できません。',
+            ], 401);
+        }
 
         return response()->json([
+            'status' => 'success',
             'message' => 'ログイン中のオペレーター情報を取得しました。',
             'data' => $operator,
         ], 200);
