@@ -2,21 +2,21 @@
 
 namespace Database\Factories;
 
-use App\Models\WorkingHour;
-use App\Models\Operator;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Operator;
+use App\Models\Service;
 
-class WorkingHourFactory extends Factory
+class TimeSlotFactory extends Factory
 {
-    protected $model = WorkingHour::class;
-
     public function definition(): array
     {
         return [
             'operator_id' => Operator::factory(),
-            'day_of_week' => $this->faker->numberBetween(0, 6),
+            'service_id' => Service::factory(),
+            'date' => $this->faker->date(),
             'start_time' => $this->faker->time('H:i'),
             'end_time' => $this->faker->time('H:i'),
+            'capacity' => $this->faker->numberBetween(1, 5),
         ];
     }
 }

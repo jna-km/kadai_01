@@ -4,20 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Reservation;
+use App\Models\Operator;
+use App\Models\Service;
 
 /**
  * 時間枠（TimeSlot）モデル
  *
  * @property int $id
+ * @property int $operator_id
+ * @property int|null $service_id
+ * @property Carbon $date
  * @property Carbon $start_time
  * @property Carbon $end_time
+ * @property int $capacity
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * 他モデルとのリレーションを持たない時間枠の定義モデル。
+ * オペレーターとサービスに紐づく予約可能時間枠を表すモデル。
  */
 class TimeSlot extends Model
 {
@@ -29,8 +34,12 @@ class TimeSlot extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'start_time',  // 開始時刻（例: 09:00）
-        'end_time',    // 終了時刻（例: 09:30）
+        'operator_id',
+        'service_id',
+        'date',
+        'start_time',
+        'end_time',
+        'capacity',
     ];
 
     /**
@@ -39,15 +48,25 @@ class TimeSlot extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'date' => 'date',
         'start_time' => 'datetime:H:i:s',
         'end_time' => 'datetime:H:i:s',
+        'capacity' => 'integer',
     ];
 
     /**
-     * この時間枠に紐づく予約一覧
+     * リレーション：この時間枠を持つオペレーター
      */
-    public function reservations(): HasMany
+    public function operator(): BelongsTo
     {
-        return $this->hasMany(Reservation::class);
+        return $this->belongsTo(Operator::class);
+    }
+
+    /**
+     * リレーション：この時間枠に紐づくサービス
+     */
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class);
     }
 }

@@ -13,7 +13,7 @@ use App\Models\Operator;
  *
  * @property int $id
  * @property int $operator_id
- * @property int $weekday
+ * @property int $day_of_week
  * @property Carbon $start_time
  * @property Carbon $end_time
  * @property Carbon|null $created_at
@@ -27,7 +27,7 @@ class WorkingHour extends Model
 
     protected $fillable = [
         'operator_id',
-        'weekday',     // 曜日（0〜6など、日曜始まり）
+        'day_of_week',     // 曜日（0〜6など、日曜始まり）
         'start_time',  // 開始時刻
         'end_time',    // 終了時刻
     ];
