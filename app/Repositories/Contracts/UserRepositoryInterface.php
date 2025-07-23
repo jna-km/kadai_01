@@ -30,9 +30,9 @@ interface UserRepositoryInterface
      *
      * @param int $id
      * @param array $data
-     * @return bool
+     * @return User|null
      */
-    public function update(int $id, array $data): bool;
+    public function update(int $id, array $data): ?User;
 
     /**
      * ユーザーを削除

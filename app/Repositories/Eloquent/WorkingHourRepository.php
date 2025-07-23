@@ -21,7 +21,7 @@ class WorkingHourRepository implements WorkingHourRepositoryInterface
 
     public function find(int $id)
     {
-        return $this->model->findOrFail($id);
+        return $this->model->find($id);
     }
 
     public function create(array $data)
@@ -29,15 +29,20 @@ class WorkingHourRepository implements WorkingHourRepositoryInterface
         return $this->model->create($data);
     }
 
-    public function update(int $id, array $data)
+    public function update(int $id, array $data): ?WorkingHour
     {
-        $item = $this->model->findOrFail($id);
-        $item->update($data);
-        return $item;
+        $workingHour = $this->model->find($id);
+        if (!$workingHour) return null;
+        $workingHour->update($data);
+        return $workingHour;
     }
 
     public function delete(int $id)
     {
-        return $this->model->destroy($id);
+        $workingHour = $this->model->find($id);
+        if (!$workingHour) {
+            return false;
+        }
+        return $workingHour->delete();
     }
 }

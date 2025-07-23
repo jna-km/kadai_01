@@ -58,6 +58,9 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, int $id): JsonResponse
     {
         $user = $this->userService->update($id, $request->validated());
+        if (!$user) {
+            return response()->json(['message' => 'Not Found'], 404);
+        }
         return response()->json(['message' => 'ユーザー情報を更新しました。', 'data' => $user], 200);
     }
 

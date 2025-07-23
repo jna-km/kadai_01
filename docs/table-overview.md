@@ -229,6 +229,7 @@ erDiagram
 - [コーディングルール](coding-rules.md)
 - [APIレスポンス設計ガイドライン](api_response.md)
 - [ショートカット](shortcuts.md)
+- [UI改善ガイド](ui_improvement_guide.md)
 - [画面遷移図（PDF）](画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](ワイヤーフレーム.pdf)
 
@@ -242,5 +243,6 @@ erDiagram
 - [2025-07-17](logs/2025-07-17.md)
 - [2025-07-18](logs/2025-07-18.md)
 - [2025-07-22](logs/2025-07-22.md)
+- [2025-07-23](logs/2025-07-23.md)
 
 --- フッター終了 ---

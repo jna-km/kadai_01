@@ -2,71 +2,67 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Auth;
+use App\Services\Auth\UserAuthService;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\Auth\LoginRequest;
 
 class AuthController extends Controller
 {
+    protected UserAuthService $userAuthService;
+    public function __construct(UserAuthService $userAuthService)
+    {
+        $this->userAuthService = $userAuthService;
+    }
+
     /**
      * ユーザー認証を行い、アクセストークンを発行する
+     *
+     * @param LoginRequest $request
+     * @return JsonResponse
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->only('email', 'password');
+        $validated = $request->validated();
         $remember = $request->boolean('remember');
 
-        if (Auth::attempt($credentials, $remember)) {
-            $user = Auth::user();
-            $token = $user->createToken('auth_token')->plainTextToken;
-            // $request->session()->regenerate();
+        $result = $this->userAuthService->loginUser($validated, $remember);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'ログインしました',
-                'data' => [
-                    'access_token' => $token,
-                    'token_type' => 'Bearer',
-                    'user' => $user,
-                ]
-            ]);
-        }
-
-        throw ValidationException::withMessages([
-            'email' => ['認証情報が正しくありません。'],
-        ]);
-    }
-    /**
-     * 現在のアクセストークンを無効化し、ログアウト処理を行う
-     */
-    public function logout(Request $request)
-    {
-        try {
-            $request->user()->currentAccessToken()->delete();
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'ログアウトしました',
-            ]);
-        } catch (\Throwable $e) {
+        if (!$result) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'ログアウト処理に失敗しました',
-            ], 500);
+                'message' => '認証情報が正しくありません。',
+            ], 401);
         }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'ログインしました',
+            'data' => $result,
+        ]);
+    }
+
+    /**
+     * 現在のアクセストークンを無効化し、ログアウト処理を行う
+     *
+     * @return JsonResponse
+     */
+    public function logout(): JsonResponse
+    {
+        $this->userAuthService->logout();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'ログアウトしました',
+        ]);
     }
 
     /**
      * ログイン中のユーザー情報を返す
+     *
+     * @return JsonResponse
      */
-    public function me(Request $request)
+    public function me(): JsonResponse
     {
-        $user = $request->user();
-
-        // ユーザーに紐づく予約と、その予約のサービス情報をロード
-        $user->load(['reservations.service']);
-
+        $user = $this->userAuthService->getAuthenticatedUserWithRelations();
         return response()->json([
             'status' => 'success',
             'message' => 'ログインユーザー情報を取得しました。',

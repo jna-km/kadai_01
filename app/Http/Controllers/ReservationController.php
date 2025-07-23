@@ -38,7 +38,7 @@ class ReservationController extends Controller
     {
         return response()->json([
             'message' => '予約一覧を取得しました。',
-            'data' => $this->reservationService->getAllReservations()
+            'data' => $this->reservationService->getAll()
         ]);
     }
 
@@ -47,7 +47,7 @@ class ReservationController extends Controller
      */
     public function store(StoreReservationRequest $request): JsonResponse
     {
-        $reservation = $this->reservationService->createReservation($request->validated());
+        $reservation = $this->reservationService->create($request->validated());
 
         return response()->json([
             'message' => '予約が作成されました。',
@@ -58,9 +58,9 @@ class ReservationController extends Controller
     /**
      * 指定IDの予約詳細を取得
      */
-    public function show(string $id): JsonResponse
+    public function show(int $id): JsonResponse
     {
-        $reservation = $this->reservationService->getReservation((int)$id);
+        $reservation = $this->reservationService->getById($id);
 
         return response()->json([
             'message' => '予約詳細を取得しました。',
@@ -74,12 +74,12 @@ class ReservationController extends Controller
     public function update(UpdateReservationRequest $request, int $id): JsonResponse
     {
         
-        $reservation = $this->reservationService->getReservation($id);
+        $reservation = $this->reservationService->getById($id);
         if (!$reservation) {
             return response()->json(['message' => '予約が見つかりません'], 404);
         }
 
-        $reservation = $this->reservationService->updateReservation($id, $request->validated());
+        $reservation = $this->reservationService->update($id, $request->validated());
 
         return response()->json([
             'message' => '予約が更新されました。',
@@ -90,9 +90,9 @@ class ReservationController extends Controller
     /**
      * 予約を削除
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        $this->reservationService->deleteReservation((int)$id);
+        $this->reservationService->delete($id);
 
         return response()->json([
             'message' => '予約を削除しました。'

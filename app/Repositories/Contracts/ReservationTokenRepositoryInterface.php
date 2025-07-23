@@ -16,7 +16,7 @@ interface ReservationTokenRepositoryInterface
 
     public function create(array $data): ReservationToken;
 
-    public function update(int $id, array $data): ReservationToken;
+    public function update(int $id, array $data): ?ReservationToken;
 
     public function delete(int $id): bool;
 }

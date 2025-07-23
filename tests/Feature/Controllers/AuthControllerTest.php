@@ -63,8 +63,11 @@ test('ログインに失敗する（パスワード不一致）', function () {
         'password' => 'wrong-password',
     ]);
 
-    $response->assertStatus(422)
-             ->assertJsonValidationErrors(['email']);
+    $response->assertStatus(401)
+             ->assertJson([
+                 'status' => 'error',
+                 'message' => '認証情報が正しくありません。',
+             ]);
 });
 
 test('ログアウトできる', function () {
@@ -88,8 +91,47 @@ test('認証済みユーザー情報を取得できる', function () {
 
     Sanctum::actingAs($user, ['*'], 'user');
 
-    $response = $this->getJson('/api/user');
+    $response = $this->getJson('/api/me');
 
     $response->assertStatus(200)
              ->assertJsonFragment(['email' => 'info@example.com']);
+});
+
+
+test('未認証でmeにアクセスすると401を返す', function () {
+    $response = $this->getJson('/api/me');
+    $response->assertStatus(401);
+});
+
+test('未認証でlogoutにアクセスすると401を返す', function () {
+    $response = $this->postJson('/api/logout');
+    $response->assertStatus(401);
+});
+
+test('ログインでバリデーションエラー（email必須）', function () {
+    $response = $this->postJson('/api/login', [
+        'password' => 'password123'
+    ]);
+
+    $response->assertStatus(422)
+             ->assertJsonValidationErrors(['email']);
+});
+
+test('ログインでバリデーションエラー（password必須）', function () {
+    $response = $this->postJson('/api/login', [
+        'email' => 'test@example.com'
+    ]);
+
+    $response->assertStatus(422)
+             ->assertJsonValidationErrors(['password']);
+});
+
+test('ログインでバリデーションエラー（passwordが短すぎる）', function () {
+    $response = $this->postJson('/api/login', [
+        'email' => 'test@example.com',
+        'password' => 'short'
+    ]);
+
+    $response->assertStatus(422)
+             ->assertJsonValidationErrors(['password']);
 });

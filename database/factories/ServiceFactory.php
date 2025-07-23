@@ -17,12 +17,13 @@ class ServiceFactory extends Factory
      */
     public function definition(): array
     {
+        $operator = Operator::factory()->create();
         return [
             'name' => fake()->word() . 'サービス',
             'description' => fake()->sentence(),
             'duration' => fake()->numberBetween(15, 90), // 分
             'price' => fake()->numberBetween(1000, 10000), // 料金（円）
-            'operator_id' => Operator::inRandomOrder()->first()?->id ?? 1,
+            'operator_id' => $operator->id,
         ];
     }
 }

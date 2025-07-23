@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Repositories\Contracts\OperatorRepositoryInterface;
-use Illuminate\Support\Facades\Hash;
 
 /**
  * OperatorService
@@ -58,9 +57,6 @@ class OperatorService
      */
     public function create(array $data)
     {
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        }
         return $this->operatorRepository->create($data);
     }
 
@@ -73,9 +69,6 @@ class OperatorService
      */
     public function update(int $id, array $data)
     {
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        }
         return $this->operatorRepository->update($id, $data);
     }
 

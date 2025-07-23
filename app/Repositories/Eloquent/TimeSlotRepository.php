@@ -21,7 +21,7 @@ class TimeSlotRepository implements TimeSlotRepositoryInterface
 
     public function find(int $id)
     {
-        return $this->model->findOrFail($id);
+        return $this->model->find($id);
     }
 
     public function create(array $data)
@@ -29,15 +29,20 @@ class TimeSlotRepository implements TimeSlotRepositoryInterface
         return $this->model->create($data);
     }
 
-    public function update(int $id, array $data)
+    public function update(int $id, array $data): ?TimeSlot
     {
-        $timeSlot = $this->model->findOrFail($id);
+        $timeSlot = $this->model->find($id);
+        if (!$timeSlot) return null;
         $timeSlot->update($data);
         return $timeSlot;
     }
 
     public function delete(int $id)
     {
-        return $this->model->destroy($id);
+        $timeSlot = $this->model->find($id);
+        if (!$timeSlot) {
+            return false;
+        }
+        return $timeSlot->delete();
     }
 }

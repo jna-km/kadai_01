@@ -35,15 +35,20 @@ class ReservationTokenRepository implements ReservationTokenRepositoryInterface
         return $this->model->create($data);
     }
 
-    public function update(int $id, array $data): ReservationToken
+    public function update(int $id, array $data): ?ReservationToken
     {
-        $item = $this->model->findOrFail($id);
-        $item->update($data);
-        return $item;
+        $reservationToken = $this->model->find($id);
+        if (!$reservationToken) return false;
+        $reservationToken->update($data);
+        return $reservationToken;
     }
 
     public function delete(int $id): bool
     {
-        return $this->model->destroy($id) > 0;
+        $reservationToken = $this->model->find($id);
+        if (!$reservationToken) {
+            return false;
+        }
+        return $reservationToken->delete();
     }
 }

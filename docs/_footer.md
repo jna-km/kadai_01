@@ -13,6 +13,7 @@
 - [コーディングルール]({{prefix}}coding-rules.md)
 - [APIレスポンス設計ガイドライン]({{prefix}}api_response.md)
 - [ショートカット]({{prefix}}shortcuts.md)
+- [UI改善ガイド]({{prefix}}ui_improvement_guide.md)
 - [画面遷移図（PDF）]({{prefix}}画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）]({{prefix}}ワイヤーフレーム.pdf)
 
@@ -26,5 +27,6 @@
 - [2025-07-17]({{prefix}}logs/2025-07-17.md)
 - [2025-07-18]({{prefix}}logs/2025-07-18.md)
 - [2025-07-22]({{prefix}}logs/2025-07-22.md)
+- [2025-07-23]({{prefix}}logs/2025-07-23.md)
 
 --- フッター終了 ---
