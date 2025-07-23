@@ -33,7 +33,7 @@ class ReservationService
      *
      * @return mixed
      */
-    public function getAllReservations()
+    public function getAll()
     {
         return $this->reservationRepository->all();
     }
@@ -44,7 +44,7 @@ class ReservationService
      * @param int $id
      * @return mixed
      */
-    public function getReservation(int $id)
+    public function getById(int $id)
     {
         return $this->reservationRepository->find($id);
     }
@@ -55,7 +55,7 @@ class ReservationService
      * @param array $data
      * @return mixed
      */
-    public function createReservation(array $data)
+    public function create(array $data)
     {
         return $this->reservationRepository->create($data);
     }
@@ -67,7 +67,7 @@ class ReservationService
      * @param array $data
      * @return mixed
      */
-    public function updateReservation(int $id, array $data)
+    public function update(int $id, array $data)
     {
         return $this->reservationRepository->update($id, $data);
     }
@@ -78,7 +78,7 @@ class ReservationService
      * @param int $id
      * @return bool
      */
-    public function deleteReservation(int $id)
+    public function delete(int $id)
     {
         return $this->reservationRepository->delete($id);
     }

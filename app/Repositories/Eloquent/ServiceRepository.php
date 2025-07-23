@@ -7,30 +7,37 @@ use App\Repositories\Contracts\ServiceRepositoryInterface;
 
 class ServiceRepository implements ServiceRepositoryInterface
 {
+    protected $model;
+
+    public function __construct(Service $model)
+    {
+        $this->model = $model;
+    }
+
     public function all()
     {
-        return Service::all();
+        return $this->model->all();
     }
 
     public function find(int $id)
     {
-        return Service::findOrFail($id);
+        return $this->model->find($id);
     }
 
     public function create(array $data)
     {
-        return Service::create($data);
+        return $this->model->create($data);
     }
 
     public function update(int $id, array $data)
     {
-        $item = Service::findOrFail($id);
+        $item = $this->model->findOrFail($id);
         $item->update($data);
         return $item;
     }
 
     public function delete(int $id)
     {
-        return Service::destroy($id);
+        return $this->model->destroy($id);
     }
 }

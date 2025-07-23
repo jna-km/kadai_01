@@ -21,7 +21,7 @@ class HolidayRepository implements HolidayRepositoryInterface
 
     public function find(int $id)
     {
-        return $this->model->findOrFail($id);
+        return $this->model->find($id);
     }
 
     public function create(array $data)

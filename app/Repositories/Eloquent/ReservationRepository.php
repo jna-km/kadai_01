@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Collection;
 class ReservationRepository implements ReservationRepositoryInterface
 {
     protected $model;
-
     public function __construct(Reservation $model)
     {
         $this->model = $model;
@@ -26,9 +25,9 @@ class ReservationRepository implements ReservationRepositoryInterface
     /**
      * IDで予約を取得（存在しない場合は例外を投げる）
      */
-    public function find(int $id): Reservation
+    public function find(int $id): ?Reservation
     {
-        return $this->model->findOrFail($id);
+        return $this->model->find($id);
     }
 
     /**
