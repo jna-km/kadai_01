@@ -70,6 +70,6 @@ test('TimeSlotService delete() タイムスロットを削除できる', functio
         'service_id' => $this->srv->id,
     ]);
     $result = $this->service->delete($slot->id);
-    expect($result)->toBe(1);
+    expect($result)->toBeTrue();
     $this->assertDatabaseMissing('time_slots', ['id' => $slot->id]);
 });

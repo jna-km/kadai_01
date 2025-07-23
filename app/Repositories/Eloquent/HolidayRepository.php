@@ -31,13 +31,18 @@ class HolidayRepository implements HolidayRepositoryInterface
 
     public function update(int $id, array $data)
     {
-        $holiday = $this->model->findOrFail($id);
+        $holiday = $this->model->find($id);
+        if (!$holiday) return null;
         $holiday->update($data);
         return $holiday;
     }
 
     public function delete(int $id)
     {
-        return $this->model->destroy($id);
+        $holiday = $this->model->find($id);
+        if (!$holiday) {
+            return false;
+        }
+        return $holiday->delete();
     }
 }

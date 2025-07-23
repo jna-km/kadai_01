@@ -43,6 +43,6 @@ test('OperatorService update() オペレーター情報を更新できる', func
 test('OperatorService delete() オペレーターを削除できる', function () {
     $operator = Operator::factory()->create();
     $result = $this->service->delete($operator->id);
-    expect($result)->toBe(1); // 件数で判定
+    expect($result)->toBeTrue();
     $this->assertDatabaseMissing('operators', ['id' => $operator->id]);
 });

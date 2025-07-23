@@ -41,9 +41,10 @@ class ReservationRepository implements ReservationRepositoryInterface
     /**
      * 予約を更新
      */
-    public function update(int $id, array $data): Reservation
+    public function update(int $id, array $data): ?Reservation
     {
         $reservation = $this->find($id);
+        if (!$reservation) return null;
         $reservation->update($data);
         return $reservation;
     }
@@ -53,7 +54,11 @@ class ReservationRepository implements ReservationRepositoryInterface
      */
     public function delete(int $id): bool
     {
-        return $this->model->destroy($id) > 0;
+        $reservation = $this->model->find($id);
+        if (!$reservation) {
+            return false;
+        }
+        return $reservation->delete();
     }
 
     /**

@@ -29,15 +29,20 @@ class NoticeRepository implements NoticeRepositoryInterface
         return $this->model->create($data);
     }
 
-    public function update(int $id, array $data)
+    public function update(int $id, array $data): ?Notice
     {
-        $notice = $this->model->findOrFail($id);
+        $notice = $this->model->find($id);
+        if (!$notice) return null;
         $notice->update($data);
         return $notice;
     }
 
     public function delete(int $id)
     {
-        return $this->model->destroy($id);
+        $notice = $this->model->find($id);
+        if (!$notice) {
+            return false;
+        }
+        return $notice->delete();
     }
 }

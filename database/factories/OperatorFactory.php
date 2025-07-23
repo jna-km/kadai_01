@@ -20,7 +20,7 @@ class OperatorFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'password' => bcrypt('password'), // 固定パスワードでログイン確認しやすく
+            'password' => '$2y$04$ZDdx7OAQDXCZp5g5X9X1SuNrxhcoPgbW1.kOKFG20nUbOJ07OdiPC', // 固定パスワードでログイン確認しやすく
             'role' => 'staff',
             'remember_token' => Str::random(10),
         ];

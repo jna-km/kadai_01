@@ -49,10 +49,12 @@ class UserRepository implements UserRepositoryInterface
      * @param array $data
      * @return bool
      */
-    public function update(int $id, array $data): bool
+    public function update(int $id, array $data): ?User
     {
-        $item = $this->model->findOrFail($id);
-        return $item->update($data);
+        $user = $this->model->find($id);
+        if (!$user) return null;
+        $user->update($data);
+        return $user;
     }
 
     /**
@@ -63,6 +65,10 @@ class UserRepository implements UserRepositoryInterface
      */
     public function delete(int $id): bool
     {
-        return (bool)$this->model->destroy($id);
+        $user = $this->model->find($id);
+        if (!$user) {
+            return false;
+        }
+        return $user->delete();
     }
 }

@@ -45,6 +45,6 @@ test('NoticeService update() お知らせ情報を更新できる', function () 
 test('NoticeService delete() お知らせを削除できる', function () {
     $notice = Notice::factory()->create(['published_at' => now()]);
     $result = $this->service->delete($notice->id);
-    expect($result)->toBe(1); // 件数で判定
+    expect($result)->toBeTrue();
     $this->assertDatabaseMissing('notices', ['id' => $notice->id]);
 });

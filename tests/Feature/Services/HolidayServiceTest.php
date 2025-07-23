@@ -47,6 +47,6 @@ test('HolidayService update() 祝日情報を更新できる', function () {
 test('HolidayService delete() 祝日を削除できる', function () {
     $holiday = Holiday::factory()->create(['operator_id' => $this->operator->id]);
     $result = $this->service->delete($holiday->id);
-    expect($result)->toBe(1); // 件数で判定
+    expect($result)->toBeTrue();
     $this->assertDatabaseMissing('holidays', ['id' => $holiday->id]);
 });

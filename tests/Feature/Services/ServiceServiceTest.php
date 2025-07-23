@@ -49,6 +49,6 @@ test('ServiceService update() サービス情報を更新できる', function ()
 test('ServiceService delete() サービスを削除できる', function () {
     $service = Service::factory()->create(['operator_id' => $this->operator->id]);
     $result = $this->service->delete($service->id);
-    expect($result)->toBe(1);
+    expect($result)->toBeTrue();
     $this->assertDatabaseMissing('services', ['id' => $service->id]);
 });

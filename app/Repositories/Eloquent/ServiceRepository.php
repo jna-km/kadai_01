@@ -29,15 +29,20 @@ class ServiceRepository implements ServiceRepositoryInterface
         return $this->model->create($data);
     }
 
-    public function update(int $id, array $data)
+    public function update(int $id, array $data): ?Service
     {
-        $item = $this->model->findOrFail($id);
-        $item->update($data);
-        return $item;
+        $service = $this->model->find($id);
+        if (!$service) return null;
+        $service->update($data);
+        return $service;
     }
 
     public function delete(int $id)
     {
-        return $this->model->destroy($id);
+        $service = $this->model->find($id);
+        if (!$service) {
+            return false;
+        }
+        return $service->delete();
     }
 }

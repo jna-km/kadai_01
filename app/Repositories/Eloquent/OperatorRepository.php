@@ -29,15 +29,20 @@ class OperatorRepository implements OperatorRepositoryInterface
         return $this->model->create($data);
     }
 
-    public function update(int $id, array $data)
+    public function update(int $id, array $data): ?Operator
     {
-        $operator = $this->model->findOrFail($id);
+        $operator = $this->model->find($id);
+        if (!$operator) return null;
         $operator->update($data);
         return $operator;
     }
 
     public function delete(int $id)
     {
-        return $this->model->destroy($id);
+        $operator = $this->model->find($id);
+        if (!$operator) {
+            return false;
+        }
+        return $operator->delete();
     }
 }
