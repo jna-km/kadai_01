@@ -3,7 +3,15 @@
 
 📘 開発ルールについては [こちら（docs/coding-rules.md）](docs/coding-rules.md) を参照してください。
 
+
 このプロジェクトは Docker を使用して Laravel + React + MySQL + Mailpit 環境を構築します。
+
+## ✅ 新規追加・改善点（2025/07/23）
+- UI改善ガイドを追加：[docs/ui_improvement_guide.md](docs/ui_improvement_guide.md)
+- 共通UIコンポーネント設計（Input / Select）Props仕様を整備
+- Service層の責務分離を完了し、Controller → Service → Repository 構成を導入
+- HolidayFactory / TimeSlotFactory / ReservationTokenFactory を追加
+- Pestによるサービス層テストを拡充（tests/Feature/Services/ 配下）
 
 ## 🚀 セットアップ手順（Docker構成）
 
@@ -26,8 +34,8 @@ cp .env.example .env
 # アプリケーションキー生成
 docker compose exec app php artisan key:generate
 
-# マイグレーション実行
-docker compose exec app php artisan migrate
+# マイグレーション実行（シーディングも実施）
+docker compose exec app php artisan migrate --seed
 
 # React の依存パッケージインストール（初回のみ）
 docker compose exec app npm install
@@ -86,6 +94,7 @@ SANCTUM_STATEFUL_DOMAINS=localhost:5173
 - [機能と画面の対応表](docs/function_screen_map.md)
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
+- [UI改善ガイド](docs/ui_improvement_guide.md)
 
 -### 🆕 最近の変更点（2025/07/22）
 - サービス層の実装を完了（Reservation, TimeSlot, WorkingHour, Notice, Holiday）
@@ -233,6 +242,7 @@ API仕様は `openapi.yaml` に記述されており、変更は直接このフ�
 - [コーディングルール](docs/coding-rules.md)
 - [APIレスポンス設計ガイドライン](docs/api_response.md)
 - [ショートカット](docs/shortcuts.md)
+- [UI改善ガイド](docs/ui_improvement_guide.md)
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
 

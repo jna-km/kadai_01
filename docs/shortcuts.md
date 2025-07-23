@@ -38,6 +38,7 @@ alias fresh="docker compose exec app php artisan migrate:fresh --seed"
 - [コーディングルール](coding-rules.md)
 - [APIレスポンス設計ガイドライン](api_response.md)
 - [ショートカット](shortcuts.md)
+- [UI改善ガイド](ui_improvement_guide.md)
 - [画面遷移図（PDF）](画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](ワイヤーフレーム.pdf)
 
