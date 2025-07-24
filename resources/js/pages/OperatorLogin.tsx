@@ -22,11 +22,19 @@ const OperatorLogin: React.FC = () => {
   const onSubmit = async (data: FormValues) => {
     setApiError(null);
     try {
-      await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
-      const response = await axios.post('/api/operator/login', data, { withCredentials: true });
-      const operatorData = response.data?.data?.user;
-      if (operatorData) {
-        setUserAndRole(operatorData, 'operator');
+      const response = await axios.post('/api/operator/login', data);
+      const { access_token, user } = response.data?.data || {};
+
+      if (access_token && user) {
+        // Save token in sessionStorage
+        sessionStorage.setItem('operator_token', access_token);
+
+        // Apply token globally
+        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+
+        // Update AuthContext with operator data
+        setUserAndRole(user, 'operator');
+
         navigate('/operator/dashboard');
       } else {
         setApiError('ログイン情報を確認できませんでした');

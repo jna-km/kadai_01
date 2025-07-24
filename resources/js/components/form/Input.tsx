@@ -1,6 +1,5 @@
-
-
 import React, { forwardRef } from 'react';
+import ErrorMessage from './ErrorMessage';
 
 type InputProps = {
   id: string;
@@ -17,6 +16,13 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
       'w-full border rounded-md p-2 ' +
       (error ? 'border-red-500' : 'border-gray-300');
 
+    const inputProps = {
+      id,
+      name,
+      className: `${baseClass} ${className}`,
+      ...rest,
+    };
+
     return (
       <div className="mb-4">
         {label && (
@@ -26,25 +32,21 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
         )}
         {as === 'textarea' ? (
           <textarea
-            id={id}
-            name={name}
+            {...(inputProps as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
             ref={ref as React.Ref<HTMLTextAreaElement>}
-            className={`${baseClass} ${className}`}
-            {...rest}
           />
         ) : (
           <input
-            id={id}
-            name={name}
+            {...(inputProps as React.InputHTMLAttributes<HTMLInputElement>)}
             ref={ref as React.Ref<HTMLInputElement>}
-            className={`${baseClass} ${className}`}
-            {...rest}
           />
         )}
-        {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+        <ErrorMessage message={error} />
       </div>
     );
   }
 );
+
+Input.displayName = 'Input';
 
 export default Input;

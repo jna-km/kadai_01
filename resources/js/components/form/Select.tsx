@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+import ErrorMessage from './ErrorMessage';
 
 type SelectOption = {
   label: string;
@@ -20,7 +21,7 @@ type SelectProps = {
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
   ({ id, name, value, onChange, onBlur, options, placeholder, label, error }, ref) => {
     const normalizedValue =
-      value === null || value === undefined || Number.isNaN(value) ? '' : String(value);
+      value === null || value === undefined || Number.isNaN(Number(value)) ? '' : String(value);
 
     return (
       <div className="mb-4">
@@ -45,7 +46,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           ))}
         </select>
-        {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+        <ErrorMessage error={error} />
       </div>
     );
   }

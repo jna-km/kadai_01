@@ -1,12 +1,8 @@
-// 役割：日付選択コンポーネント。
-// 注意点：React Hook FormのControllerと連携して使用する。
-// 依存パッケージ: react-datepicker, @types/react-datepicker
-
-
 import 'react-datepicker/dist/react-datepicker.css';
 import React, { forwardRef } from 'react';
 import ReactDatePicker, { registerLocale } from 'react-datepicker';
 import ja from 'date-fns/locale/ja';
+import ErrorMessage from './ErrorMessage';
 
 registerLocale('ja', ja);
 
@@ -45,7 +41,7 @@ const DatePicker = forwardRef<any, DatePickerProps>(
           calendarClassName="react-datepicker"
           ref={ref}
         />
-        {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+        {error && <ErrorMessage message={error} />}
       </div>
     );
   }
