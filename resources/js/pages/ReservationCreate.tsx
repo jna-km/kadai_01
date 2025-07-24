@@ -1,128 +1,197 @@
 // resources/js/pages/ReservationCreate.tsx
-import React, { useState, useEffect } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useForm, Controller } from 'react-hook-form';
+import Input from '../components/form/Input';
+import Select from '../components/form/Select';
+import DatePicker from '../components/form/DatePicker';
 
-interface Operator {
-  id: number;
-  name: string;
+type SelectOption = { label: string; value: string | number };
+
+interface FormValues {
+  service_name: string;
+  operator_id: number | '';
+  duration: number | '';
+  date: string;
+  start_time: string;
+  notes: string;
 }
 
 const ReservationCreate: React.FC = () => {
-  const [service_name, setServiceName] = useState('');
-  const [operators, setOperators] = useState<Operator[]>([]);
-  const [operator_id, setOperatorId] = useState<number | null>(null);
-  const [duration, setDuration] = useState<number | null>(null);
-  const { user } = useAuth();
-  const [date, setDate] = useState('');
-  const [start_time, setStartTime] = useState('');
-  const [notes, setNotes] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [operatorOptions, setOperatorOptions] = useState<SelectOption[]>([]);
   const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const { user } = useAuth();
   const navigate = useNavigate();
 
+  const { control, handleSubmit, formState: { errors } } = useForm<FormValues>({
+    defaultValues: {
+      service_name: '',
+      operator_id: '',
+      duration: '',
+      date: '',
+      start_time: '',
+      notes: '',
+    },
+  });
+
   useEffect(() => {
-    const fetchOperators = async () => {
-      try {
-        const response = await axios.get('/api/operators'); // Assuming you have an endpoint to get operators
-        setOperators(response.data.data);
-      } catch (error) {
-        console.error('Failed to fetch operators:', error);
-        setError('オペレーターの取得に失敗しました'); // "Failed to get operators"
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOperators();
+    axios.get('/api/operators')
+      .then(res => {
+        const ops = res.data.data || [];
+        setOperatorOptions(ops.map((op: any) => ({ label: op.name, value: op.id })));
+      })
+      .catch(err => {
+        setApiError('オペレーターの取得に失敗しました');
+        console.error(err);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    if (!operator_id || !duration || !date || !start_time) {
-      setError('必須項目をすべて入力してください。');
+  const onSubmit = async (data: FormValues) => {
+    setApiError(null);
+    if (!user?.id) {
+      setApiError('ユーザー情報の読み込みに失敗しました。再ログインしてください。');
       return;
     }
-
-    // 終了時間を自動計算
-    const startTimeDate = new Date(`${date}T${start_time}`);
-    startTimeDate.setMinutes(startTimeDate.getMinutes() + duration);
+    // 終了時間自動計算
+    const startTimeDate = new Date(`${data.date}T${data.start_time}`);
+    startTimeDate.setMinutes(startTimeDate.getMinutes() + Number(data.duration));
     const endHours = String(startTimeDate.getHours()).padStart(2, '0');
     const endMinutes = String(startTimeDate.getMinutes()).padStart(2, '0');
     const calculatedEndTime = `${endHours}:${endMinutes}`;
-
     try {
       const response = await axios.post('/api/reservations', {
         user_id: user?.id,
-        operator_id,
-        service_name,
-        duration,
-        date,
-        start_time,
+        operator_id: data.operator_id,
+        service_name: data.service_name,
+        duration: data.duration,
+        date: data.date,
+        start_time: data.start_time,
         end_time: calculatedEndTime,
-        notes,
+        notes: data.notes,
       });
       if (response.status === 201) {
-        alert('予約が完了しました'); // "Reservation completed"
+        alert('予約が完了しました');
         navigate('/dashboard/reservations');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || '予約に失敗しました'); // "Reservation failed"
+      setApiError(err.response?.data?.message || '予約に失敗しました');
       console.error(err);
     }
   };
 
   if (loading) {
     return <div>Loading...</div>;
-  } else if (error) {
-    return <div>{error}</div>;
-  } else {
-    return (
-      <div>
-      <h2>新規予約</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="service_name">サービス名:</label>
-          <input type="text" id="service_name" value={service_name} onChange={(e) => setServiceName(e.target.value)} required />
-        </div>
-        <div>
-          <label htmlFor="operator">担当者:</label>
-          <select
-            id="operator"
-            value={operator_id !== null ? operator_id : ''}
-            onChange={(e) => setOperatorId(Number(e.target.value))}
-            required
-          >
-            <option value="">担当者を選択してください</option>  {/* "Please select an operator" */}
-            {operators.map((operator) => (
-              <option key={operator.id} value={operator.id}>
-                {operator.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="duration">所要時間（分）:</label>
-          <input type="number" id="duration" value={duration !== null ? duration : ''} onChange={(e) => setDuration(Number(e.target.value))} required />
-          <label htmlFor="date">日付:</label>
-          <input type="date" id="date" value={date} onChange={(e) => setDate(e.target.value)} required />
-        </div>
-        <div>
-          <label htmlFor="start_time">開始時間:</label>
-          <input type="time" id="start_time" value={start_time} onChange={(e) => setStartTime(e.target.value)} required />
-        </div>
-        <div>
-          <label htmlFor="notes">備考:</label>
-          <textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
-        </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">予約する</button>
-      </form>
-      </div>
-    );
   }
+
+  return (
+    <div>
+      <h2>新規予約</h2>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+          name="service_name"
+          control={control}
+          rules={{ required: 'サービス名は必須です' }}
+          render={({ field, fieldState }) => (
+            <Input
+              {...field}
+              id="service_name"
+              name="service_name"
+              label="サービス名"
+              placeholder="サービス名"
+              error={fieldState.error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="operator_id"
+          control={control}
+          rules={{ required: '担当者は必須です' }}
+          render={({ field, fieldState }) => (
+            <Select
+              {...field}
+              id="operator_id"
+              name="operator_id"
+              label="担当者"
+              options={operatorOptions}
+              placeholder="担当者を選択してください"
+              error={fieldState.error?.message}
+              ref={field.ref}
+            />
+          )}
+        />
+        <Controller
+          name="duration"
+          control={control}
+          rules={{ required: '所要時間は必須です' }}
+          render={({ field, fieldState }) => (
+            <Input
+              {...field}
+              id="duration"
+              name="duration"
+              label="所要時間（分）"
+              type="number"
+              placeholder="所要時間"
+              error={fieldState.error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="date"
+          control={control}
+          rules={{ required: '日付は必須です' }}
+          render={({ field, fieldState }) => (
+            <DatePicker
+              {...field}
+              id="date"
+              name="date"
+              label="日付"
+              placeholder="日付を選択"
+              error={fieldState.error?.message}
+              ref={field.ref}
+            />
+          )}
+        />
+        <Controller
+          name="start_time"
+          control={control}
+          rules={{ required: '開始時間は必須です' }}
+          render={({ field, fieldState }) => (
+            <Input
+              {...field}
+              id="start_time"
+              name="start_time"
+              label="開始時間"
+              type="time"
+              placeholder="開始時間"
+              error={fieldState.error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="notes"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Input
+              {...field}
+              id="notes"
+              name="notes"
+              label="備考"
+              as="textarea"
+              placeholder="任意のメモを入力"
+              error={fieldState.error?.message}
+            />
+          )}
+        />
+        {apiError && <p className="text-red-500 text-xs mt-1">{apiError}</p>}
+        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">予約する</button>
+      </form>
+    </div>
+  );
 };
 
 export default ReservationCreate;

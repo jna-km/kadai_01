@@ -50,4 +50,6 @@ interface OperatorRepositoryInterface
      */
     public function delete(int $id);
 
+    public function getPublicList();
+    public function getPublicById(int $id);
 }

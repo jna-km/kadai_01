@@ -1,10 +1,24 @@
 
+
 ---
 
-📘 開発ルールについては [こちら（docs/coding-rules.md）](docs/coding-rules.md) を参照してください。
+詳細な開発ルールはこちら → [docs/coding_rules.md](docs/coding_rules.md)
 
 
-このプロジェクトは Docker を使用して Laravel + React + MySQL + Mailpit 環境を構築します。
+### 🆕 認証方式の改善（2025/07/24）
+- 一般ユーザー：セッションベース認証（Sanctum）
+- オペレーター：APIトークン認証（Bearer Token）
+    - ログイン成功時に `access_token` を受け取り、Axiosヘッダーに `Authorization: Bearer <token>` を付与
+    - React側では `AuthContext` でトークンを状態管理
+- 理由：
+    - 一般ユーザーはセッション保持が自然（ブラウザ利用想定）
+    - オペレーターはシステム管理者であり、API操作やSPA対応を想定したためトークン方式を採用
+- トークン有効期限：デフォルトは長期運用を想定（必要に応じて `personal_access_tokens` の有効期限を調整）
+- 注意事項：
+    - ローカル開発はHTTPで動作（本番はHTTPS必須）
+    - オペレーター操作は `/api/operator/*` エンドポイントでのみ利用可能
+
+---
 
 ## ✅ 新規追加・改善点（2025/07/23）
 - UI改善ガイドを追加：[docs/ui_improvement_guide.md](docs/ui_improvement_guide.md)
@@ -257,5 +271,6 @@ API仕様は `openapi.yaml` に記述されており、変更は直接このフ�
 - [2025-07-18](docs/logs/2025-07-18.md)
 - [2025-07-22](docs/logs/2025-07-22.md)
 - [2025-07-23](docs/logs/2025-07-23.md)
+- [2025-07-24](docs/logs/2025-07-24.md)
 
 --- フッター終了 ---

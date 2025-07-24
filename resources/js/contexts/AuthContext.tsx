@@ -4,9 +4,6 @@ import { User } from '../types/user';
 import { Operator } from '../types/operator';
 import { AuthContextType } from '../types';
 
-axios.defaults.withCredentials = true; // ✅ Cookieを送信する
-axios.defaults.withXSRFToken = true;
-
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthProviderProps {
@@ -29,46 +26,69 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setRole(userRole);
   };
 
-  const setUserAndRole = (userData: User | null, userRole: 'user' | 'operator') => {
+  const setUserAndRole = (
+    data: User | Operator | null,
+    userRole: 'user' | 'operator'
+  ) => {
     if (userRole === 'user') {
-      setAuthState(userData, null, 'user');
+      setAuthState(data as User, null, 'user');
     } else {
-      setAuthState(null, operator, 'operator');
+      setAuthState(null, data as Operator, 'operator');
     }
   };
 
   useEffect(() => {
     const checkLoginStatus = async () => {
       setIsLoading(true);
+
       try {
-        await axios.get('/sanctum/csrf-cookie');
-        // ✅ まずオペレーター確認
-        const opRes = await axios.get('/api/operator/me');
-        if (opRes.data?.data) {
-          setAuthState(null, opRes.data.data, 'operator');
-          return;
+        const operatorToken = sessionStorage.getItem('operator_token');
+
+        if (operatorToken) {
+          // ✅ Authorizationヘッダーを設定
+          axios.defaults.headers.common['Authorization'] = `Bearer ${operatorToken}`;
+
+          try {
+            const opRes = await axios.get('/api/operator/me');
+            if (opRes.data?.data) {
+              setAuthState(null, opRes.data.data, 'operator');
+              setIsLoading(false);
+              return;
+            }
+          } catch (error) {
+            console.warn('オペレーター認証失敗、ユーザー確認へ');
+          }
         }
-      } catch (operatorError) {
+
+        // ✅ ユーザー認証（Sanctumセッション利用）
         try {
-          // ✅ 次にユーザー確認
-          const userRes = await axios.get('/api/me');
+          const userRes = await axios.get('/api/me', { withCredentials: true });
           if (userRes.data?.data) {
             setAuthState(userRes.data.data, null, 'user');
+            setIsLoading(false);
             return;
           }
-        } catch (userError) {
-          console.log('Not authenticated as user or operator');
-          setAuthState(null, null, null);
+        } catch (error) {
+          console.warn('ユーザー認証失敗');
         }
+
+        // 認証失敗時
+        setAuthState(null, null, null);
+      } catch (error) {
+        console.error('認証チェック中にエラー', error);
+        setAuthState(null, null, null);
       } finally {
         setIsLoading(false);
       }
     };
+
     checkLoginStatus();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, operator, role, isLoading, setAuthState, setUserAndRole }}>
+    <AuthContext.Provider
+      value={{ user, operator, role, isLoading, setAuthState, setUserAndRole }}
+    >
       {children}
     </AuthContext.Provider>
   );

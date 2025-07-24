@@ -1,192 +1,293 @@
-import React, { useState, useEffect } from 'react';
-import { SubmitHandler, useForm, Controller } from 'react-hook-form';
-import DatePicker from '../components/form/DatePicker';
-import Input from '../components/form/Input';
-import Select from '../components/form/Select';
-import { SelectOption } from '../types/form';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { useForm, Controller, useWatch } from 'react-hook-form';
+import { FormWrapper, Input, Select, DatePicker } from '@/components/form';
 
-interface ReservationFormInputs {
-  service_id: number;
-  operator_id: number;
-  date: Date | null;
-  duration: number;
+type OperatorOption = { label: string; value: number };
+type ServiceOption = { label: string; value: number; duration: number };
+
+interface FormValues {
+  operator_id: number | '';
+  service_id: number | '';
+  duration: number | '';
+  date: string;
   start_time: string;
   end_time: string;
   notes: string;
 }
 
 const CreateReservation: React.FC = () => {
-  const [operatorOptions, setOperatorOptions] = useState<SelectOption[]>([]);
-  const [serviceOptions, setServiceOptions] = useState<SelectOption[]>([]);
-  const { control, handleSubmit, watch, formState: { errors }, resetField: fieldReset } = useForm<ReservationFormInputs>({
+  const [operatorOptions, setOperatorOptions] = useState<OperatorOption[]>([]);
+  const [serviceOptions, setServiceOptions] = useState<ServiceOption[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const { control, handleSubmit, setValue } = useForm<FormValues>({
     defaultValues: {
-      service_id: undefined,
-      operator_id: undefined,
-      date: new Date(),
-      duration: 30,
+      operator_id: '',
+      service_id: '',
+      duration: '',
+      date: '',
       start_time: '',
       end_time: '',
-      notes: ''
-    }
+      notes: '',
+    },
   });
 
-  // 1. オペレーター一覧取得
+  const date = useWatch({ control, name: 'date' });
+  const start_time = useWatch({ control, name: 'start_time' });
+  const duration = useWatch({ control, name: 'duration' });
+
   useEffect(() => {
     axios.get('/api/operators')
       .then(res => {
-        const operators = res.data.data || [];
-        setOperatorOptions(operators.map((op: any) => ({
-          value: op.id,
-          label: op.name
-        })));
+        const ops = res.data.data || [];
+        setOperatorOptions(ops.map((op: any) => ({ label: op.name, value: op.id })));
       })
-      .catch(err => console.error('Failed to load operators', err));
+      .catch(err => {
+        setApiError('オペレーターの取得に失敗しました');
+        console.error(err);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  // 2. operator_idが変わったらサービス一覧取得
-  const operatorId = watch('operator_id');
-  useEffect(() => {
-    if (operatorId) {
-      axios.get(`/api/public/operators/${operatorId}`)
-        .then(res => {
-          const services = res.data?.data?.services || [];
-          setServiceOptions(services.map((s: any) => ({
-            value: s.id,
-            label: s.name
-          })));
-          // Reset service_id and dependent fields when operator changes
-          fieldReset('service_id', undefined);
-          fieldReset('start_time', '');
-          fieldReset('end_time', '');
-        })
-        .catch(err => console.error('Failed to load services', err));
-    } else {
-      setServiceOptions([]);
-      fieldReset('service_id', undefined);
-      fieldReset('start_time', '');
-      fieldReset('end_time', '');
-    }
-  }, [operatorId]);
-
-  // 3. フォーム送信
-  const onSubmit: SubmitHandler<ReservationFormInputs> = async (data) => {
+  // operator変更でサービス一覧を取得
+  const fetchServices = async (operatorId: number) => {
+    if (!operatorId || typeof operatorId !== 'number' || isNaN(operatorId)) return;
     try {
-      // ユーザー情報を取得
-      const userResponse = await axios.get('/api/user');
-      const userId = userResponse.data?.id;
-
-      if (!userId) {
-        alert('ユーザー情報の取得に失敗しました。再ログインしてください。');
-        window.location.href = '/login';
-        return;
-      }
-
-      const payload = { ...data, user_id: userId };
-
-      const response = await axios.post('/api/reservations', payload);
-      console.log('API Response:', response.data);
-      alert('予約が作成されました');
-      window.location.href = '/dashboard/reservations';
-    } catch (error: any) {
-      console.error('API Error:', error.response?.data || error.message);
-      alert('予約作成に失敗しました');
+      const res = await axios.get(`/api/public/operators/${operatorId}`);
+      console.log('API response for services:', res.data);
+      const services = res.data.data?.services || [];
+      setServiceOptions(services.map((s: any) => ({
+        label: s.name,
+        value: s.id,
+        duration: s.duration
+      })));
+      console.log('Fetched services:', services);
+    } catch (err) {
+      setApiError('サービス一覧の取得に失敗しました');
+      console.error(err);
     }
   };
 
+  // service選択時にdurationをローカルからセット
+  const handleServiceChange = (serviceId: number) => {
+    const service = serviceOptions.find(opt => opt.value === serviceId);
+    if (service) {
+      setValue('duration', service.duration);
+    }
+  };
+
+  // end_timeの自動計算
+  useEffect(() => {
+    if (!start_time) {
+      setValue('end_time', '');
+      return;
+    }
+
+    // start_timeを分単位に変換
+    const [startHour, startMinute] = start_time.split(':').map(Number);
+    let addMinutes = Number(duration);
+    if (!addMinutes || isNaN(addMinutes)) addMinutes = 30;
+
+    // 合計分を計算
+    const totalMinutes = startHour * 60 + startMinute + addMinutes;
+    const endHour = Math.floor(totalMinutes / 60);
+    const endMinute = totalMinutes % 60;
+
+    // HH:mm形式でセット
+    const formatted = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
+    setValue('end_time', formatted);
+  }, [start_time, duration, setValue]);
+
+  const onSubmit = async (data: FormValues) => {
+    setApiError(null);
+    if (!user?.id) {
+      setApiError('ユーザー情報の読み込みに失敗しました。再ログインしてください。');
+      return;
+    }
+    try {
+      const response = await axios.post('/api/reservations', {
+        user_id: user?.id,
+        operator_id: data.operator_id,
+        service_id: data.service_id,
+        duration: data.duration,
+        date: data.date,
+        start_time: data.start_time,
+        end_time: data.end_time,
+        notes: data.notes,
+      });
+      if (response.status === 201) {
+        navigate('/dashboard/reservations');
+      }
+    } catch (err: any) {
+      setApiError(err.response?.data?.message || '予約に失敗しました');
+      console.error(err);
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+
   return (
-    <div className="container mx-auto p-8">
-      <h1 className="mb-6 text-2xl font-bold">新規予約作成</h1>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="mx-auto max-w-lg rounded-lg bg-white p-6 shadow-md"
-      >
-        {/* 担当者 */}
-        <div className="mb-4">
-          <label className="block mb-2 text-sm font-bold">担当者</label>
-          <Controller
+    <FormWrapper
+      title="予約作成"
+      onSubmit={handleSubmit(onSubmit)}
+      isLoading={loading}
+      errorMessage={apiError || undefined}
+    >
+      {/* 担当者 */}
+      <Controller
+        name="operator_id"
+        control={control}
+        rules={{ required: '担当者は必須です' }}
+        render={({ field, fieldState }) => (
+          <Select
+            id="operator_id"
             name="operator_id"
-            control={control}
-            rules={{ required: '担当者を選択してください' }}
-            render={({ field }) => (
-              <Select
-                value={field.value || ''}
-                onChange={(e) => field.onChange(Number(e.target.value))}
-                options={operatorOptions}
-              />
-            )}
+            label="担当者"
+            options={operatorOptions}
+            placeholder="担当者を選択してください"
+            error={fieldState.error?.message}
+            ref={field.ref}
+            value={field.value ?? ''}
+            onChange={val => {
+              const selectedId = val === '' ? '' : Number(val);
+              field.onChange(selectedId);
+              if (selectedId !== '') {
+                fetchServices(selectedId);
+                setValue('service_id', '');
+              } else {
+                setServiceOptions([]);
+                setValue('service_id', '');
+              }
+            }}
           />
-          {errors.operator_id && <p className="text-red-500 text-xs">{errors.operator_id.message}</p>}
-        </div>
+        )}
+      />
 
-        {/* サービス */}
-        <div className="mb-4">
-          <label className="block mb-2 text-sm font-bold">サービス</label>
-          <Controller
+      {/* サービス */}
+      <Controller
+        name="service_id"
+        control={control}
+        rules={{ required: 'サービスは必須です' }}
+        render={({ field, fieldState }) => (
+          <Select
+            id="service_id"
             name="service_id"
-            control={control}
-            rules={{ required: 'サービスを選択してください' }}
-            render={({ field }) => (
-              <Select
-                value={field.value || ''}
-                onChange={(e) => field.onChange(Number(e.target.value))}
-                options={serviceOptions}
-              />
-            )}
+            label="サービス"
+            options={serviceOptions}
+            placeholder="サービスを選択してください"
+            error={fieldState.error?.message}
+            ref={field.ref}
+            value={field.value ?? ''}
+            onChange={val => {
+              const selectedId = val === '' ? '' : Number(val);
+              field.onChange(selectedId);
+              if (selectedId !== '') {
+                handleServiceChange(selectedId);
+              }
+            }}
           />
-          {errors.service_id && <p className="text-red-500 text-xs">{errors.service_id.message}</p>}
-        </div>
+        )}
+      />
 
-        {/* 日付 */}
-        <DatePicker
-          label="予約日"
-          name="date"
-          control={control}
-          error={errors.date}
-        />
+      {/* 所要時間 */}
+      <Controller
+        name="duration"
+        control={control}
+        rules={{ required: '所要時間は必須です' }}
+        render={({ field, fieldState }) => (
+          <Input
+            {...field}
+            id="duration"
+            name="duration"
+            label="所要時間（分）"
+            type="number"
+            placeholder="所要時間"
+            error={fieldState.error?.message}
+          />
+        )}
+      />
 
-        <Controller
-          name="duration"
-          control={control}
-          render={({ field }) => (
-            <Input label="所要時間(分)" type="number" field={field} error={errors.duration} />
-          )}
-        />
+      {/* 日付 */}
+      <Controller
+        name="date"
+        control={control}
+        rules={{ required: '日付は必須です' }}
+        render={({ field, fieldState }) => (
+          <DatePicker
+            {...field}
+            id="date"
+            name="date"
+            label="日付"
+            placeholder="日付を選択"
+            error={fieldState.error?.message}
+            ref={field.ref}
+          />
+        )}
+      />
 
-        <Controller
-          name="start_time"
-          control={control}
-          render={({ field }) => (
-            <Input label="開始時間" type="time" field={field} error={errors.start_time} />
-          )}
-        />
+      {/* 開始時間 */}
+      <Controller
+        name="start_time"
+        control={control}
+        rules={{ required: '開始時間は必須です' }}
+        render={({ field, fieldState }) => (
+          <Input
+            {...field}
+            id="start_time"
+            name="start_time"
+            label="開始時間"
+            type="time"
+            placeholder="開始時間"
+            error={fieldState.error?.message}
+          />
+        )}
+      />
 
-        <Controller
-          name="end_time"
-          control={control}
-          render={({ field }) => (
-            <Input label="終了時間" type="time" field={field} error={errors.end_time} />
-          )}
-        />
+      {/* 終了時間（表示のみ） */}
+      <Controller
+        name="end_time"
+        control={control}
+        render={({ field }) => (
+          <Input
+            {...field}
+            id="end_time"
+            name="end_time"
+            label="終了時間"
+            type="time"
+            readOnly
+            value={
+              field.value &&
+              /^([01]\d|2[0-3]):([0-5]\d)$/.test(field.value)
+                ? field.value
+                : ''
+            }
+          />
+        )}
+      />
 
-        <Controller
-          name="notes"
-          control={control}
-          render={({ field }) => (
-            <Input label="備考" placeholder="任意のメモを入力" field={field} error={errors.notes} />
-          )}
-        />
-
-        <div className="mt-6">
-          <button
-            type="submit"
-            className="w-full rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-          >
-            予約を作成する
-          </button>
-        </div>
-      </form>
-    </div>
+      {/* 備考 */}
+      <Controller
+        name="notes"
+        control={control}
+        render={({ field, fieldState }) => (
+          <Input
+            {...field}
+            id="notes"
+            name="notes"
+            label="備考"
+            as="textarea"
+            placeholder="任意のメモを入力"
+            error={fieldState.error?.message}
+          />
+        )}
+      />
+    </FormWrapper>
   );
 };
 

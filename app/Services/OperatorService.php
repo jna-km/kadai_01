@@ -3,7 +3,8 @@
 namespace App\Services;
 
 use App\Repositories\Contracts\OperatorRepositoryInterface;
-
+use App\Models\Operator;
+use Illuminate\Support\Collection;
 /**
  * OperatorService
  *
@@ -81,5 +82,26 @@ class OperatorService
     public function delete(int $id)
     {
         return $this->operatorRepository->delete($id);
+    }
+
+    /**
+     * 公開用オペレーター一覧を取得
+     *
+     * @return Collection
+     */
+    public function getPublicList()
+    {
+        return $this->operatorRepository->getPublicList();
+    }
+
+    /**
+     * 公開用オペレーター情報を取得
+     *
+     * @param int $id
+     * @return Operator
+     */
+    public function getPublicById(int $id)
+    {
+        return $this->operatorRepository->getPublicById($id);
     }
 }

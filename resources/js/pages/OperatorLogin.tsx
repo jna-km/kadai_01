@@ -2,56 +2,87 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useForm, Controller } from 'react-hook-form';
+import { FormWrapper, Input } from '@/components/form';
+
+type FormValues = {
+  email: string;
+  password: string;
+};
 
 const OperatorLogin: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [remember, setRemember] = useState(false);
-  const [error, setError] = useState('');
-  const { setAuthState } = useAuth();
   const navigate = useNavigate();
+  const { setUserAndRole } = useAuth();
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+  const { control, handleSubmit } = useForm<FormValues>({
+    defaultValues: { email: '', password: '' }
+  });
 
+  const onSubmit = async (data: FormValues) => {
+    setApiError(null);
     try {
-      await axios.get('/sanctum/csrf-cookie');
-      const response = await axios.post('/api/operator/login', { email, password, remember });
+      const response = await axios.post('/api/operator/login', data);
+      const { access_token, user } = response.data?.data || {};
 
-      if (response.data?.data?.user) {
-        // operator情報をAuthContextに設定
-        setAuthState(null, response.data.data.user, 'operator');
-        navigate('/operator/dashboard'); // オペレーター用ダッシュボードにリダイレクト
+      if (access_token && user) {
+        // Save token in sessionStorage
+        sessionStorage.setItem('operator_token', access_token);
+
+        // Apply token globally
+        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+
+        // Update AuthContext with operator data
+        setUserAndRole(user, 'operator');
+
+        navigate('/operator/dashboard');
+      } else {
+        setApiError('ログイン情報を確認できませんでした');
       }
     } catch (err: any) {
-      console.error('Operator login failed:', err);
-      setError(err.response?.data?.message || 'ログインに失敗しました。資格情報を確認してください。');
+      setApiError(err.response?.data?.message || 'ログインに失敗しました');
     }
   };
 
   return (
-    <div>
-      <h2>オペレーターログイン</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Email</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        </div>
-        <div>
-          <label>Password</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        </div>
-        <div>
-          <label>
-            <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
-            ログイン状態を保持する
-          </label>
-        </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">ログイン</button>
-      </form>
-    </div>
+    <FormWrapper
+      title="オペレーター ログイン"
+      onSubmit={handleSubmit(onSubmit)}
+      errorMessage={apiError || undefined}
+    >
+      <Controller
+        name="email"
+        control={control}
+        rules={{ required: 'メールアドレスは必須です' }}
+        render={({ field, fieldState }) => (
+          <Input
+            {...field}
+            id="email"
+            name="email"
+            label="メールアドレス"
+            type="email"
+            placeholder="メールアドレス"
+            error={fieldState.error?.message}
+          />
+        )}
+      />
+      <Controller
+        name="password"
+        control={control}
+        rules={{ required: 'パスワードは必須です' }}
+        render={({ field, fieldState }) => (
+          <Input
+            {...field}
+            id="password"
+            name="password"
+            label="パスワード"
+            type="password"
+            placeholder="パスワード"
+            error={fieldState.error?.message}
+          />
+        )}
+      />
+    </FormWrapper>
   );
 };
 

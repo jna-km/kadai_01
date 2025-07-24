@@ -7,7 +7,7 @@ import { Operator } from '../../types/operator';
 
 const OperatorReservationsPage: React.FC = () => {
   const auth = useContext(AuthContext);
-
+  console.log('OperatorReservationsPage auth:', auth);
   if (!auth || auth.isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen text-gray-600">
