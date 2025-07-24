@@ -4,8 +4,8 @@ import { User } from '../types/user';
 import { Operator } from '../types/operator';
 import { AuthContextType } from '../types';
 
-axios.defaults.withCredentials = true; // ✅ Cookieを送信する
-axios.defaults.withXSRFToken = true;
+// axios.defaults.withCredentials = true; // ✅ Cookieを送信する
+// axios.defaults.withXSRFToken = true;
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -29,41 +29,56 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setRole(userRole);
   };
 
-  const setUserAndRole = (userData: User | null, userRole: 'user' | 'operator') => {
-    if (userRole === 'user') {
-      setAuthState(userData, null, 'user');
-    } else {
-      setAuthState(null, operator, 'operator');
-    }
-  };
+const setUserAndRole = (
+  data: User | Operator | null,
+  userRole: 'user' | 'operator'
+) => {
+  if (userRole === 'user') {
+    setAuthState(data as User, null, 'user');
+  } else {
+    setAuthState(null, data as Operator, 'operator');
+  }
+};
 
   useEffect(() => {
-    const checkLoginStatus = async () => {
-      setIsLoading(true);
-      try {
-        await axios.get('/sanctum/csrf-cookie');
-        // ✅ まずオペレーター確認
-        const opRes = await axios.get('/api/operator/me');
-        if (opRes.data?.data) {
-          setAuthState(null, opRes.data.data, 'operator');
-          return;
-        }
-      } catch (operatorError) {
-        try {
-          // ✅ 次にユーザー確認
-          const userRes = await axios.get('/api/me');
-          if (userRes.data?.data) {
-            setAuthState(userRes.data.data, null, 'user');
-            return;
-          }
-        } catch (userError) {
-          console.log('Not authenticated as user or operator');
-          setAuthState(null, null, null);
-        }
-      } finally {
-        setIsLoading(false);
+const checkLoginStatus = async () => {
+  setIsLoading(true);
+  try {
+    // CSRF Cookie取得（Laravel Sanctum 用）
+    await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
+
+    alert(role)
+    console.log('Checking login status...',role);
+    if (role === 'user') {
+
+      // ユーザーログイン確認
+      const userRes = await axios.get('/api/me', { withCredentials: true });
+      if (userRes.data?.data) {
+        setAuthState(userRes.data.data, null, 'user');
+        return;
       }
-    };
+    } else if (role === 'operator') {
+      // オペレーターログイン確認
+      const opRes = await axios.get('/api/operator/me', { withCredentials: true });
+      if (opRes.data?.data) {
+        setAuthState(null, opRes.data.data, 'operator');
+        return;
+      }
+    } else {
+      // どちらも認証されていない場合
+      setAuthState(null, null, null);
+    }
+
+
+
+  } catch (err) {
+    console.error('認証チェックエラー:', err);
+    setAuthState(null, null, null);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
     checkLoginStatus();
   }, []);
 

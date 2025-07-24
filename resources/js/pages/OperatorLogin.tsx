@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { useForm, Controller } from 'react-hook-form';
 import { FormWrapper, Input } from '@/components/form';
 
@@ -11,6 +12,7 @@ type FormValues = {
 
 const OperatorLogin: React.FC = () => {
   const navigate = useNavigate();
+  const { setUserAndRole } = useAuth();
   const [apiError, setApiError] = useState<string | null>(null);
 
   const { control, handleSubmit } = useForm<FormValues>({
@@ -20,10 +22,14 @@ const OperatorLogin: React.FC = () => {
   const onSubmit = async (data: FormValues) => {
     setApiError(null);
     try {
-      await axios.get('/sanctum/csrf-cookie');
-      const response = await axios.post('/api/operator/login', data);
-      if (response.data.data.user) {
+      await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
+      const response = await axios.post('/api/operator/login', data, { withCredentials: true });
+      const operatorData = response.data?.data?.user;
+      if (operatorData) {
+        setUserAndRole(operatorData, 'operator');
         navigate('/operator/dashboard');
+      } else {
+        setApiError('ログイン情報を確認できませんでした');
       }
     } catch (err: any) {
       setApiError(err.response?.data?.message || 'ログインに失敗しました');
