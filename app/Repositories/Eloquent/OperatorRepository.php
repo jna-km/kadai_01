@@ -45,4 +45,18 @@ class OperatorRepository implements OperatorRepositoryInterface
         }
         return $operator->delete();
     }
+
+    public function getPublicList()
+    {
+        return Operator::select('id', 'name')->get();
+    }
+    public function getPublicById(int $id)
+    {
+        return Operator::with([
+            'services:id,operator_id,name,duration',
+            'workingHours:id,operator_id,day_of_week,start_time,end_time'
+        ])
+        ->select('id', 'name')
+        ->findOrFail($id);
+    }
 }
