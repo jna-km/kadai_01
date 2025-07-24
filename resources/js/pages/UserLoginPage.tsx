@@ -1,7 +1,7 @@
 
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
-import Input from '../components/form/Input';
+import { FormWrapper, Input } from '@/components/form';
 import React from 'react';
 
 type FormValues = {
@@ -53,23 +53,44 @@ export default function UserLoginPage() {
           render={({ field, fieldState }) => (
             <Input
               {...field}
-              id="password"
-              name="password"
-              label="パスワード"
-              type="password"
-              placeholder="パスワード"
-              error={fieldState.error?.message}
-            />
-          )}
-        />
-        {apiError && <p className="text-red-500 text-sm mt-1">{apiError}</p>}
-        <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full mt-2"
-        >
-          ログイン
-        </button>
-      </form>
-    </div>
+  return (
+    <FormWrapper
+      title="ユーザーログイン"
+      onSubmit={handleSubmit(onSubmit)}
+      errorMessage={apiError || undefined}
+    >
+      <Controller
+        name="email"
+        control={control}
+        rules={{ required: 'メールアドレスは必須です' }}
+        render={({ field, fieldState }) => (
+          <Input
+            {...field}
+            id="email"
+            name="email"
+            label="メールアドレス"
+            type="email"
+            placeholder="メールアドレス"
+            error={fieldState.error?.message}
+          />
+        )}
+      />
+      <Controller
+        name="password"
+        control={control}
+        rules={{ required: 'パスワードは必須です' }}
+        render={({ field, fieldState }) => (
+          <Input
+            {...field}
+            id="password"
+            name="password"
+            label="パスワード"
+            type="password"
+            placeholder="パスワード"
+            error={fieldState.error?.message}
+          />
+        )}
+      />
+      {apiError && <p className="text-red-500 text-sm mt-1">{apiError}</p>}
+    </FormWrapper>
   );
-}

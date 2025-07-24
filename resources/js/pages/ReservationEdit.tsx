@@ -1,13 +1,10 @@
-
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { AuthContext } from "../contexts/AuthContext";
 import { User } from '../types/user';
-import Select from '../components/form/Select';
-import Input from '../components/form/Input';
-import DatePicker from '../components/form/DatePicker';
+import { FormWrapper, Input, Select, DatePicker } from '@/components/form';
 
 type SelectOption = { label: string; value: string | number };
 
@@ -17,6 +14,7 @@ interface FormValues {
   duration: number | '';
   date: string;
   start_time: string;
+  end_time: string; // ← 追加
   notes: string;
 }
 
@@ -44,6 +42,7 @@ const ReservationEdit: React.FC = () => {
       duration: '',
       date: '',
       start_time: '',
+      end_time: '', // ← 追加
       notes: '',
     },
   });
@@ -101,6 +100,25 @@ const ReservationEdit: React.FC = () => {
     }
   };
 
+  // 追加: 編集時もend_time自動計算
+  const start_time = useWatch({ control, name: 'start_time' });
+  const duration = useWatch({ control, name: 'duration' });
+
+  useEffect(() => {
+    if (!start_time) {
+      setValue('end_time', '');
+      return;
+    }
+    const [startHour, startMinute] = start_time.split(':').map(Number);
+    let addMinutes = Number(duration);
+    if (!addMinutes || isNaN(addMinutes)) addMinutes = 30;
+    const totalMinutes = startHour * 60 + startMinute + addMinutes;
+    const endHour = Math.floor(totalMinutes / 60);
+    const endMinute = totalMinutes % 60;
+    const formatted = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
+    setValue('end_time', formatted);
+  }, [start_time, duration, setValue]);
+
   const onSubmit = async (data: FormValues) => {
     setApiError(null);
     if (!user?.id) {
@@ -137,96 +155,130 @@ const ReservationEdit: React.FC = () => {
   }
 
   return (
-    <div>
-      <h2>予約編集</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          name="operator_id"
-          control={control}
-          rules={{ required: '担当者は必須です' }}
-          render={({ field }) => (
-            <Select
-              id="operator_id"
-              name="operator_id"
-              value={field.value || ''}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              options={operatorOptions}
-              placeholder="担当者を選択してください"
-              label="担当者"
-              error={errors.operator_id?.message}
-              ref={field.ref}
-            />
-          )}
-        />
-        <Controller
-          name="service_id"
-          control={control}
-          rules={{ required: 'サービスは必須です' }}
-          render={({ field }) => (
-            <Select
-              id="service_id"
-              name="service_id"
-              value={field.value || ''}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              options={serviceOptions}
-              placeholder="サービスを選択してください"
-              label="サービス"
-              error={errors.service_id?.message}
-              ref={field.ref}
-            />
-          )}
-        />
-        <Input
-          id="duration"
-          name="duration"
-          label="所要時間（分）"
-          type="number"
-          placeholder="所要時間"
-          error={errors.duration?.message}
-          {...register('duration', { required: '所要時間は必須です' })}
-        />
-        <Controller
-          name="date"
-          control={control}
-          rules={{ required: '日付は必須です' }}
-          render={({ field, fieldState }) => (
-            <DatePicker
-              id="date"
-              name="date"
-              value={field.value}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              label="日付"
-              placeholder="日付を選択"
-              error={fieldState.error?.message}
-              ref={field.ref}
-            />
-          )}
-        />
-        <Input
-          id="start_time"
-          name="start_time"
-          label="開始時間"
-          type="time"
-          placeholder="開始時間"
-          error={errors.start_time?.message}
-          {...register('start_time', { required: '開始時間は必須です' })}
-        />
-        <Input
-          id="notes"
-          name="notes"
-          as="textarea"
-          label="備考"
-          placeholder="任意のメモを入力"
-          error={errors.notes?.message}
-          {...register('notes')}
-        />
-        {apiError && <p className="text-red-500 text-xs mt-1">{apiError}</p>}
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">更新する</button>
-      </form>
-    </div>
+    <FormWrapper
+      title="予約編集"
+      onSubmit={handleSubmit(onSubmit)}
+      isLoading={loading}
+      errorMessage={apiError || undefined}
+    >
+      <Controller
+        name="operator_id"
+        control={control}
+        rules={{ required: '担当者は必須です' }}
+        render={({ field, fieldState }) => (
+          <Select
+            {...field}
+            id="operator_id"
+            name="operator_id"
+            label="担当者"
+            options={operatorOptions}
+            placeholder="担当者を選択してください"
+            error={fieldState.error?.message}
+            ref={field.ref}
+          />
+        )}
+      />
+      <Controller
+        name="service_id"
+        control={control}
+        rules={{ required: 'サービスは必須です' }}
+        render={({ field, fieldState }) => (
+          <Select
+            {...field}
+            id="service_id"
+            name="service_id"
+            label="サービス"
+            options={serviceOptions}
+            placeholder="サービスを選択してください"
+            error={fieldState.error?.message}
+            ref={field.ref}
+          />
+        )}
+      />
+      <Controller
+        name="duration"
+        control={control}
+        rules={{ required: '所要時間は必須です' }}
+        render={({ field, fieldState }) => (
+          <Input
+            {...field}
+            id="duration"
+            name="duration"
+            label="所要時間（分）"
+            type="number"
+            placeholder="所要時間"
+            error={fieldState.error?.message}
+          />
+        )}
+      />
+      <Controller
+        name="date"
+        control={control}
+        rules={{ required: '日付は必須です' }}
+        render={({ field, fieldState }) => (
+          <DatePicker
+            {...field}
+            id="date"
+            name="date"
+            label="日付"
+            placeholder="日付を選択"
+            error={fieldState.error?.message}
+            ref={field.ref}
+          />
+        )}
+      />
+      <Controller
+        name="start_time"
+        control={control}
+        rules={{ required: '開始時間は必須です' }}
+        render={({ field, fieldState }) => (
+          <Input
+            {...field}
+            id="start_time"
+            name="start_time"
+            label="開始時間"
+            type="time"
+            placeholder="開始時間"
+            error={fieldState.error?.message}
+          />
+        )}
+      />
+      <Controller
+        name="end_time"
+        control={control}
+        render={({ field }) => (
+          <Input
+            {...field}
+            id="end_time"
+            name="end_time"
+            label="終了時間"
+            type="time"
+            readOnly
+            value={
+              field.value &&
+              /^([01]\d|2[0-3]):([0-5]\d)$/.test(field.value)
+                ? field.value
+                : ''
+            }
+          />
+        )}
+      />
+      <Controller
+        name="notes"
+        control={control}
+        render={({ field, fieldState }) => (
+          <Input
+            {...field}
+            id="notes"
+            name="notes"
+            label="備考"
+            as="textarea"
+            placeholder="任意のメモを入力"
+            error={fieldState.error?.message}
+          />
+        )}
+      />
+    </FormWrapper>
   );
 };
 

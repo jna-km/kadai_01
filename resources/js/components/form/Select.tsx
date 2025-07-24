@@ -1,4 +1,3 @@
-
 import React, { forwardRef } from 'react';
 
 type SelectOption = {
@@ -9,8 +8,8 @@ type SelectOption = {
 type SelectProps = {
   id: string;
   name: string;
-  value: string | number;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  value: string | number | null | undefined;
+  onChange: (value: string | number) => void;
   onBlur?: (e: React.FocusEvent<HTMLSelectElement>) => void;
   options: SelectOption[];
   placeholder?: string;
@@ -20,6 +19,9 @@ type SelectProps = {
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
   ({ id, name, value, onChange, onBlur, options, placeholder, label, error }, ref) => {
+    const normalizedValue =
+      value === null || value === undefined || Number.isNaN(value) ? '' : String(value);
+
     return (
       <div className="mb-4">
         {label && (
@@ -30,16 +32,16 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         <select
           id={id}
           name={name}
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
           ref={ref}
-          className={`border rounded-md p-2 w-full${error ? ' border-red-500' : ''}`}
+          value={normalizedValue}
+          onChange={e => onChange(e.target.value)}
+          onBlur={onBlur}
+          className={`w-full border rounded-md p-2 ${error ? 'border-red-500' : 'border-gray-300'}`}
         >
-          {placeholder && <option value="">{placeholder}</option>}
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
+          <option value="">{placeholder || '選択してください'}</option>
+          {options.map(opt => (
+            <option key={opt.value} value={String(opt.value)}>
+              {opt.label}
             </option>
           ))}
         </select>
