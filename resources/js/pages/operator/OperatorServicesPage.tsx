@@ -1,21 +1,35 @@
+
 import React, { useContext, useState } from "react";
 import Sidebar from "../../components/operator/Sidebar";
 import Header from "../../components/operator/Header";
 import { AuthContext } from "../../contexts/AuthContext";
 import { Service } from "../../types/service";
 import axios from "axios";
+import { useForm, Controller } from 'react-hook-form';
+import Input from '../../components/form/Input';
 
 const OperatorServicesPage: React.FC = () => {
   const { operator } = useContext(AuthContext);
   const [services, setServices] = useState<Service[]>(operator?.services || []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    duration: 30,
-    price: 0
+
+  type FormValues = {
+    name: string;
+    description: string;
+    duration: number | '';
+    price: number | '';
+  };
+
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
+    defaultValues: {
+      name: '',
+      description: '',
+      duration: 30,
+      price: 0,
+    }
   });
+  const [apiError, setApiError] = useState('');
 
   if (!operator) {
     return (
@@ -35,7 +49,7 @@ const OperatorServicesPage: React.FC = () => {
   const handleOpenModal = (service?: Service) => {
     if (service) {
       setEditingService(service);
-      setFormData({
+      reset({
         name: service.name,
         description: service.description || "",
         duration: service.duration,
@@ -43,7 +57,7 @@ const OperatorServicesPage: React.FC = () => {
       });
     } else {
       setEditingService(null);
-      setFormData({ name: "", description: "", duration: 30, price: 0 });
+      reset({ name: "", description: "", duration: 30, price: 0 });
     }
     setIsModalOpen(true);
   };
@@ -52,33 +66,24 @@ const OperatorServicesPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: name === "duration" || name === "price" ? Number(value) : value
-    });
-  };
 
-  const handleSubmit = async () => {
+  const onSubmit = async (data: FormValues) => {
+    setApiError('');
     try {
       const payload = {
-        ...formData,
-        operator_id: operator.id, // オペレーターIDを追加
+        ...data,
+        operator_id: operator.id,
       };
-
       if (editingService) {
-        // Update existing service
         const response = await axios.put(`/api/services/${editingService.id}`, payload);
         setServices(services.map(s => (s.id === editingService.id ? response.data.data : s)));
       } else {
-        console.log(payload)
-        // Create new service
         const response = await axios.post("/api/services", payload);
         setServices([...services, response.data.data]);
       }
       handleCloseModal();
-    } catch (error) {
+    } catch (error: any) {
+      setApiError(error.response?.data?.message || "サービスの保存に失敗しました");
       console.error("サービスの保存に失敗しました", error);
     }
   };
@@ -161,51 +166,86 @@ const OperatorServicesPage: React.FC = () => {
                 <h3 className="text-xl font-bold mb-4">
                   {editingService ? "サービス編集" : "新規サービス追加"}
                 </h3>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="サービス名"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="border w-full p-2 mb-2"
-                />
-                <textarea
-                  name="description"
-                  placeholder="説明"
-                  value={formData.description}
-                  onChange={handleChange}
-                  className="border w-full p-2 mb-2"
-                />
-                <input
-                  type="number"
-                  name="duration"
-                  placeholder="所要時間(分)"
-                  value={formData.duration}
-                  onChange={handleChange}
-                  className="border w-full p-2 mb-4"
-                />
-                <input
-                  type="number"
-                  name="price"
-                  placeholder="価格（円）"
-                  value={formData.price}
-                  onChange={handleChange}
-                  className="border w-full p-2 mb-4"
-                />
-                <div className="flex justify-end space-x-2">
-                  <button
-                    onClick={handleCloseModal}
-                    className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-                  >
-                    キャンセル
-                  </button>
-                  <button
-                    onClick={handleSubmit}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                  >
-                    保存
-                  </button>
-                </div>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <Controller
+                    name="name"
+                    control={control}
+                    rules={{ required: 'サービス名は必須です' }}
+                    render={({ field, fieldState }) => (
+                      <Input
+                        {...field}
+                        id="name"
+                        name="name"
+                        label="サービス名"
+                        placeholder="サービス名"
+                        error={fieldState.error?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="description"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <Input
+                        {...field}
+                        id="description"
+                        name="description"
+                        label="説明"
+                        as="textarea"
+                        placeholder="説明"
+                        error={fieldState.error?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="duration"
+                    control={control}
+                    rules={{ required: '所要時間は必須です' }}
+                    render={({ field, fieldState }) => (
+                      <Input
+                        {...field}
+                        id="duration"
+                        name="duration"
+                        label="所要時間(分)"
+                        type="number"
+                        placeholder="所要時間(分)"
+                        error={fieldState.error?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="price"
+                    control={control}
+                    rules={{ required: '価格は必須です' }}
+                    render={({ field, fieldState }) => (
+                      <Input
+                        {...field}
+                        id="price"
+                        name="price"
+                        label="価格（円）"
+                        type="number"
+                        placeholder="価格（円）"
+                        error={fieldState.error?.message}
+                      />
+                    )}
+                  />
+                  {apiError && <p className="text-red-500 text-sm mt-1">{apiError}</p>}
+                  <div className="flex justify-end space-x-2 mt-4">
+                    <button
+                      type="button"
+                      onClick={handleCloseModal}
+                      className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                    >
+                      キャンセル
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                      保存
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           )}
