@@ -5,6 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { FormWrapper } from '@/components/form';
 import { Input } from '@/components/ui';
 import { useAuthStore } from '../../stores/authStore';
+import { useNotificationStore } from '@/stores/useNotificationStore';
 
 type FormValues = {
   email: string;
@@ -15,6 +16,7 @@ const OperatorLogin: React.FC = () => {
   const navigate = useNavigate();
   const setUserAndRole = useAuthStore(state => state.setUserAndRole);
   const [apiError, setApiError] = useState<string | null>(null);
+  const { showNotification } = useNotificationStore();
 
   const { control, handleSubmit } = useForm<FormValues>({
     defaultValues: { email: '', password: '' }
@@ -30,12 +32,16 @@ const OperatorLogin: React.FC = () => {
         sessionStorage.setItem('operator_token', access_token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
         setUserAndRole(user, 'operator');
+
+        showNotification('ログインに成功しました！', 'success');
         navigate('/operator/dashboard');
       } else {
         setApiError('ログイン情報を確認できませんでした');
       }
     } catch (err: any) {
-      setApiError(err.response?.data?.message || 'ログインに失敗しました');
+      const message = err.response?.data?.message || 'ログインに失敗しました';
+      setApiError(message);
+      showNotification(message, 'error');
     }
   };
 

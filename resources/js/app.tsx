@@ -5,6 +5,7 @@ import axios from 'axios';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../css/app.css';
 import { useAuthStore } from './stores/authStore';
+import Notification from '@/components/ui/Notification';
 
 axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken = true;
@@ -17,10 +18,13 @@ const App: React.FC = () => {
   }, [checkLoginStatus]);
 
   return (
-    <RouterProvider
-      router={router}
-      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-    />
+    <>
+      <Notification />
+      <RouterProvider
+        router={router}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      />
+    </>
   );
 };
 

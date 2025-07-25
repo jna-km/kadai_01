@@ -1,47 +1,41 @@
-import 'react-datepicker/dist/react-datepicker.css';
-import React, { forwardRef } from 'react';
-import ReactDatePicker, { registerLocale } from 'react-datepicker';
-import ja from 'date-fns/locale/ja';
-import ErrorMessage from '../form/ErrorMessage';
+import React, { forwardRef } from "react";
+import ReactDatePicker, { ReactDatePickerProps } from "react-datepicker";
+import { registerLocale } from "react-datepicker";
+import ja from "date-fns/locale/ja";
+import "react-datepicker/dist/react-datepicker.css";
 
-registerLocale('ja', ja);
+registerLocale("ja", ja);
 
-type DatePickerProps = {
-  id: string;
-  name: string;
-  value: Date | null;
-  onChange: (date: Date | null) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-  placeholder?: string;
+type Props = Omit<ReactDatePickerProps, "onChange" | "selected"> & {
   label?: string;
   error?: string;
-  ref?: React.Ref<any>;
+  className?: string;
+  selected?: Date | null;
+  onChange: (date: Date | null) => void;
+  placeholder?: string;
 };
 
-const DatePicker = forwardRef<any, DatePickerProps>(
-  ({ id, name, value, onChange, onBlur, placeholder = '日付を選択', label, error }, ref) => {
+const baseClass =
+  "block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed";
+
+const DatePicker = forwardRef<ReactDatePicker, Props>(
+  ({ label, error, className = "", placeholder, selected, onChange, ...rest }, ref) => {
     return (
-      <div className="mb-4">
+      <div>
         {label && (
-          <label htmlFor={id} className="mb-1 block text-sm font-medium text-gray-700">
-            {label}
-          </label>
+          <label className="block mb-1 text-sm font-medium text-gray-700">{label}</label>
         )}
         <ReactDatePicker
-          id={id}
-          name={name}
-          selected={value}
-          onChange={onChange}
-          onBlur={onBlur}
+          selected={selected ?? null}
+          onChange={(date) => onChange(date ?? null)}
+          className={`${baseClass} ${className}`}
+          placeholderText={placeholder}
           locale="ja"
           dateFormat="yyyy/MM/dd"
-          placeholderText={placeholder}
-          className={`mt-1 block w-full rounded-md border bg-white px-3 py-2 shadow-sm placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm${error ? ' border-red-500' : ' border-gray-300'}`}
-          wrapperClassName="w-full"
-          calendarClassName="react-datepicker"
           ref={ref}
+          {...rest}
         />
-        {error && <ErrorMessage message={error} />}
+        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
       </div>
     );
   }

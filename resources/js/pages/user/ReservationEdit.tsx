@@ -166,14 +166,14 @@ const ReservationEdit: React.FC = () => {
         rules={{ required: '担当者は必須です' }}
         render={({ field, fieldState }) => (
           <Select
-            {...field}
             id="operator_id"
             name="operator_id"
             label="担当者"
             options={operatorOptions}
             placeholder="担当者を選択してください"
             error={fieldState.error?.message}
-            ref={field.ref}
+            value={field.value?.toString() || ''}
+            onChange={(e) => field.onChange(e.target.value)}
           />
         )}
       />
@@ -183,14 +183,14 @@ const ReservationEdit: React.FC = () => {
         rules={{ required: 'サービスは必須です' }}
         render={({ field, fieldState }) => (
           <Select
-            {...field}
             id="service_id"
             name="service_id"
             label="サービス"
             options={serviceOptions}
             placeholder="サービスを選択してください"
             error={fieldState.error?.message}
-            ref={field.ref}
+            value={field.value?.toString() || ''}
+            onChange={(e) => field.onChange(e.target.value)}
           />
         )}
       />
@@ -200,13 +200,14 @@ const ReservationEdit: React.FC = () => {
         rules={{ required: '所要時間は必須です' }}
         render={({ field, fieldState }) => (
           <Input
-            {...field}
             id="duration"
             name="duration"
             label="所要時間（分）"
             type="number"
             placeholder="所要時間"
             error={fieldState.error?.message}
+            value={field.value || ''}
+            onChange={field.onChange}
           />
         )}
       />
@@ -216,13 +217,13 @@ const ReservationEdit: React.FC = () => {
         rules={{ required: '日付は必須です' }}
         render={({ field, fieldState }) => (
           <DatePicker
-            {...field}
             id="date"
             name="date"
             label="日付"
             placeholder="日付を選択"
             error={fieldState.error?.message}
-            ref={field.ref}
+            selected={field.value ? new Date(field.value) : null}
+            onChange={(date) => field.onChange(date ? date.toISOString().split('T')[0] : '')}
           />
         )}
       />
@@ -232,13 +233,14 @@ const ReservationEdit: React.FC = () => {
         rules={{ required: '開始時間は必須です' }}
         render={({ field, fieldState }) => (
           <Input
-            {...field}
             id="start_time"
             name="start_time"
             label="開始時間"
             type="time"
             placeholder="開始時間"
             error={fieldState.error?.message}
+            value={field.value || ''}
+            onChange={field.onChange}
           />
         )}
       />
@@ -267,13 +269,14 @@ const ReservationEdit: React.FC = () => {
         control={control}
         render={({ field, fieldState }) => (
           <Input
-            {...field}
             id="notes"
             name="notes"
             label="備考"
-            as="textarea"
             placeholder="任意のメモを入力"
             error={fieldState.error?.message}
+            value={field.value || ''}
+            onChange={field.onChange}
+            className="h-24"
           />
         )}
       />

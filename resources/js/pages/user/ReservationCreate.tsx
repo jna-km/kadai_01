@@ -19,6 +19,10 @@ interface FormValues {
   notes: string;
 }
 
+const safeNumber = (val: string): number | '' => {
+  return val && !isNaN(Number(val)) ? Number(val) : '';
+};
+
 const ReservationCreate: React.FC = () => {
   const [operatorOptions, setOperatorOptions] = useState<OperatorOption[]>([]);
   const [serviceOptions, setServiceOptions] = useState<ServiceOption[]>([]);
@@ -148,18 +152,16 @@ const ReservationCreate: React.FC = () => {
         render={({ field, fieldState }) => (
           <Select
             id="operator_id"
-            name="operator_id"
             label="担当者"
             options={operatorOptions}
             placeholder="担当者を選択してください"
             error={fieldState.error?.message}
-            ref={field.ref}
-            value={field.value ?? ''}
-            onChange={val => {
-              const selectedId = val === '' ? '' : Number(val);
+            value={String(field.value ?? '')}
+            onChange={(e) => {
+              const selectedId = safeNumber(e.target.value);
               field.onChange(selectedId);
               if (selectedId !== '') {
-                fetchServices(selectedId);
+                fetchServices(selectedId as number);
                 setValue('service_id', '');
               } else {
                 setServiceOptions([]);
@@ -178,18 +180,16 @@ const ReservationCreate: React.FC = () => {
         render={({ field, fieldState }) => (
           <Select
             id="service_id"
-            name="service_id"
             label="サービス"
             options={serviceOptions}
             placeholder="サービスを選択してください"
             error={fieldState.error?.message}
-            ref={field.ref}
-            value={field.value ?? ''}
-            onChange={val => {
-              const selectedId = val === '' ? '' : Number(val);
+            value={String(field.value ?? '')}
+            onChange={(e) => {
+              const selectedId = safeNumber(e.target.value);
               field.onChange(selectedId);
               if (selectedId !== '') {
-                handleServiceChange(selectedId);
+                handleServiceChange(selectedId as number);
               }
             }}
           />
@@ -221,13 +221,13 @@ const ReservationCreate: React.FC = () => {
         rules={{ required: '日付は必須です' }}
         render={({ field, fieldState }) => (
           <DatePicker
-            {...field}
             id="date"
             name="date"
             label="日付"
             placeholder="日付を選択"
             error={fieldState.error?.message}
-            ref={field.ref}
+            selected={field.value ? new Date(field.value) : null}
+            onChange={(date) => field.onChange(date ? date.toISOString().split('T')[0] : '')}
           />
         )}
       />
