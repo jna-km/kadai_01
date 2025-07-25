@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuthStore } from '../../stores/authStore';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { FormWrapper, Input, Select, DatePicker } from '@/components/form';
 
@@ -18,12 +18,12 @@ interface FormValues {
   notes: string;
 }
 
-const CreateReservation: React.FC = () => {
+const ReservationCreate: React.FC = () => {
   const [operatorOptions, setOperatorOptions] = useState<OperatorOption[]>([]);
   const [serviceOptions, setServiceOptions] = useState<ServiceOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
-  const { user } = useAuth();
+  const user = useAuthStore(state => state.user);
   const navigate = useNavigate();
 
   const { control, handleSubmit, setValue } = useForm<FormValues>({
@@ -291,4 +291,4 @@ const CreateReservation: React.FC = () => {
   );
 };
 
-export default CreateReservation;
+export default ReservationCreate;

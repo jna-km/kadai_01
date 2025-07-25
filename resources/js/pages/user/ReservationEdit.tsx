@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller, useWatch } from 'react-hook-form';
-import { AuthContext } from "../contexts/AuthContext";
-import { User } from '../types/user';
+import { useAuthStore } from '../../stores/authStore';
+import { User } from '../../types/user';
 import { FormWrapper, Input, Select, DatePicker } from '@/components/form';
 
 type SelectOption = { label: string; value: string | number };
@@ -14,15 +14,14 @@ interface FormValues {
   duration: number | '';
   date: string;
   start_time: string;
-  end_time: string; // ← 追加
+  end_time: string;
   notes: string;
 }
 
 const ReservationEdit: React.FC = () => {
   const { reservationId } = useParams<{ reservationId: string }>();
   const navigate = useNavigate();
-  const auth = useContext(AuthContext);
-  const user = auth.user as User;
+  const user = useAuthStore(state => state.user) as User;
 
   const [operatorOptions, setOperatorOptions] = useState<SelectOption[]>([]);
   const [serviceOptions, setServiceOptions] = useState<SelectOption[]>([]);
@@ -42,7 +41,7 @@ const ReservationEdit: React.FC = () => {
       duration: '',
       date: '',
       start_time: '',
-      end_time: '', // ← 追加
+      end_time: '',
       notes: '',
     },
   });
@@ -73,7 +72,6 @@ const ReservationEdit: React.FC = () => {
         setValue('date', r.date ? r.date.split('T')[0] : '');
         setValue('start_time', r.start_time ? r.start_time.substring(0, 5) : '');
         setValue('notes', r.notes ?? '');
-        // サービス一覧も取得
         if (r.operator_id) fetchServices(r.operator_id);
       })
       .catch(err => {

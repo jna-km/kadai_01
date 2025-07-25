@@ -1,43 +1,33 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
 import { useForm, Controller } from 'react-hook-form';
 import { FormWrapper, Input } from '@/components/form';
+import { useAuthStore } from '../../stores/authStore';
 
 type FormValues = {
   email: string;
   password: string;
+  remember: boolean;
 };
 
-const OperatorLogin: React.FC = () => {
+const Login: React.FC = () => {
+  const setUserAndRole = useAuthStore(state => state.setUserAndRole);
   const navigate = useNavigate();
-  const { setUserAndRole } = useAuth();
   const [apiError, setApiError] = useState<string | null>(null);
 
   const { control, handleSubmit } = useForm<FormValues>({
-    defaultValues: { email: '', password: '' }
+    defaultValues: { email: '', password: '', remember: false }
   });
 
   const onSubmit = async (data: FormValues) => {
     setApiError(null);
     try {
-      const response = await axios.post('/api/operator/login', data);
-      const { access_token, user } = response.data?.data || {};
-
-      if (access_token && user) {
-        // Save token in sessionStorage
-        sessionStorage.setItem('operator_token', access_token);
-
-        // Apply token globally
-        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-
-        // Update AuthContext with operator data
-        setUserAndRole(user, 'operator');
-
-        navigate('/operator/dashboard');
-      } else {
-        setApiError('ログイン情報を確認できませんでした');
+      await axios.get('/sanctum/csrf-cookie');
+      const response = await axios.post('/api/login', data);
+      if (response.data.data.user) {
+        setUserAndRole(response.data.data.user, 'user');
+        navigate('/dashboard');
       }
     } catch (err: any) {
       setApiError(err.response?.data?.message || 'ログインに失敗しました');
@@ -46,7 +36,7 @@ const OperatorLogin: React.FC = () => {
 
   return (
     <FormWrapper
-      title="オペレーター ログイン"
+      title="ログイン"
       onSubmit={handleSubmit(onSubmit)}
       errorMessage={apiError || undefined}
     >
@@ -82,8 +72,23 @@ const OperatorLogin: React.FC = () => {
           />
         )}
       />
+      <Controller
+        name="remember"
+        control={control}
+        render={({ field }) => (
+          <label className="flex items-center gap-2 mb-4 text-sm font-medium text-gray-700">
+            <input
+              type="checkbox"
+              checked={field.value}
+              onChange={e => field.onChange(e.target.checked)}
+              className="mr-2"
+            />
+            ログイン状態を保持する
+          </label>
+        )}
+      />
     </FormWrapper>
   );
 };
 
-export default OperatorLogin;
+export default Login;

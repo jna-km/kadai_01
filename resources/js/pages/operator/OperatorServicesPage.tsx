@@ -1,15 +1,14 @@
-
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import Sidebar from "../../components/operator/Sidebar";
 import Header from "../../components/operator/Header";
-import { AuthContext } from "../../contexts/AuthContext";
+import { useAuthStore } from '../../stores/authStore';
 import { Service } from "../../types/service";
 import axios from "axios";
 import { useForm, Controller } from 'react-hook-form';
 import Input from '../../components/form/Input';
 
 const OperatorServicesPage: React.FC = () => {
-  const { operator } = useContext(AuthContext);
+  const operator = useAuthStore(state => state.operator);
   const [services, setServices] = useState<Service[]>(operator?.services || []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
