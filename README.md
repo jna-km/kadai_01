@@ -257,6 +257,7 @@ API仕様は `openapi.yaml` に記述されており、変更は直接このフ�
 - [APIレスポンス設計ガイドライン](docs/api_response.md)
 - [ショートカット](docs/shortcuts.md)
 - [UI改善ガイド](docs/ui_improvement_guide.md)
+- [Laravel + Supervisor 設定ガイド](docs/supervisor.md)
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
 

@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { useForm, Controller, useWatch } from 'react-hook-form';
-import { FormWrapper, Input, Select, DatePicker } from '@/components/form';
+import { FormWrapper } from '@/components/form';
+import { Input, Select, DatePicker } from '@/components/ui';
 
 type OperatorOption = { label: string; value: number };
 type ServiceOption = { label: string; value: number; duration: number };

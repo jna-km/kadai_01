@@ -4,7 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { useAuthStore } from '../../stores/authStore';
 import { User } from '../../types/user';
-import { FormWrapper, Input, Select, DatePicker } from '@/components/form';
+import { FormWrapper } from '@/components/form';
+import { Input, Select, DatePicker } from '@/components/ui';
 
 type SelectOption = { label: string; value: string | number };
 

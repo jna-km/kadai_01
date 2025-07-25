@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
-import { FormWrapper, Input } from '@/components/form';
+import { FormWrapper } from '@/components/form';
+import { Input } from '@/components/ui';
 import { useAuthStore } from '../../stores/authStore';
 
 type FormValues = {

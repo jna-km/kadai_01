@@ -2,7 +2,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import React, { forwardRef } from 'react';
 import ReactDatePicker, { registerLocale } from 'react-datepicker';
 import ja from 'date-fns/locale/ja';
-import ErrorMessage from './ErrorMessage';
+import ErrorMessage from '../form/ErrorMessage';
 
 registerLocale('ja', ja);
 

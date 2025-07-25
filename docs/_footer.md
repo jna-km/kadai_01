@@ -14,6 +14,7 @@
 - [APIレスポンス設計ガイドライン]({{prefix}}api_response.md)
 - [ショートカット]({{prefix}}shortcuts.md)
 - [UI改善ガイド]({{prefix}}ui_improvement_guide.md)
+- [Laravel + Supervisor 設定ガイド]({{prefix}}supervisor.md)
 - [画面遷移図（PDF）]({{prefix}}画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）]({{prefix}}ワイヤーフレーム.pdf)
 

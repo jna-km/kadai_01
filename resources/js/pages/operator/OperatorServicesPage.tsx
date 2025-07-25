@@ -5,7 +5,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { Service } from "../../types/service";
 import axios from "axios";
 import { useForm, Controller } from 'react-hook-form';
-import Input from '../../components/form/Input';
+import Input from '../../components/ui/Input';
 
 const OperatorServicesPage: React.FC = () => {
   const operator = useAuthStore(state => state.operator);

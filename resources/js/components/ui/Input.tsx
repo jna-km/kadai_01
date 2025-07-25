@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import ErrorMessage from './ErrorMessage';
+import ErrorMessage from '../form/ErrorMessage';
 
 type InputProps = {
   id: string;
