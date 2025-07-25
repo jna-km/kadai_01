@@ -1,28 +1,31 @@
-# 🚀 ショートカットコマンド早見表
 
-Laravel + Docker 開発でよく使う `.sh` スクリプトや alias の一覧です。
+
+# ✅ 今後のTODOメモ
+
+## 🔹 状態管理とUI改善
+- [ ] Zustandへの完全移行検証
+- [ ] 共通UIコンポーネント（Button, Input, Select, DatePicker）整理
+- [ ] UIガイドライン文書化
+
+## 🔹 認証・API関連
+- [ ] オペレーター／ユーザー認証の統合テスト
+- [ ] Axiosクライアントの責務分離
+- [ ] CSRF & Token認証仕組みドキュメント化
+
+## 🔹 インフラ・運用
+- [ ] Supervisor設定の本番反映
+- [ ] 本番デプロイ手順のドキュメント化
+
+## 🔹 残課題
+- [ ] Router再確認（未使用ページ洗い出し）
+- [ ] cleanup.jsの最終版を仕上げる
+- [ ] 未使用ファイル整理後の最終確認
 
 ---
 
-## 🔧 .shスクリプト（scripts/ 配下）
-
-| コマンド                      | 説明                             |
-|------------------------------|----------------------------------|
-| `./scripts/dc.sh`            | docker compose を実行           |
-| `./scripts/into.sh`          | Laravelコンテナに入る            |
-| `./scripts/update-footer.sh` | Markdownフッターを一括更新       |
-<!-- | `./scripts/artisan.sh`       | artisanコマンドをラップする      | -->
-<!-- | `./scripts/fresh.sh`         | migrate:fresh + seed を実行     | -->
-
----
-
-## ⚡ エイリアス（~/.zshrc / ~/.bashrc）
-
-```bash
-alias dcb="docker compose exec app bash"
-alias art="docker compose exec app php artisan"
-alias fresh="docker compose exec app php artisan migrate:fresh --seed"
-```
+📌 **備考**  
+- 追加で浮かんだタスクはここに追記。
+- 完了したらチェックボックスに ✅ をつける。
 --- フッター開始 ---
 
 [← READMEに戻る](../README.md)
