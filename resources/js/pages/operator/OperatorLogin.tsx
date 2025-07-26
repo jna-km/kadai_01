@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { FormWrapper } from '@/components/form';
 import { Input } from '@/components/ui';
-import { useAuthStore } from '../../stores/authStore';
+import { useAuthStore } from '@/stores/authStore';
 import { showNotification } from '@/stores/useNotificationStore';
 
 type FormValues = {
