@@ -14,6 +14,7 @@
 - [APIレスポンス設計ガイドライン]({{prefix}}api_response.md)
 - [ショートカット]({{prefix}}shortcuts.md)
 - [UI改善ガイド]({{prefix}}ui_improvement_guide.md)
+- [Laravel + Supervisor 設定ガイド]({{prefix}}supervisor.md)
 - [画面遷移図（PDF）]({{prefix}}画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）]({{prefix}}ワイヤーフレーム.pdf)
 
@@ -29,5 +30,10 @@
 - [2025-07-22]({{prefix}}logs/2025-07-22.md)
 - [2025-07-23]({{prefix}}logs/2025-07-23.md)
 - [2025-07-24]({{prefix}}logs/2025-07-24.md)
+- [2025-07-25]({{prefix}}logs/2025-07-25.md)
+
+
+### 色々やること
+- [今後のTODOメモ]({{prefix}}todo.md)
 
 --- フッター終了 ---

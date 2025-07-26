@@ -20,6 +20,7 @@ node_modules
 dist
 dist-ssr
 *.local
+zchat-rulues.md
 
 # Editor directories and files
 .vscode/*

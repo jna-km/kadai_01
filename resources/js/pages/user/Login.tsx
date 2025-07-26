@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
 import { useForm, Controller } from 'react-hook-form';
-import { FormWrapper, Input } from '@/components/form';
+import { FormWrapper } from '@/components/form';
+import { Input } from '@/components/ui';
+import { useAuthStore } from '../../stores/authStore';
+import { showNotification } from '@/stores/useNotificationStore';
 
 type FormValues = {
   email: string;
@@ -12,7 +14,7 @@ type FormValues = {
 };
 
 const Login: React.FC = () => {
-  const { setUserAndRole } = useAuth();
+  const setUserAndRole = useAuthStore(state => state.setUserAndRole);
   const navigate = useNavigate();
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -27,10 +29,13 @@ const Login: React.FC = () => {
       const response = await axios.post('/api/login', data);
       if (response.data.data.user) {
         setUserAndRole(response.data.data.user, 'user');
+        showNotification({ type: 'success', message: 'ログインに成功しました！' });
         navigate('/dashboard');
       }
     } catch (err: any) {
-      setApiError(err.response?.data?.message || 'ログインに失敗しました');
+      const message = err.response?.data?.message || 'ログインに失敗しました';
+      setApiError(message);
+      showNotification({ type: 'error', message });
     }
   };
 

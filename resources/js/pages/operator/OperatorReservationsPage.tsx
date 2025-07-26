@@ -1,22 +1,21 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { format } from 'date-fns';
 import Sidebar from '../../components/operator/Sidebar';
 import Header from '../../components/operator/Header';
-import { AuthContext } from '../../contexts/AuthContext';
+import { useAuthStore } from '../../stores/authStore';
 import { Operator } from '../../types/operator';
 
 const OperatorReservationsPage: React.FC = () => {
-  const auth = useContext(AuthContext);
-  console.log('OperatorReservationsPage auth:', auth);
-  if (!auth || auth.isLoading) {
+  const operator = useAuthStore(state => state.operator) as Operator;
+  const isLoading = useAuthStore(state => state.isLoading);
+
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen text-gray-600">
         データを読み込み中...
       </div>
     );
   }
-
-  const operator = auth.operator as Operator;
 
   if (!operator) {
     return (

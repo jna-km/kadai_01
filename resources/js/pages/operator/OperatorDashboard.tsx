@@ -1,6 +1,6 @@
 import React from 'react';
-import Sidebar from '../components/operator/Sidebar';
-import Header from '../components/operator/Header';
+import Sidebar from '../../components/operator/Sidebar';
+import Header from '../../components/operator/Header';
 
 const OperatorDashboard: React.FC = () => {
   return (
