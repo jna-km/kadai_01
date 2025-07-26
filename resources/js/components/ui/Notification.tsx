@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNotificationStore } from '../../stores/useNotificationStore';
+import { useNotificationStore } from '@/stores/useNotificationStore';
 
 const NotificationItem: React.FC<{ id: string; type: string; message: string; onClose: (id: string) => void }> = ({ id, type, message, onClose }) => {
   useEffect(() => {
@@ -11,7 +11,7 @@ const NotificationItem: React.FC<{ id: string; type: string; message: string; on
 
   const bgColor = type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white';
   return (
-    <div className={`flex items-center justify-between px-4 py-3 rounded shadow-lg ${bgColor}`}>
+    <div className={`flex items-center justify-between px-4 py-3 rounded shadow-lg ${bgColor}`} role="alert">
       <span className="text-sm">{message}</span>
       <button
         onClick={() => onClose(id)}

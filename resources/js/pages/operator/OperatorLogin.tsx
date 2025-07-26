@@ -5,7 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { FormWrapper } from '@/components/form';
 import { Input } from '@/components/ui';
 import { useAuthStore } from '../../stores/authStore';
-import { useNotificationStore } from '@/stores/useNotificationStore';
+import { showNotification } from '@/stores/useNotificationStore';
 
 type FormValues = {
   email: string;
@@ -16,7 +16,6 @@ const OperatorLogin: React.FC = () => {
   const navigate = useNavigate();
   const setUserAndRole = useAuthStore(state => state.setUserAndRole);
   const [apiError, setApiError] = useState<string | null>(null);
-  const { showNotification } = useNotificationStore();
 
   const { control, handleSubmit } = useForm<FormValues>({
     defaultValues: { email: '', password: '' }

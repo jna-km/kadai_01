@@ -26,3 +26,8 @@ export const useNotificationStore = create<NotificationState>((set) => ({
       notifications: state.notifications.filter((n) => n.id !== id),
     })),
 }));
+
+// ラッパー関数としてshowNotificationを追加
+export function showNotification(notification: { type: 'success' | 'error'; message: string }) {
+  useNotificationStore.getState().addNotification(notification);
+}
