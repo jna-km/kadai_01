@@ -1,7 +1,5 @@
 import React from 'react';
 import { format } from 'date-fns';
-import Sidebar from '../../components/operator/Sidebar';
-import Header from '../../components/operator/Header';
 import { useAuthStore } from '../../stores/authStore';
 import { Operator } from '../../types/operator';
 
@@ -36,9 +34,9 @@ const OperatorReservationsPage: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar />
+      
       <div className="flex-1">
-        <Header />
+        
         <main className="p-6">
           <h2 className="text-2xl font-bold mb-4">予約管理</h2>
           {reservations.length === 0 ? (

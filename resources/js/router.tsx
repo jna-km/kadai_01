@@ -22,6 +22,7 @@ import OperatorUsersPage from './pages/operator/OperatorUsersPage';
 import OperatorServicesPage from './pages/operator/OperatorServicesPage';
 import OperatorHolidaysPage from './pages/operator/OperatorHolidaysPage';
 import OperatorNoticesPage from './pages/operator/OperatorNoticesPage';
+import OperatorLayout from './components/OperatorLayout';
 
 import OperatorListPage from './pages/OperatorListPage';
 import OperatorDetailPage from './pages/OperatorDetailPage';
@@ -63,12 +64,17 @@ const router = createBrowserRouter([
     path: '/operator',
     element: <ProtectedRoute />,
     children: [
-      { path: 'dashboard', element: <OperatorDashboard /> },
-      { path: 'reservations', element: <OperatorReservationsPage /> },
-      { path: 'users', element: <OperatorUsersPage /> },
-      { path: 'services', element: <OperatorServicesPage /> },
-      { path: 'holidays', element: <OperatorHolidaysPage /> },
-      { path: 'notices', element: <OperatorNoticesPage /> },
+      {
+        element: <OperatorLayout />,
+        children: [
+          { path: 'dashboard', element: <OperatorDashboard /> },
+          { path: 'reservations', element: <OperatorReservationsPage /> },
+          { path: 'users', element: <OperatorUsersPage /> },
+          { path: 'services', element: <OperatorServicesPage /> },
+          { path: 'holidays', element: <OperatorHolidaysPage /> },
+          { path: 'notices', element: <OperatorNoticesPage /> },
+        ]
+      }
     ]
   }
 ]);

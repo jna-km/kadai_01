@@ -12,10 +12,10 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-10">
-      <h1 className="text-xl font-bold text-gray-800">オペレーター管理画面</h1>
+    <header className="bg-blue-600 shadow-md px-4 sm:px-6 py-3 flex justify-between items-center sticky top-0 z-20 text-white w-full box-border max-w-full overflow-x-hidden">
+      <h1 className="text-xl font-bold tracking-wide">オペレーター管理画面</h1>
       <button
-        className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition-colors"
+        className="flex items-center gap-2 bg-white hover:bg-gray-100 text-blue-600 font-semibold px-3 py-1.5 rounded-md shadow transition"
         onClick={handleLogout}
       >
         <FiLogOut size={18} />
