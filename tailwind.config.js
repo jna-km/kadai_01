@@ -22,6 +22,11 @@ export default {
         success: {
           DEFAULT: '#16A34A',
         },
+        brand: {
+          light: '#CFE2F3',
+          DEFAULT: '#3C78D8',
+          dark: '#1C4587',
+        },
       },
       borderRadius: {
         DEFAULT: '0.5rem',

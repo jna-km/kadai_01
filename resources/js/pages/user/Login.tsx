@@ -30,7 +30,7 @@ const Login: React.FC = () => {
       if (response.data.data.user) {
         setUserAndRole(response.data.data.user, 'user');
         showNotification({ type: 'success', message: 'ログインに成功しました！' });
-        navigate('/dashboard');
+        navigate('/user/dashboard');
       }
     } catch (err: any) {
       const message = err.response?.data?.message || 'ログインに失敗しました';

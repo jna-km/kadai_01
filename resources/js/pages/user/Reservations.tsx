@@ -58,7 +58,7 @@ const Reservations: React.FC = () => {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">予約一覧</h2>
-        <Link to="/dashboard/reservations/create">
+        <Link to="/user/reservations/create">
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             新規予約
           </button>
@@ -89,7 +89,7 @@ const Reservations: React.FC = () => {
                   <td className="py-2 px-4 border-b">{reservation.start_time.substring(0, 5)} - {reservation.end_time.substring(0, 5)}</td>
                   <td className="py-2 px-4 border-b">{reservation.notes}</td>
                   <td className="py-2 px-4 border-b text-center">
-                    <Link to={`/dashboard/reservations/edit/${reservation.id}`}>
+                    <Link to={`/user/reservations/edit/${reservation.id}`}>
                       <button>編集</button>
                     </Link>
                     <button onClick={() => handleDelete(reservation.id)} className="text-sm bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">

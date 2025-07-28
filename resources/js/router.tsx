@@ -32,7 +32,7 @@ import TestApi from './test/TestApi';
 const router = createBrowserRouter([
   // パブリックルート
   { path: '/', element: <Home /> },
-  { path: '/login', element: <Login /> },
+  { path: '/user/login', element: <Login /> },
   { path: '/operator/login', element: <OperatorLogin /> },
   { path: '/logout', element: <Logout /> },
   { path: '/admin/dashboard', element: <AdminDashboard /> },
@@ -44,13 +44,13 @@ const router = createBrowserRouter([
 
   // ユーザー用ダッシュボード（認証必須）
   {
-    path: '/dashboard',
+    path: '/user',
     element: <ProtectedRoute />,
     children: [
       {
         element: <DashboardLayout />,
         children: [
-          { index: true, element: <DashboardHome /> },
+          { path: 'dashboard', element: <DashboardHome /> },
           { path: 'reservations', element: <Reservations /> },
           { path: 'reservations/create', element: <ReservationCreate /> },
           { path: 'reservations/edit/:reservationId', element: <ReservationEdit /> },

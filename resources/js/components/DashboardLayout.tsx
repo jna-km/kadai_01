@@ -1,11 +1,13 @@
 import React from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import axios from 'axios';
+import Header from '../components/user/Header';
+import Sidebar from '../components/user/Sidebar';
+import Footer from '../components/user/Footer';
 
 const DashboardLayout: React.FC = () => {
-  // ↓↓↓ userと一緒にsetUserも取り出すように修正 ↓↓↓
-  const { user, role, setUserAndRole } = useAuth();
+  const { user, setUserAndRole, role } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -15,29 +17,21 @@ const DashboardLayout: React.FC = () => {
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
-      // これでsetUserが使えるようになります
       setUserAndRole(null, null);
-      navigate('/login');
+      navigate('/user/login');
     }
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
-      <aside style={{ width: '200px', background: '#f0f0f0', padding: '1rem' }}>
-        <nav>
-          <h3>Welcome, {user?.name}</h3>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            <li><Link to="/dashboard">Dashboard</Link></li>
-            <li><Link to="/dashboard/reservations">My Reservations</Link></li>
-            {/* ↓↓↓ ログアウトはLinkではなくbuttonに変更すると、よりセマンティックです ↓↓↓ */}
-            <li><button onClick={handleLogout} style={{all: 'unset', cursor: 'pointer', textDecoration: 'underline', color: 'blue'}}>Logout</button></li>
-          </ul>
-        </nav>
-      </aside>
-
-      <main style={{ flex: 1, padding: '2rem' }}>
-        <Outlet />
+    <div className="flex flex-col min-h-screen">
+      <Header onLogout={handleLogout} />
+      <main className="flex flex-1">
+        <Sidebar />
+        <div className="flex-1 p-8">
+          <Outlet />
+        </div>
       </main>
+      <Footer />
     </div>
   );
 };

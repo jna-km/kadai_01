@@ -3,6 +3,7 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "@/components/operator/Sidebar";
 import Header from "@/components/operator/Header";
+import Footer from "@/components/operator/Footer";
 
 export default function OperatorLayout() {
   return (
@@ -19,6 +20,8 @@ export default function OperatorLayout() {
         <main className="flex-1 overflow-auto p-6 min-w-0">
           <Outlet />
         </main>
+        {/* フッター */}
+        <Footer />
       </div>
     </div>
   );
