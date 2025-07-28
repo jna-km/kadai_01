@@ -21,7 +21,7 @@ const ProtectedRoute: React.FC = () => {
 
   // 未認証時はログインページへ
   // operatorページなら operator/login へ
-  const redirectTo = location.pathname.startsWith('/operator') ? '/operator/login' : '/login';
+  const redirectTo = location.pathname.startsWith('/operator') ? '/operator/login' : '/user/login';
   return <Navigate to={redirectTo} replace />;
 };
 

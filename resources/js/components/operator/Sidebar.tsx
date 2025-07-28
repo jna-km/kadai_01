@@ -3,14 +3,15 @@ import { NavLink } from 'react-router-dom';
 
 const Sidebar: React.FC = () => {
   const linkClasses = ({ isActive }: { isActive: boolean }) =>
-    `block px-4 py-2 rounded hover:bg-gray-700 ${
-      isActive ? 'bg-gray-900 font-bold' : ''
+    `block px-4 py-2 rounded-md transition-colors duration-150 ${
+      isActive ? 'bg-blue-600 text-white font-bold' : 'text-gray-400 hover:bg-gray-800 hover:text-white'
     }`;
 
   return (
-    <aside className="w-64 bg-gray-800 text-white h-screen p-4">
+    <aside className="w-56 bg-gray-900 text-gray-200 h-screen px-6 py-5 shadow-md border-r border-slate-700">
       <nav>
-        <ul className="space-y-2">
+        <p className="text-xs text-gray-500 uppercase tracking-widest mb-2">管理メニュー</p>
+        <ul className="space-y-3 text-sm">
           <li>
             <NavLink to="/operator/dashboard" className={linkClasses}>
               ダッシュボード

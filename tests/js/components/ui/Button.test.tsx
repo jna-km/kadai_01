@@ -23,4 +23,25 @@ describe("Button", () => {
     expect(handleClick).not.toHaveBeenCalled();
     expect(screen.getByText("無効")).toBeDisabled();
   });
+
+  it("variantとsizeに応じたクラスが適用される", () => {
+    const { rerender } = render(<Button variant="primary" size="lg">Primary</Button>);
+    const button = screen.getByText("Primary");
+
+    expect(button.className).toContain("bg-blue-500"); // primary
+    expect(button.className).toContain("text-white");
+    expect(button.className).toContain("px-6"); // lgサイズ
+    expect(button.className).toContain("py-3");
+    expect(button.className).toContain("text-lg");
+
+
+    rerender(<Button variant="secondary" size="sm">Secondary</Button>);
+    const buttonSecondary = screen.getByText("Secondary");
+
+    expect(buttonSecondary.className).toContain("bg-gray-500"); // secondary
+    expect(buttonSecondary.className).toContain("text-white");
+    expect(buttonSecondary.className).toContain("px-2"); // smサイズ
+    expect(buttonSecondary.className).toContain("py-1");
+    expect(buttonSecondary.className).toContain("text-sm");
+  });
 });

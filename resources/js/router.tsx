@@ -22,6 +22,7 @@ import OperatorUsersPage from './pages/operator/OperatorUsersPage';
 import OperatorServicesPage from './pages/operator/OperatorServicesPage';
 import OperatorHolidaysPage from './pages/operator/OperatorHolidaysPage';
 import OperatorNoticesPage from './pages/operator/OperatorNoticesPage';
+import OperatorLayout from './components/OperatorLayout';
 
 import OperatorListPage from './pages/OperatorListPage';
 import OperatorDetailPage from './pages/OperatorDetailPage';
@@ -31,7 +32,7 @@ import TestApi from './test/TestApi';
 const router = createBrowserRouter([
   // パブリックルート
   { path: '/', element: <Home /> },
-  { path: '/login', element: <Login /> },
+  { path: '/user/login', element: <Login /> },
   { path: '/operator/login', element: <OperatorLogin /> },
   { path: '/logout', element: <Logout /> },
   { path: '/admin/dashboard', element: <AdminDashboard /> },
@@ -43,13 +44,13 @@ const router = createBrowserRouter([
 
   // ユーザー用ダッシュボード（認証必須）
   {
-    path: '/dashboard',
+    path: '/user',
     element: <ProtectedRoute />,
     children: [
       {
         element: <DashboardLayout />,
         children: [
-          { index: true, element: <DashboardHome /> },
+          { path: 'dashboard', element: <DashboardHome /> },
           { path: 'reservations', element: <Reservations /> },
           { path: 'reservations/create', element: <ReservationCreate /> },
           { path: 'reservations/edit/:reservationId', element: <ReservationEdit /> },
@@ -63,12 +64,17 @@ const router = createBrowserRouter([
     path: '/operator',
     element: <ProtectedRoute />,
     children: [
-      { path: 'dashboard', element: <OperatorDashboard /> },
-      { path: 'reservations', element: <OperatorReservationsPage /> },
-      { path: 'users', element: <OperatorUsersPage /> },
-      { path: 'services', element: <OperatorServicesPage /> },
-      { path: 'holidays', element: <OperatorHolidaysPage /> },
-      { path: 'notices', element: <OperatorNoticesPage /> },
+      {
+        element: <OperatorLayout />,
+        children: [
+          { path: 'dashboard', element: <OperatorDashboard /> },
+          { path: 'reservations', element: <OperatorReservationsPage /> },
+          { path: 'users', element: <OperatorUsersPage /> },
+          { path: 'services', element: <OperatorServicesPage /> },
+          { path: 'holidays', element: <OperatorHolidaysPage /> },
+          { path: 'notices', element: <OperatorNoticesPage /> },
+        ]
+      }
     ]
   }
 ]);

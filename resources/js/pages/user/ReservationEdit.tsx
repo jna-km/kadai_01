@@ -142,7 +142,7 @@ const ReservationEdit: React.FC = () => {
         notes: data.notes,
       });
       console.log('予約更新成功');
-      navigate('/dashboard/reservations');
+      navigate('/user/reservations');
     } catch (err: any) {
       setApiError(err.response?.data?.message || '予約の更新に失敗しました');
       console.error(err);

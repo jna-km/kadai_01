@@ -5,13 +5,30 @@
   .react-datepicker {
     @apply bg-white border border-gray-300 rounded-lg shadow-md;
   }
+  .sidebar {
+    @apply bg-gray-900 text-white w-64 h-screen px-4 py-6;
+  }
+  .sidebar-link {
+    @apply block py-2 px-4 rounded hover:bg-blue-700;
+  }
+  .sidebar-link.active {
+    @apply bg-blue-400 text-white;
+  }
+
+  .header {
+    @apply bg-gradient-to-r from-blue-400 to-indigo-400 text-white px-6 py-4 flex justify-between items-center;
+  }
+
+  .main-content {
+    @apply bg-gray-100 p-6 min-h-screen;
+  }
   .react-datepicker__header {
-    @apply bg-indigo-500 text-white rounded-t-lg;
+    @apply bg-indigo-400 text-white rounded-t-lg;
   }
   .react-datepicker__day {
     @apply w-8 h-8 flex items-center justify-center rounded hover:bg-indigo-100;
   }
   .react-datepicker__day--selected {
-    @apply bg-indigo-500 text-white;
+    @apply bg-indigo-400 text-white;
   }
 }

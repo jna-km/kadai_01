@@ -17,7 +17,7 @@ const Logout = () => {
         console.error('Logout failed:', error);
       } finally {
         setUserAndRole(null, null);
-        navigate('/login');
+        navigate('/user/login');
       }
     };
     performLogout();

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import Sidebar from "../../components/operator/Sidebar";
-import Header from "../../components/operator/Header";
+import OperatorLayout from "../../components/OperatorLayout";
 import { useAuthStore } from '../../stores/authStore';
 import { Service } from "../../types/service";
 import axios from "axios";
@@ -32,16 +31,10 @@ const OperatorServicesPage: React.FC = () => {
 
   if (!operator) {
     return (
-      <div className="flex min-h-screen bg-gray-100">
-        <Sidebar />
-        <div className="flex-1">
-          <Header />
-          <main className="p-6">
-            <h2 className="text-2xl font-bold mb-4">サービス管理</h2>
-            <p>データを読み込み中です...</p>
-          </main>
-        </div>
-      </div>
+      <main className="p-6">
+        <h2 className="text-2xl font-bold mb-4">サービス管理</h2>
+        <p>データを読み込み中です...</p>
+      </main>
     );
   }
 
@@ -102,11 +95,7 @@ const OperatorServicesPage: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1">
-        <Header />
-        <main className="p-6">
+    <main className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">サービス管理</h2>
             <button
@@ -248,10 +237,13 @@ const OperatorServicesPage: React.FC = () => {
               </div>
             </div>
           )}
-        </main>
-      </div>
-    </div>
+      </main>
   );
 };
 
 export default OperatorServicesPage;
+
+// Optional: expose getLayout for custom layout handling (e.g. Next.js)
+OperatorServicesPage.getLayout = (page: React.ReactNode) => (
+  <OperatorLayout>{page}</OperatorLayout>
+);
