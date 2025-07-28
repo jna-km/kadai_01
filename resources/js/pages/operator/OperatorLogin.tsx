@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
 import { useForm, Controller } from 'react-hook-form';
-import { FormWrapper, Input } from '@/components/form';
+import { FormWrapper } from '@/components/form';
+import { Input } from '@/components/ui';
+import { useAuthStore } from '@/stores/authStore';
+import { showNotification } from '@/stores/useNotificationStore';
 
 type FormValues = {
   email: string;
@@ -12,7 +14,7 @@ type FormValues = {
 
 const OperatorLogin: React.FC = () => {
   const navigate = useNavigate();
-  const { setUserAndRole } = useAuth();
+  const setUserAndRole = useAuthStore(state => state.setUserAndRole);
   const [apiError, setApiError] = useState<string | null>(null);
 
   const { control, handleSubmit } = useForm<FormValues>({
@@ -26,21 +28,19 @@ const OperatorLogin: React.FC = () => {
       const { access_token, user } = response.data?.data || {};
 
       if (access_token && user) {
-        // Save token in sessionStorage
         sessionStorage.setItem('operator_token', access_token);
-
-        // Apply token globally
         axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-
-        // Update AuthContext with operator data
         setUserAndRole(user, 'operator');
 
+        showNotification('ログインに成功しました！', 'success');
         navigate('/operator/dashboard');
       } else {
         setApiError('ログイン情報を確認できませんでした');
       }
     } catch (err: any) {
-      setApiError(err.response?.data?.message || 'ログインに失敗しました');
+      const message = err.response?.data?.message || 'ログインに失敗しました';
+      setApiError(message);
+      showNotification(message, 'error');
     }
   };
 

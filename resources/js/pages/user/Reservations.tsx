@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Reservation } from '../types/reservations';
+import { Reservation } from '../../types/reservations';
 import { format, parseISO } from 'date-fns';
 
 const Reservations: React.FC = () => {

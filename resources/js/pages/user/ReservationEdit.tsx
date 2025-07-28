@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller, useWatch } from 'react-hook-form';
-import { AuthContext } from "../contexts/AuthContext";
-import { User } from '../types/user';
-import { FormWrapper, Input, Select, DatePicker } from '@/components/form';
+import { useAuthStore } from '../../stores/authStore';
+import { User } from '../../types/user';
+import { FormWrapper } from '@/components/form';
+import { Input, Select, DatePicker } from '@/components/ui';
 
 type SelectOption = { label: string; value: string | number };
 
@@ -14,15 +15,14 @@ interface FormValues {
   duration: number | '';
   date: string;
   start_time: string;
-  end_time: string; // ← 追加
+  end_time: string;
   notes: string;
 }
 
 const ReservationEdit: React.FC = () => {
   const { reservationId } = useParams<{ reservationId: string }>();
   const navigate = useNavigate();
-  const auth = useContext(AuthContext);
-  const user = auth.user as User;
+  const user = useAuthStore(state => state.user) as User;
 
   const [operatorOptions, setOperatorOptions] = useState<SelectOption[]>([]);
   const [serviceOptions, setServiceOptions] = useState<SelectOption[]>([]);
@@ -42,7 +42,7 @@ const ReservationEdit: React.FC = () => {
       duration: '',
       date: '',
       start_time: '',
-      end_time: '', // ← 追加
+      end_time: '',
       notes: '',
     },
   });
@@ -73,7 +73,6 @@ const ReservationEdit: React.FC = () => {
         setValue('date', r.date ? r.date.split('T')[0] : '');
         setValue('start_time', r.start_time ? r.start_time.substring(0, 5) : '');
         setValue('notes', r.notes ?? '');
-        // サービス一覧も取得
         if (r.operator_id) fetchServices(r.operator_id);
       })
       .catch(err => {
@@ -167,14 +166,14 @@ const ReservationEdit: React.FC = () => {
         rules={{ required: '担当者は必須です' }}
         render={({ field, fieldState }) => (
           <Select
-            {...field}
             id="operator_id"
             name="operator_id"
             label="担当者"
             options={operatorOptions}
             placeholder="担当者を選択してください"
             error={fieldState.error?.message}
-            ref={field.ref}
+            value={field.value?.toString() || ''}
+            onChange={(e) => field.onChange(e.target.value)}
           />
         )}
       />
@@ -184,14 +183,14 @@ const ReservationEdit: React.FC = () => {
         rules={{ required: 'サービスは必須です' }}
         render={({ field, fieldState }) => (
           <Select
-            {...field}
             id="service_id"
             name="service_id"
             label="サービス"
             options={serviceOptions}
             placeholder="サービスを選択してください"
             error={fieldState.error?.message}
-            ref={field.ref}
+            value={field.value?.toString() || ''}
+            onChange={(e) => field.onChange(e.target.value)}
           />
         )}
       />
@@ -201,13 +200,14 @@ const ReservationEdit: React.FC = () => {
         rules={{ required: '所要時間は必須です' }}
         render={({ field, fieldState }) => (
           <Input
-            {...field}
             id="duration"
             name="duration"
             label="所要時間（分）"
             type="number"
             placeholder="所要時間"
             error={fieldState.error?.message}
+            value={field.value || ''}
+            onChange={field.onChange}
           />
         )}
       />
@@ -217,13 +217,13 @@ const ReservationEdit: React.FC = () => {
         rules={{ required: '日付は必須です' }}
         render={({ field, fieldState }) => (
           <DatePicker
-            {...field}
             id="date"
             name="date"
             label="日付"
             placeholder="日付を選択"
             error={fieldState.error?.message}
-            ref={field.ref}
+            selected={field.value ? new Date(field.value) : null}
+            onChange={(date) => field.onChange(date ? date.toISOString().split('T')[0] : '')}
           />
         )}
       />
@@ -233,13 +233,14 @@ const ReservationEdit: React.FC = () => {
         rules={{ required: '開始時間は必須です' }}
         render={({ field, fieldState }) => (
           <Input
-            {...field}
             id="start_time"
             name="start_time"
             label="開始時間"
             type="time"
             placeholder="開始時間"
             error={fieldState.error?.message}
+            value={field.value || ''}
+            onChange={field.onChange}
           />
         )}
       />
@@ -268,13 +269,14 @@ const ReservationEdit: React.FC = () => {
         control={control}
         render={({ field, fieldState }) => (
           <Input
-            {...field}
             id="notes"
             name="notes"
             label="備考"
-            as="textarea"
             placeholder="任意のメモを入力"
             error={fieldState.error?.message}
+            value={field.value || ''}
+            onChange={field.onChange}
+            className="h-24"
           />
         )}
       />

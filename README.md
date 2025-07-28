@@ -1,5 +1,4 @@
 
-
 ---
 
 詳細な開発ルールはこちら → [docs/coding_rules.md](docs/coding_rules.md)
@@ -17,6 +16,13 @@
 - 注意事項：
     - ローカル開発はHTTPで動作（本番はHTTPS必須）
     - オペレーター操作は `/api/operator/*` エンドポイントでのみ利用可能
+
+### 🆕 最近の変更点（2025/07/25）
+- 状態管理をZustandに統一し、APIレスポンス同期設計を最適化
+- 共通ボタンコンポーネントを実装し、UIの一貫性を強化
+- フォームUIの調整とアクセシビリティ改善を完了
+- UIガイドラインのドキュメント化を開始
+- 成功時メッセージ表示を追加し、ユーザーフィードバックを改善
 
 ---
 
@@ -257,6 +263,7 @@ API仕様は `openapi.yaml` に記述されており、変更は直接このフ�
 - [APIレスポンス設計ガイドライン](docs/api_response.md)
 - [ショートカット](docs/shortcuts.md)
 - [UI改善ガイド](docs/ui_improvement_guide.md)
+- [Laravel + Supervisor 設定ガイド](docs/supervisor.md)
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
 
@@ -272,5 +279,10 @@ API仕様は `openapi.yaml` に記述されており、変更は直接このフ�
 - [2025-07-22](docs/logs/2025-07-22.md)
 - [2025-07-23](docs/logs/2025-07-23.md)
 - [2025-07-24](docs/logs/2025-07-24.md)
+- [2025-07-25](docs/logs/2025-07-25.md)
+
+
+### 色々やること
+- [今後のTODOメモ](docs/todo.md)
 
 --- フッター終了 ---

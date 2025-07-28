@@ -3,21 +3,20 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 
 // パブリックページ
 import Home from './pages/Home';
-import Login from './pages/Login';
-import OperatorLogin from './pages/OperatorLogin';
+import Login from './pages/user/Login';
+import OperatorLogin from './pages/operator/OperatorLogin';
 import Logout from './pages/Logout';
 import AdminDashboard from './pages/AdminDashboard';
 
 // ユーザーダッシュボード
 import DashboardLayout from './components/DashboardLayout';
-import DashboardHome from './pages/DashboardHome';
-import Reservations from './pages/Reservations';
-import ReservationCreate from './pages/ReservationCreate';
-import CreateReservation from './pages/CreateReservation';
-import ReservationEdit from './pages/ReservationEdit';
+import DashboardHome from './pages/user/DashboardHome';
+import Reservations from './pages/user/Reservations';
+import ReservationCreate from './pages/user/ReservationCreate';
+import ReservationEdit from './pages/user/ReservationEdit';
 
 // オペレーター管理ページ
-import OperatorDashboard from './pages/OperatorDashboard';
+import OperatorDashboard from './pages/operator/OperatorDashboard';
 import OperatorReservationsPage from './pages/operator/OperatorReservationsPage';
 import OperatorUsersPage from './pages/operator/OperatorUsersPage';
 import OperatorServicesPage from './pages/operator/OperatorServicesPage';
@@ -52,8 +51,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <DashboardHome /> },
           { path: 'reservations', element: <Reservations /> },
-          { path: 'reservations/new', element: <ReservationCreate /> },
-          { path: 'reservations/create', element: <CreateReservation /> },
+          { path: 'reservations/create', element: <ReservationCreate /> },
           { path: 'reservations/edit/:reservationId', element: <ReservationEdit /> },
         ]
       }
