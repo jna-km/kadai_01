@@ -1,0 +1,5 @@
+# GitHub Copilot Code Review configuration
+auto_review:
+  # Ask Copilot to perform code reviews in Japanese
+  locale: ja
+  instructions_file: .github/copilot-instructions.md
