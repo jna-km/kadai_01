@@ -34,7 +34,7 @@ const Notification: React.FC = () => {
   return (
     <div className="fixed top-5 right-5 z-50 space-y-3 w-80">
       {notifications.map((n) => (
-        <Transition key={n.id} show={true}>
+        <Transition key={n.id} show={n.visible}>
           <NotificationItem
             id={n.id}
             type={n.type}

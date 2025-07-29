@@ -12,7 +12,7 @@ export const Transition = ({ show, children, className = '' }: TransitionProps) 
     <div
       className={clsx(
         'transition-opacity duration-300 ease-in-out',
-        show ? 'opacity-100' : 'opacity-0 pointer-events-none',
+        show ? 'opacity-100' : 'opacity-0',
         className
       )}
       aria-hidden={!show}

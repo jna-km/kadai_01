@@ -151,7 +151,12 @@ const OperatorServicesPage: React.FC = () => {
 
           {/* モーダル */}
           {isModalOpen && (
-            <div className="fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 z-50 flex justify-center items-center">
+            <div
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 z-50 flex justify-center items-center"
+              role="dialog"  
+              aria-modal="true"  
+              aria-labelledby="modal-title"  
+            >
               <div className="bg-white rounded p-6 w-96">
                 <h3 className="text-xl font-bold mb-4">
                   {editingService ? "サービス編集" : "新規サービス追加"}
