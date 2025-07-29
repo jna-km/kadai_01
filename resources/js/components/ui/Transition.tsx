@@ -8,11 +8,12 @@ type TransitionProps = {
 };
 
 export const Transition = ({ show, children, className = '' }: TransitionProps) => {
+  if (!show) return null; 
   return (
     <div
       className={clsx(
         'transition-opacity duration-300 ease-in-out',
-        show ? 'opacity-100' : 'opacity-0',
+        'opacity-0',
         className
       )}
       aria-hidden={!show}

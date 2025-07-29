@@ -152,10 +152,17 @@ const OperatorServicesPage: React.FC = () => {
           {/* モーダル */}
           {isModalOpen && (
             <div
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 z-50 flex justify-center items-center"
-              role="dialog"  
-              aria-modal="true"  
-              aria-labelledby="modal-title"  
+              className={`fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 z-50 flex justify-center items-center
+    ${isModalOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="modal-title"
+              ref={modalRef}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  handleCloseModal();
+                }
+              }}
             >
               <div className="bg-white rounded p-6 w-96">
                 <h3 className="text-xl font-bold mb-4">

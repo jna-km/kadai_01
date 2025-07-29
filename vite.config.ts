@@ -27,7 +27,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: 'resources/js/main.tsx',
-      external: ['.ai-config.json', '.project-root'],
+      // external: ['.ai-config.json', '.project-root'],
     },
   },
   
