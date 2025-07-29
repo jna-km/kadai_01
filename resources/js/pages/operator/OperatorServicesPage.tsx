@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import OperatorLayout from "../../components/OperatorLayout";
 import { useAuthStore } from '../../stores/authStore';
 import { Service } from "../../types/service";
@@ -12,6 +12,7 @@ const OperatorServicesPage: React.FC = () => {
   const [services, setServices] = useState<Service[]>(operator?.services || []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   type FormValues = {
     name: string;
