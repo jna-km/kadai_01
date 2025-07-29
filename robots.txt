@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /.ai-config.json
+Disallow: /.project-root

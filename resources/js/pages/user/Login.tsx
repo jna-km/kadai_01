@@ -5,7 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { FormWrapper } from '@/components/form';
 import { Input } from '@/components/ui';
 import { useAuthStore } from '../../stores/authStore';
-import { showNotification } from '@/stores/useNotificationStore';
+import { toast } from 'sonner';
 
 type FormValues = {
   email: string;
@@ -30,12 +30,14 @@ const Login: React.FC = () => {
       if (response.data.data.user) {
         setUserAndRole(response.data.data.user, 'user');
         showNotification({ type: 'success', message: 'ログインに成功しました！' });
+        
+        toast.success('ログインに成功しました！');
         navigate('/user/dashboard');
       }
     } catch (err: any) {
       const message = err.response?.data?.message || 'ログインに失敗しました';
       setApiError(message);
-      showNotification({ type: 'error', message });
+      toast.error(message);
     }
   };
 

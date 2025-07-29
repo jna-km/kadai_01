@@ -5,7 +5,7 @@ import axios from 'axios';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../css/app.css';
 import { useAuthStore } from './stores/authStore';
-import Notification from '@/components/ui/Notification';
+import { Toaster } from 'sonner';
 
 axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken = true;
@@ -19,7 +19,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Notification />
+      <Toaster richColors position="top-right" />
       <RouterProvider
         router={router}
         future={{ v7_startTransition: true, v7_relativeSplatPath: true }}

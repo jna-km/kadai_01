@@ -5,6 +5,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { FormWrapper } from '@/components/form';
 import { Input, Select, DatePicker } from '@/components/ui';
+import { toast } from 'sonner';
 
 type OperatorOption = { label: string; value: number };
 type ServiceOption = { label: string; value: number; duration: number };
@@ -127,11 +128,14 @@ const ReservationCreate: React.FC = () => {
         notes: data.notes,
       });
       if (response.status === 201) {
-        navigate('/dashboard/reservations');
+        console.log('予約作成成功');
+        toast.success("予約作成成功");
+        navigate('/user/reservations');
       }
     } catch (err: any) {
       setApiError(err.response?.data?.message || '予約に失敗しました');
       console.error(err);
+      toast.error("予約作成失敗");
     }
   };
 

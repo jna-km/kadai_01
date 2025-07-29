@@ -5,6 +5,7 @@ import { Service } from "../../types/service";
 import axios from "axios";
 import { useForm, Controller } from 'react-hook-form';
 import Input from '../../components/ui/Input';
+import { toast } from 'sonner';
 
 const OperatorServicesPage: React.FC = () => {
   const operator = useAuthStore(state => state.operator);
@@ -27,7 +28,6 @@ const OperatorServicesPage: React.FC = () => {
       price: 0,
     }
   });
-  const [apiError, setApiError] = useState('');
 
   if (!operator) {
     return (
@@ -60,7 +60,6 @@ const OperatorServicesPage: React.FC = () => {
 
 
   const onSubmit = async (data: FormValues) => {
-    setApiError('');
     try {
       const payload = {
         ...data,
@@ -69,13 +68,15 @@ const OperatorServicesPage: React.FC = () => {
       if (editingService) {
         const response = await axios.put(`/api/services/${editingService.id}`, payload);
         setServices(services.map(s => (s.id === editingService.id ? response.data.data : s)));
+        toast.success("サービスを更新しました");
       } else {
         const response = await axios.post("/api/services", payload);
         setServices([...services, response.data.data]);
+        toast.success("サービスを追加しました");
       }
       handleCloseModal();
     } catch (error: any) {
-      setApiError(error.response?.data?.message || "サービスの保存に失敗しました");
+      toast.error(error.response?.data?.message || "サービスの保存に失敗しました");
       console.error("サービスの保存に失敗しました", error);
     }
   };
@@ -85,9 +86,10 @@ const OperatorServicesPage: React.FC = () => {
     try {
       await axios.delete(`/api/services/${id}`);
       setServices(services.filter(s => s.id !== id));
+      toast.success("サービスを削除しました");
     } catch (error: any) {
       if (error.response?.status === 409) {
-        alert("このサービスは予約で使用されているため削除できません。");
+        toast.error("このサービスは予約で使用されているため削除できません。");
       } else {
         console.error("サービスの削除に失敗しました", error);
       }
@@ -149,7 +151,7 @@ const OperatorServicesPage: React.FC = () => {
 
           {/* モーダル */}
           {isModalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 z-50 flex justify-center items-center">
               <div className="bg-white rounded p-6 w-96">
                 <h3 className="text-xl font-bold mb-4">
                   {editingService ? "サービス編集" : "新規サービス追加"}
@@ -217,7 +219,6 @@ const OperatorServicesPage: React.FC = () => {
                       />
                     )}
                   />
-                  {apiError && <p className="text-red-500 text-sm mt-1">{apiError}</p>}
                   <div className="flex justify-end space-x-2 mt-4">
                     <button
                       type="button"

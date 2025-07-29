@@ -1,0 +1,47 @@
+{
+  "projectName": "kadai_01",
+  "description": "Laravel（RESTful API） + React（Vite + Tailwind CSS）による統合型予約管理システム。resources/js を起点に SPA を構築し、@ エイリアスで共通コンポーネントにアクセス可能。",
+  "entryPoints": [
+    "README.md",
+    "resources/js/main.tsx",
+    "resources/js/router.tsx",
+    "routes/api.php",
+    "routes/web.php",
+    "app/Http/Controllers",
+    "app/Models"
+  ],
+  "alias": {
+    "@": "resources/js",
+    "@form": "resources/js/components/form",
+    "@ui": "resources/js/components/ui",
+    "@docs": "docs"
+  },
+  "excludedPaths": [
+    "resources/js/__mocks__",
+    "resources/js/.DS_Store",
+    "resources/js/**/*.test.tsx",
+    "node_modules/",
+    "vendor/",
+    "storage/",
+    "public/",
+    "tests/",
+    "bootstrap/cache/",
+    ".git/",
+    ".vscode/",
+    ".idea/"
+  ],
+  "frameworks": [
+    "laravel",
+    "react",
+    "typescript",
+    "tailwindcss",
+    "vite"
+  ],
+  "docs": {
+    "overview": "docs/project-overview.md",
+    "apiGuide": "docs/api_response.md",
+    "uiGuideline": "docs/ui_improvement_guide.md",
+    "screenMap": "docs/function_screen_map.md",
+    "usage": "docs/usecase_reserve.md"
+  }
+}
