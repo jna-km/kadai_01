@@ -5,7 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { FormWrapper } from '@/components/form';
 import { Input } from '@/components/ui';
 import { useAuthStore } from '@/stores/authStore';
-import { showNotification } from '@/stores/useNotificationStore';
+import { toast } from 'sonner';
 
 type FormValues = {
   email: string;
@@ -32,7 +32,7 @@ const OperatorLogin: React.FC = () => {
         axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
         setUserAndRole(user, 'operator');
 
-        showNotification('ログインに成功しました！', 'success');
+        toast.success('ログインに成功しました！');
         navigate('/operator/dashboard');
       } else {
         setApiError('ログイン情報を確認できませんでした');
@@ -40,7 +40,7 @@ const OperatorLogin: React.FC = () => {
     } catch (err: any) {
       const message = err.response?.data?.message || 'ログインに失敗しました';
       setApiError(message);
-      showNotification(message, 'error');
+      toast.error(message);
     }
   };
 

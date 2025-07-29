@@ -54,22 +54,24 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       await axios.get('/sanctum/csrf-cookie');
 
-      const operatorToken = sessionStorage.getItem('operator_token');
-      if (operatorToken) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${operatorToken}`;
-        try {
+      // 1. operator認証チェック
+      try {
+        const operatorToken = sessionStorage.getItem('operator_token');
+        if (operatorToken) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${operatorToken}`;
           const opRes = await axios.get('/api/operator/me');
           if (opRes.data?.data) {
             set({ user: null, operator: opRes.data.data, role: 'operator' });
             return;
           }
-        } catch (operatorError: any) {
-          if (operatorError.response?.status !== 401) {
-            console.error(operatorError);
-          }
+        }
+      } catch (operatorError: any) {
+        if (operatorError.response?.status !== 401) {
+          console.error(operatorError);
         }
       }
 
+      // 2. user認証チェック
       try {
         delete axios.defaults.headers.common['Authorization'];
         const userRes = await axios.get('/api/me', { withCredentials: true });
@@ -83,6 +85,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         }
       }
 
+      // どちらも未認証
       set({ user: null, operator: null, role: null });
     } finally {
       set({ isLoading: false });

@@ -6,6 +6,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { User } from '../../types/user';
 import { FormWrapper } from '@/components/form';
 import { Input, Select, DatePicker } from '@/components/ui';
+import { toast } from 'sonner';
 
 type SelectOption = { label: string; value: string | number };
 
@@ -142,10 +143,12 @@ const ReservationEdit: React.FC = () => {
         notes: data.notes,
       });
       console.log('予約更新成功');
+      toast.success("予約更新成功");
       navigate('/user/reservations');
     } catch (err: any) {
       setApiError(err.response?.data?.message || '予約の更新に失敗しました');
       console.error(err);
+      toast.error("予約更新失敗");
     }
   };
 

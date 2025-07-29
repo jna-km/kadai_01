@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNotificationStore } from '@/stores/useNotificationStore';
+import { Transition } from './Transition';
 
 const NotificationItem: React.FC<{ id: string; type: string; message: string; onClose: (id: string) => void }> = ({ id, type, message, onClose }) => {
   useEffect(() => {
@@ -33,13 +34,14 @@ const Notification: React.FC = () => {
   return (
     <div className="fixed top-5 right-5 z-50 space-y-3 w-80">
       {notifications.map((n) => (
-        <NotificationItem
-          key={n.id}
-          id={n.id}
-          type={n.type}
-          message={n.message}
-          onClose={removeNotification}
-        />
+        <Transition key={n.id} show={n.visible}>
+          <NotificationItem
+            id={n.id}
+            type={n.type}
+            message={n.message}
+            onClose={removeNotification}
+          />
+        </Transition>
       ))}
     </div>
   );

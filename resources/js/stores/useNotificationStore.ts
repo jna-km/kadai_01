@@ -14,7 +14,7 @@ interface NotificationState {
 
 export const useNotificationStore = create<NotificationState>((set) => ({
   notifications: [],
-  addNotification: (notification) =>
+  addNotification: (notification)
     set((state) => ({
       notifications: [
         ...state.notifications,

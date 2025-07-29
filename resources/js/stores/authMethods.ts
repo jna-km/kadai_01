@@ -1,4 +1,3 @@
-import { create } from 'zustand';
 import axios from 'axios';
 import { User } from '../types/user';
 import { Operator } from '../types/operator';
@@ -15,13 +14,8 @@ interface AuthState {
   checkLoginStatus: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  operator: null,
-  role: null,
-  isLoading: true,
-  setAuthState: (user, operator, role) => {
-    // operator_tokenの管理
+export const createAuthMethods = (set: (state: Partial<AuthState>) => void) => {
+  const setAuthState = (user: User | null, operator: Operator | null, role: Role) => {
     if (role === 'operator' && operator) {
       sessionStorage.setItem('operator_token', operator.token || '');
       axios.defaults.headers.common['Authorization'] = `Bearer ${operator.token}`;
@@ -30,14 +24,14 @@ export const useAuthStore = create<AuthState>((set) => ({
       delete axios.defaults.headers.common['Authorization'];
     }
     set({ user, operator, role });
-  },
-  setUserAndRole: (user, role) => {
+  };
+
+  const setUserAndRole = (user: User | null, role: Role) => {
     if (role === 'user') {
       set({ user, operator: null, role });
       sessionStorage.removeItem('operator_token');
       delete axios.defaults.headers.common['Authorization'];
     } else if (role === 'operator' && user) {
-      // operatorとしてuserをoperatorにセット
       set({ user: null, operator: user as any, role });
       if ((user as any).token) {
         sessionStorage.setItem('operator_token', (user as any).token);
@@ -48,25 +42,26 @@ export const useAuthStore = create<AuthState>((set) => ({
       sessionStorage.removeItem('operator_token');
       delete axios.defaults.headers.common['Authorization'];
     }
-  },
-  checkLoginStatus: async () => {
+  };
+
+  const checkLoginStatus = async () => {
     set({ isLoading: true });
     try {
       await axios.get('/sanctum/csrf-cookie');
 
-      const operatorToken = sessionStorage.getItem('operator_token');
-      if (operatorToken) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${operatorToken}`;
-        try {
+      try {
+        const operatorToken = sessionStorage.getItem('operator_token');
+        if (operatorToken) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${operatorToken}`;
           const opRes = await axios.get('/api/operator/me');
           if (opRes.data?.data) {
             set({ user: null, operator: opRes.data.data, role: 'operator' });
             return;
           }
-        } catch (operatorError: any) {
-          if (operatorError.response?.status !== 401) {
-            console.error(operatorError);
-          }
+        }
+      } catch (operatorError: any) {
+        if (operatorError.response?.status !== 401) {
+          console.error(operatorError);
         }
       }
 
@@ -87,5 +82,11 @@ export const useAuthStore = create<AuthState>((set) => ({
     } finally {
       set({ isLoading: false });
     }
-  },
-}));
+  };
+
+  return {
+    setAuthState,
+    setUserAndRole,
+    checkLoginStatus,
+  };
+};

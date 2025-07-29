@@ -24,5 +24,11 @@ export default defineConfig({
   optimizeDeps: {
     include: ['react-datepicker', 'date-fns'], // 依存CSS読み込みエラー防止
   },
+  build: {
+    rollupOptions: {
+      input: 'resources/js/main.tsx',
+      // external: ['.ai-config.json', '.project-root'],
+    },
+  },
   
 });
