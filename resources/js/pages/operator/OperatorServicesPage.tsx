@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import OperatorLayout from "../../components/OperatorLayout";
 import { useAuthStore } from '../../stores/authStore';
 import { Service } from "../../types/service";
@@ -13,6 +13,7 @@ const OperatorServicesPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const firstInputRef = useRef<HTMLInputElement>(null);
 
   type FormValues = {
     name: string;
@@ -29,6 +30,12 @@ const OperatorServicesPage: React.FC = () => {
       price: 0,
     }
   });
+
+  useEffect(() => {
+    if (isModalOpen) {
+      firstInputRef.current?.focus();
+    }
+  }, [isModalOpen]);
 
   if (!operator) {
     return (
@@ -158,14 +165,16 @@ const OperatorServicesPage: React.FC = () => {
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-title"
-              ref={modalRef}
               onKeyDown={(e) => {
                 if (e.key === "Escape") {
                   handleCloseModal();
                 }
               }}
             >
-              <div className="bg-white rounded p-6 w-96">
+              <div
+                className="bg-white rounded p-6 w-96"
+                ref={modalRef}
+              >
                 <h3 className="text-xl font-bold mb-4">
                   {editingService ? "サービス編集" : "新規サービス追加"}
                 </h3>
@@ -182,6 +191,7 @@ const OperatorServicesPage: React.FC = () => {
                         label="サービス名"
                         placeholder="サービス名"
                         error={fieldState.error?.message}
+                        ref={firstInputRef}
                       />
                     )}
                   />
