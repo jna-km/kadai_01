@@ -29,7 +29,6 @@ const Login: React.FC = () => {
       const response = await axios.post('/api/login', data);
       if (response.data.data.user) {
         setUserAndRole(response.data.data.user, 'user');
-        showNotification({ type: 'success', message: 'ログインに成功しました！' });
         
         toast.success('ログインに成功しました！');
         navigate('/user/dashboard');
