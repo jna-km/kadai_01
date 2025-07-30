@@ -8,6 +8,8 @@
     "routes/api.php",
     "routes/web.php",
     "app/Http/Controllers",
+    "app/Http/Requests",
+    "app/Services",
     "app/Models"
   ],
   "alias": {
@@ -40,8 +42,10 @@
   "docs": {
     "overview": "docs/project-overview.md",
     "apiGuide": "docs/api_response.md",
-    "uiGuideline": "docs/ui_improvement_guide.md",
+    "uiGuideline": "docs/ui_guideline.md",
+    "uiImprovement": "docs/ui_improvement_guide.md",
     "screenMap": "docs/function_screen_map.md",
     "usage": "docs/usecase_reserve.md"
-  }
+  },
+  "reviewGuideline": ".github/copilot-instructions.md"
 }

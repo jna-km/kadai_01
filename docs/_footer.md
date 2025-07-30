@@ -13,6 +13,7 @@
 - [コーディングルール]({{prefix}}coding-rules.md)
 - [APIレスポンス設計ガイドライン]({{prefix}}api_response.md)
 - [ショートカット]({{prefix}}shortcuts.md)
+- [バリデーション設計仕様]({{prefix}}validation_spec.md)
 - [UIガイドライン]({{prefix}}ui_guideline.md)
 - [UI改善ガイド]({{prefix}}ui_improvement_guide.md)
 - [Laravel + Supervisor 設定ガイド]({{prefix}}supervisor.md)
