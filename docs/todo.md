@@ -1,9 +1,10 @@
 # ✅ 今後のTODOメモ
 
-- [ ] Zustandストア分離（auth/user/operatorストア統合・selector対応）
+- [x] Zustand状態管理ガイド文書化（2025-07-30 完了）
+- [x] Zustand設計方針・運用ルールの明文化（2025-07-30 完了）
 - [x] 共通UIコンポーネント（Button, Input, Select, DatePicker）整理（2025-07-30 完了）
 - [x] UIガイドライン文書化（2025-07-30 完了）
-
+- [ ] Zustandストア分離（auth/user/operatorストア統合・selector対応）
 - [ ] Zustandストアのテスト自動化（ユニット・統合テスト）
 - [ ] Zustandストアのパフォーマンス最適化検討
 - [ ] DatePickerコンポーネントのアクセシビリティ強化
@@ -66,6 +67,7 @@
 - [バリデーション設計仕様](validation_spec.md)
 - [UIガイドライン](ui_guideline.md)
 - [UI改善ガイド](ui_improvement_guide.md)
+- [アクセシビリティガイド](accessibility_guide.md) 
 - [Zustand 状態管理ガイド](zustand_guide.md)
 - [Laravel + Supervisor 設定ガイド](supervisor.md)
 - [画面遷移図（PDF）](画面遷移図.pdf)
