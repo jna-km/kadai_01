@@ -123,6 +123,7 @@ public function findById(int $id): ?User
 - [2025-07-25](logs/2025-07-25.md)
 - [2025-07-28](logs/2025-07-28.md)
 - [2025-07-29](logs/2025-07-29.md)
+- [2025-07-30](logs/2025-07-30.md)
 
 ### 色々やること
 - [今後のTODOメモ](todo.md)
