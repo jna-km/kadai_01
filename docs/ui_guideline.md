@@ -1,28 +1,4 @@
-# 🚀 ショートカットコマンド早見表
 
-Laravel + Docker 開発でよく使う `.sh` スクリプトや alias の一覧です。
-
----
-
-## 🔧 .shスクリプト（scripts/ 配下）
-
-| コマンド                      | 説明                             |
-|------------------------------|----------------------------------|
-| `./scripts/dc.sh`            | docker compose を実行           |
-| `./scripts/into.sh`          | Laravelコンテナに入る            |
-| `./scripts/update-footer.sh` | Markdownフッターを一括更新       |
-<!-- | `./scripts/artisan.sh`       | artisanコマンドをラップする      | -->
-<!-- | `./scripts/fresh.sh`         | migrate:fresh + seed を実行     | -->
-
----
-
-## ⚡ エイリアス（~/.zshrc / ~/.bashrc）
-
-```bash
-alias dcb="docker compose exec app bash"
-alias art="docker compose exec app php artisan"
-alias fresh="docker compose exec app php artisan migrate:fresh --seed"
-```
 --- フッター開始 ---
 
 [← READMEに戻る](../README.md)

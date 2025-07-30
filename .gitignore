@@ -43,3 +43,6 @@ excluded/*
 # Vite
 /node_modules/.vite/
 /public/build/
+
+#docs
+/docs/and_more/*
