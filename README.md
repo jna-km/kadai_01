@@ -291,6 +291,7 @@ API仕様は `openapi.yaml` に記述されており、変更は直接このフ�
 - [バリデーション設計仕様](docs/validation_spec.md)
 - [UIガイドライン](docs/ui_guideline.md)
 - [UI改善ガイド](docs/ui_improvement_guide.md)
+- [Zustand 状態管理ガイド](docs/zustand_guide.md)
 - [Laravel + Supervisor 設定ガイド](docs/supervisor.md)
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
