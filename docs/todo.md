@@ -4,8 +4,9 @@
 - [x] Zustand設計方針・運用ルールの明文化（2025-07-30 完了）
 - [x] 共通UIコンポーネント（Button, Input, Select, DatePicker）整理（2025-07-30 完了）
 - [x] UIガイドライン文書化（2025-07-30 完了）
-- [ ] Zustandストア分離（auth/user/operatorストア統合・selector対応）
-- [ ] Zustandストアのテスト自動化（ユニット・統合テスト）
+- [x] Zustandストア分離（auth/user/operatorストア統合・selector対応）
+- [x] Zustand状態管理ベストプラクティス文書化（2025-07-30 完了）
+- [x] Zustandストアのテスト自動化（ユニット・統合テスト）（2025-07-30 完了）
 - [ ] Zustandストアのパフォーマンス最適化検討
 - [ ] DatePickerコンポーネントのアクセシビリティ強化
 - [ ] ボタンコンポーネントのホバー・フォーカス状態統一
