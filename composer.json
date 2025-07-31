@@ -59,7 +59,12 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
-        ]
+        ],
+        "pest": "php ./vendor/bin/pest",
+        "pest-compact": "php ./vendor/bin/pest --compact",
+        "pestc": "php ./vendor/bin/pest --compact",
+        "coverage": "php ./vendor/bin/pest --compact --coverage --coverage-html coverage/",
+        "cvr": "php ./vendor/bin/pest --compact --coverage --coverage-html coverage/"   
     },
     "extra": {
         "laravel": {

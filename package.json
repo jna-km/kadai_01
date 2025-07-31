@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest --run",
-    "coverage": "NODE_OPTIONS=--max-old-space-size=0 vitest run --coverage --watch",
+    "coverage": "vitest run --coverage --watch",
+    "cvr": "vitest run --coverage --watch",
     "typecheck": "tsc --noEmit",
     "check": "npm run lint && npm run typecheck && npm run test"
   },
