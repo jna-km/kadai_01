@@ -1,9 +1,13 @@
+// Service型をimportして利用
+import { Service } from './service';
+
 export interface Operator {
   id: number;
   name: string;
   email: string;
+  token?: string;
   reservations?: Reservation[];
-  services?: Service[];
+  services: Service[]; // 型を統一
   workingHours?: WorkingHour[];
 }
 
@@ -12,12 +16,6 @@ export interface OperatorPublic {
   name: string;
   services: Service[];
   workingHours: WorkingHour[];
-}
-
-export interface Service {
-  id: number;
-  name: string;
-  duration: number;
 }
 
 export interface WorkingHour {

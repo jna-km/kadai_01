@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import axios from 'axios';
+import { ApiResponse } from '../types/api';
 import { User } from '../types/user';
 import { Operator } from '../types/operator';
 
@@ -11,7 +12,7 @@ interface AuthState {
   role: Role;
   isLoading: boolean;
   setAuthState: (user: User | null, operator: Operator | null, role: Role) => void;
-  setUserAndRole: (user: User | null, role: Role) => void;
+  setUserAndRole: (user: User | Operator | null, role: Role) => void; // 修正
   checkLoginStatus: () => Promise<void>;
 }
 
@@ -25,28 +26,31 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (role === 'operator' && operator) {
       sessionStorage.setItem('operator_token', operator.token || '');
       axios.defaults.headers.common['Authorization'] = `Bearer ${operator.token}`;
+      set({ user, operator, role, isLoading: false });
+    } else if (role === 'user' && user) {
+      sessionStorage.removeItem('operator_token');
+      delete axios.defaults.headers.common['Authorization'];
+      set({ user, operator: null, role, isLoading: false });
     } else {
       sessionStorage.removeItem('operator_token');
       delete axios.defaults.headers.common['Authorization'];
+      set({ user: null, operator: null, role: null, isLoading: false });
     }
-    set({ user, operator, role });
   },
   setUserAndRole: (user, role) => {
-    if (role === 'user') {
-      set({ user, operator: null, role });
+    if (role === 'user' && user) {
       sessionStorage.removeItem('operator_token');
       delete axios.defaults.headers.common['Authorization'];
+      set({ user: user as User, operator: null, role: 'user', isLoading: false });
     } else if (role === 'operator' && user) {
-      // operatorとしてuserをoperatorにセット
-      set({ user: null, operator: user as any, role });
-      if ((user as any).token) {
-        sessionStorage.setItem('operator_token', (user as any).token);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${(user as any).token}`;
-      }
+      const operator = user as Operator;
+      sessionStorage.setItem('operator_token', operator.token ?? '');
+      axios.defaults.headers.common['Authorization'] = `Bearer ${operator.token ?? ''}`;
+      set({ user: null, operator, role: 'operator', isLoading: false });
     } else {
-      set({ user: null, operator: null, role: null });
       sessionStorage.removeItem('operator_token');
       delete axios.defaults.headers.common['Authorization'];
+      set({ user: null, operator: null, role: null, isLoading: false });
     }
   },
   checkLoginStatus: async () => {
@@ -59,9 +63,9 @@ export const useAuthStore = create<AuthState>((set) => ({
         const operatorToken = sessionStorage.getItem('operator_token');
         if (operatorToken) {
           axios.defaults.headers.common['Authorization'] = `Bearer ${operatorToken}`;
-          const opRes = await axios.get('/api/operator/me');
+          const opRes = await axios.get<ApiResponse<Operator>>('/api/operator');
           if (opRes.data?.data) {
-            set({ user: null, operator: opRes.data.data, role: 'operator' });
+            set({ user: null, operator: opRes.data.data, role: 'operator', isLoading: false });
             return;
           }
         }
@@ -74,9 +78,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       // 2. user認証チェック
       try {
         delete axios.defaults.headers.common['Authorization'];
-        const userRes = await axios.get('/api/me', { withCredentials: true });
+        const userRes = await axios.get<ApiResponse<User>>('/api/user', { withCredentials: true });
         if (userRes.data?.data) {
-          set({ user: userRes.data.data, operator: null, role: 'user' });
+          set({ user: userRes.data.data, operator: null, role: 'user', isLoading: false });
           return;
         }
       } catch (userError: any) {
@@ -86,9 +90,12 @@ export const useAuthStore = create<AuthState>((set) => ({
       }
 
       // どちらも未認証
-      set({ user: null, operator: null, role: null });
-    } finally {
-      set({ isLoading: false });
+      set({ user: null, operator: null, role: null, isLoading: false });
+    } catch (error: any) {
+      set({ user: null, operator: null, role: null, isLoading: false });
+      if (error.response?.status !== 401) {
+        console.error(error);
+      }
     }
   },
 }));

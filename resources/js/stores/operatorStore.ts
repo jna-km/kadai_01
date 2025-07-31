@@ -2,19 +2,18 @@ import { create } from 'zustand';
 import { Operator } from '../types/operator';
 import { createAuthMethods } from './authMethods';
 
+type AuthMethods = ReturnType<typeof createAuthMethods>;
+
 interface OperatorState {
   operator: Operator | null;
   isLoading: boolean;
   error: string | null;
-
-  setOperator: (operator: Operator | null) => void;
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
+  updateState: (state: Partial<OperatorState>) => void;
   reset: () => void;
-
-  setAuthState: (user: null, operator: Operator | null, role: string | null) => void;
-  setUserAndRole: (user: null, role: string | null) => void;
-  checkLoginStatus: () => Promise<void>;
+  // authMethodsの型は展開でOK
+  setAuthState: AuthMethods['setAuthState'];
+  setUserAndRole: AuthMethods['setUserAndRole'];
+  checkLoginStatus: AuthMethods['checkLoginStatus'];
 }
 
 export const useOperatorStore = create<OperatorState>((set) => {
@@ -24,12 +23,8 @@ export const useOperatorStore = create<OperatorState>((set) => {
     operator: null,
     isLoading: false,
     error: null,
-
-    setOperator: (operator) => set({ operator }),
-    setLoading: (loading) => set({ isLoading: loading }),
-    setError: (error) => set({ error }),
+    updateState: (state) => set(state),
     reset: () => set({ operator: null, isLoading: false, error: null }),
-
     ...authMethods,
   };
 });

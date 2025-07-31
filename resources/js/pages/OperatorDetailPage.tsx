@@ -1,27 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import { Operator, WorkingHour } from '@/types/operator';
+import { ApiResponse } from '@/types/api';
 
-interface Service {
-  id: number;
-  name: string;
-  duration: number;
-}
-
-interface WorkingHour {
-  day_of_week: number;
-  start_time: string;
-  end_time: string;
-}
-
-interface Operator {
-  id: number;
-  name: string;
-  services: Service[];
-  working_hours: WorkingHour[];
-}
-
-const days = ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'];
+const dayMap: { [key: string]: string } = {
+  sunday: '日曜日',
+  monday: '月曜日',
+  tuesday: '火曜日',
+  wednesday: '水曜日',
+  thursday: '木曜日',
+  friday: '金曜日',
+  saturday: '土曜日',
+};
 
 const OperatorDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,15 +23,14 @@ const OperatorDetailPage: React.FC = () => {
   useEffect(() => {
     const fetchOperator = async () => {
       try {
-        const response = await axios.get(`/api/public/operators/${id}`);
+        const response = await axios.get<ApiResponse<Operator>>(`/api/operator/${id}`);
         setOperator(response.data.data);
-      } catch (err) {
-        setError('オペレーター情報の取得に失敗しました。');
+      } catch (err: any) {
+        setError('オペレーター情報の取得に失敗しました。' + (err?.message ? ` (${err.message})` : ''));
       } finally {
         setLoading(false);
       }
     };
-
     fetchOperator();
   }, [id]);
 
@@ -54,7 +44,7 @@ const OperatorDetailPage: React.FC = () => {
 
       <h3>サービス一覧</h3>
       <ul>
-        {operator.services.map((service) => (
+        {operator.services?.map((service) => (
           <li key={service.id}>
             {service.name}（{service.duration}分）
           </li>
@@ -63,10 +53,10 @@ const OperatorDetailPage: React.FC = () => {
 
       <h3>営業時間</h3>
       <ul>
-        {operator.working_hours && operator.working_hours.length > 0 ? (
-          operator.working_hours.map((wh, index) => (
+        {operator.workingHours && operator.workingHours.length > 0 ? (
+          operator.workingHours.map((wh: WorkingHour, index: number) => (
             <li key={index}>
-              {days[wh.day_of_week]}: {wh.start_time} - {wh.end_time}
+              {dayMap[wh.day] ?? wh.day}: {wh.start_time} - {wh.end_time}
             </li>
           ))
         ) : (

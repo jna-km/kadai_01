@@ -6,9 +6,10 @@ import axios from "axios";
 import { useForm, Controller } from 'react-hook-form';
 import Input from '../../components/ui/Input';
 import { toast } from 'sonner';
+import { ApiResponse } from '../../types/api';
 
 const OperatorServicesPage: React.FC = () => {
-  const operator = useAuthStore(state => state.operator);
+  const operator = useAuthStore.getState().operator;
   const [services, setServices] = useState<Service[]>(operator?.services || []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
@@ -69,16 +70,13 @@ const OperatorServicesPage: React.FC = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const payload = {
-        ...data,
-        operator_id: operator.id,
-      };
+      const payload = { ...data, operator_id: operator.id };
       if (editingService) {
-        const response = await axios.put(`/api/services/${editingService.id}`, payload);
+        const response = await axios.put<ApiResponse<Service>>(`/api/services/${editingService.id}`, payload);
         setServices(services.map(s => (s.id === editingService.id ? response.data.data : s)));
         toast.success("サービスを更新しました");
       } else {
-        const response = await axios.post("/api/services", payload);
+        const response = await axios.post<ApiResponse<Service>>("/api/services", payload);
         setServices([...services, response.data.data]);
         toast.success("サービスを追加しました");
       }
@@ -266,8 +264,3 @@ const OperatorServicesPage: React.FC = () => {
 };
 
 export default OperatorServicesPage;
-
-// Optional: expose getLayout for custom layout handling (e.g. Next.js)
-OperatorServicesPage.getLayout = (page: React.ReactNode) => (
-  <OperatorLayout>{page}</OperatorLayout>
-);

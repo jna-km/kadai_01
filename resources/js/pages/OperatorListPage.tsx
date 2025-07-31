@@ -7,6 +7,11 @@ interface Operator {
   name: string;
 }
 
+interface ApiResponse<T> {
+  data: T;
+  // 他に必要なプロパティがあれば追加
+}
+
 const OperatorListPage: React.FC = () => {
   const [operators, setOperators] = useState<Operator[]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +20,7 @@ const OperatorListPage: React.FC = () => {
   useEffect(() => {
     const fetchOperators = async () => {
       try {
-        const response = await axios.get('/api/public/operators');
+        const response = await axios.get<ApiResponse<Operator[]>>('/api/public/operators');
         setOperators(response.data.data);
       } catch (err) {
         setError('オペレーター一覧の取得に失敗しました。');

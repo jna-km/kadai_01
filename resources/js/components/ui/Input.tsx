@@ -16,6 +16,11 @@ type InputProps = {
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> &
   Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "size">;
 
+export type ErrorMessageProps = {
+  message?: string;
+  id?: string;
+};
+
 const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
   (
     {

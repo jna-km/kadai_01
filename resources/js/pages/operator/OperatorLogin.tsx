@@ -6,6 +6,8 @@ import { FormWrapper } from '@/components/form';
 import { Input } from '@/components/ui';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'sonner';
+import { ApiResponse } from '../../types/api';
+import { Operator } from '../../types/operator';
 
 type FormValues = {
   email: string;
@@ -14,7 +16,7 @@ type FormValues = {
 
 const OperatorLogin: React.FC = () => {
   const navigate = useNavigate();
-  const setUserAndRole = useAuthStore(state => state.setUserAndRole);
+  const setUserAndRole = useAuthStore.getState().setUserAndRole;
   const [apiError, setApiError] = useState<string | null>(null);
 
   const { control, handleSubmit } = useForm<FormValues>({
@@ -24,15 +26,18 @@ const OperatorLogin: React.FC = () => {
   const onSubmit = async (data: FormValues) => {
     setApiError(null);
     try {
-      const response = await axios.post('/api/operator/login', data);
-      const { access_token, user } = response.data?.data || {};
+      const response = await axios.post<ApiResponse<{ access_token: string; user: Operator }>>('/api/operator/login', data);
+      const { access_token, user } = response.data.data || {};
 
       if (access_token && user) {
         sessionStorage.setItem('operator_token', access_token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
         setUserAndRole(user, 'operator');
-
         toast.success('ログインに成功しました！');
+        // 認証状態を最新化
+        if (typeof useAuthStore.getState().checkLoginStatus === 'function') {
+          await useAuthStore.getState().checkLoginStatus();
+        }
         navigate('/operator/dashboard');
       } else {
         setApiError('ログイン情報を確認できませんでした');

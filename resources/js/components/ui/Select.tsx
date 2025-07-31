@@ -1,9 +1,9 @@
 import React from "react";
 import clsx from "clsx";
 
-type SelectOption = {
-  value: string;
+export type SelectOption = {
   label: string;
+  value: string;
 };
 
 type SelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & {

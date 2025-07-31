@@ -6,6 +6,8 @@ import { FormWrapper } from '@/components/form';
 import { Input } from '@/components/ui';
 import { useAuthStore } from '../../stores/authStore';
 import { toast } from 'sonner';
+import { ApiResponse } from '../../types/api';
+import { User } from '../../types/user'; // 追加
 
 type FormValues = {
   email: string;
@@ -14,7 +16,7 @@ type FormValues = {
 };
 
 const Login: React.FC = () => {
-  const setUserAndRole = useAuthStore(state => state.setUserAndRole);
+  const setUserAndRole = useAuthStore.getState().setUserAndRole;
   const navigate = useNavigate();
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -25,12 +27,15 @@ const Login: React.FC = () => {
   const onSubmit = async (data: FormValues) => {
     setApiError(null);
     try {
-      await axios.get('/sanctum/csrf-cookie');
-      const response = await axios.post('/api/login', data);
-      if (response.data.data.user) {
-        setUserAndRole(response.data.data.user, 'user');
-        
+      await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
+      const response = await axios.post<ApiResponse<User>>('/api/login', data, { withCredentials: true });
+      if (response.data.data) {
+        setUserAndRole(response.data.data, 'user');
         toast.success('ログインに成功しました！');
+        // 認証状態が反映されてから画面遷移
+        if (typeof useAuthStore.getState().checkLoginStatus === 'function') {
+          await useAuthStore.getState().checkLoginStatus();
+        }
         navigate('/user/dashboard');
       }
     } catch (err: any) {

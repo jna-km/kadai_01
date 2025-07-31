@@ -7,12 +7,13 @@ import { User } from '../../types/user';
 import { FormWrapper } from '@/components/form';
 import { Input, Select, DatePicker } from '@/components/ui';
 import { toast } from 'sonner';
+import { ApiResponse } from '../../types/api';
 
-type SelectOption = { label: string; value: string | number };
+type SelectOption = { label: string; value: string };
 
 interface FormValues {
-  operator_id: number | '';
-  service_id: number | '';
+  operator_id: string;
+  service_id: string;
   duration: number | '';
   date: string;
   start_time: string;
@@ -23,7 +24,7 @@ interface FormValues {
 const ReservationEdit: React.FC = () => {
   const { reservationId } = useParams<{ reservationId: string }>();
   const navigate = useNavigate();
-  const user = useAuthStore(state => state.user) as User;
+  const user = useAuthStore.getState().user as User;
 
   const [operatorOptions, setOperatorOptions] = useState<SelectOption[]>([]);
   const [serviceOptions, setServiceOptions] = useState<SelectOption[]>([]);
@@ -50,26 +51,27 @@ const ReservationEdit: React.FC = () => {
 
   // オペレーター一覧取得
   useEffect(() => {
-    axios.get('/api/operators')
+    axios.get<ApiResponse<any[]>>('/api/operators')
       .then(res => {
         const ops = res.data.data || [];
-        setOperatorOptions(ops.map((op: any) => ({ label: op.name, value: op.id })));
+        setOperatorOptions(ops.map((op: any) => ({ label: op.name, value: String(op.id) })));
       })
       .catch(err => {
         setApiError('担当者一覧の取得に失敗しました');
         console.error(err);
-      });
+      })
+      .then(() => setLoading(false)); // finallyの代わりにthenでsetLoading
   }, []);
 
   // 予約詳細取得 & 初期値セット
   useEffect(() => {
     if (!reservationId) return;
     setLoading(true);
-    axios.get(`/api/reservations/${reservationId}`)
+    axios.get<ApiResponse<any>>(`/api/reservations/${reservationId}`)
       .then(res => {
         const r = res.data.data || res.data;
-        setValue('operator_id', r.operator_id ?? '');
-        setValue('service_id', r.service_id ?? '');
+        setValue('operator_id', r.operator_id ? String(r.operator_id) : '');
+        setValue('service_id', r.service_id ? String(r.service_id) : '');
         setValue('duration', r.duration ?? '');
         setValue('date', r.date ? r.date.split('T')[0] : '');
         setValue('start_time', r.start_time ? r.start_time.substring(0, 5) : '');
@@ -80,7 +82,7 @@ const ReservationEdit: React.FC = () => {
         setApiError('予約情報の取得に失敗しました');
         console.error(err);
       })
-      .finally(() => setLoading(false));
+      .then(() => setLoading(false)); // finallyの代わりにthenでsetLoading
   }, [reservationId, setValue]);
 
   // operator_id変更時にサービス一覧取得
@@ -89,11 +91,15 @@ const ReservationEdit: React.FC = () => {
     if (operatorId) fetchServices(operatorId);
   }, [operatorId]);
 
-  const fetchServices = async (operatorId: number | string) => {
+  const fetchServices = async (operatorId: string) => {
     try {
-      const res = await axios.get(`/api/public/operators/${operatorId}`);
+      const res = await axios.get<ApiResponse<any>>(`/api/public/operators/${operatorId}`);
       const services = res.data.data?.services || [];
-      setServiceOptions(services.map((s: any) => ({ label: s.name, value: s.id })));
+      const serviceOptions = services.map((service: any) => ({
+        label: service.name,
+        value: String(service.id),
+      }));
+      setServiceOptions(serviceOptions);
     } catch (err) {
       setApiError('サービス一覧の取得に失敗しました');
       console.error(err);
@@ -175,7 +181,7 @@ const ReservationEdit: React.FC = () => {
             options={operatorOptions}
             placeholder="担当者を選択してください"
             error={fieldState.error?.message}
-            value={field.value?.toString() || ''}
+            value={field.value || ''}
             onChange={(e) => field.onChange(e.target.value)}
           />
         )}
@@ -192,7 +198,7 @@ const ReservationEdit: React.FC = () => {
             options={serviceOptions}
             placeholder="サービスを選択してください"
             error={fieldState.error?.message}
-            value={field.value?.toString() || ''}
+            value={field.value || ''}
             onChange={(e) => field.onChange(e.target.value)}
           />
         )}
@@ -226,7 +232,15 @@ const ReservationEdit: React.FC = () => {
             placeholder="日付を選択"
             error={fieldState.error?.message}
             selected={field.value ? new Date(field.value) : null}
-            onChange={(date) => field.onChange(date ? date.toISOString().split('T')[0] : '')}
+            onChange={(date) => {
+              let iso = '';
+              if (Array.isArray(date)) {
+                if (date[0] instanceof Date) iso = date[0].toISOString().split('T')[0];
+              } else if (date instanceof Date) {
+                iso = date.toISOString().split('T')[0];
+              }
+              field.onChange(date ? iso : '');
+            }}
           />
         )}
       />

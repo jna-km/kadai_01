@@ -4,8 +4,8 @@ import { useAuthStore } from '../../stores/authStore';
 import { Operator } from '../../types/operator';
 
 const OperatorReservationsPage: React.FC = () => {
-  const operator = useAuthStore(state => state.operator) as Operator;
-  const isLoading = useAuthStore(state => state.isLoading);
+  const operator = useAuthStore.getState().operator as Operator;
+  const isLoading = useAuthStore.getState().isLoading;
 
   if (isLoading) {
     return (

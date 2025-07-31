@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 import React, { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import router from './router';
@@ -8,11 +10,11 @@ import { useAuthStore } from './stores/authStore';
 import { Toaster } from 'sonner';
 
 axios.defaults.withCredentials = true;
-axios.defaults.withXSRFToken = true;
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 
+const checkLoginStatus = useAuthStore.getState().checkLoginStatus;
+
 const App: React.FC = () => {
-  const checkLoginStatus = useAuthStore(state => state.checkLoginStatus);
   useEffect(() => {
     checkLoginStatus();
   }, [checkLoginStatus]);
@@ -22,7 +24,7 @@ const App: React.FC = () => {
       <Toaster richColors position="top-right" />
       <RouterProvider
         router={router}
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        future={{ v7_startTransition: true }}
       />
     </>
   );

@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useNotificationStore } from '@/stores/useNotificationStore';
 import { Transition } from './Transition';
+import { Notification } from '../../types/notification';
+
 
 const NotificationItem: React.FC<{ id: string; type: string; message: string; onClose: (id: string) => void }> = ({ id, type, message, onClose }) => {
   useEffect(() => {

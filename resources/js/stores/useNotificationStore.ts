@@ -1,33 +1,25 @@
 import { create } from 'zustand';
-
-interface Notification {
-  id: string;
-  message: string;
-  type: 'success' | 'error';
-}
+import { Notification } from '@/types/notification';
 
 interface NotificationState {
   notifications: Notification[];
-  addNotification: (notification: Partial<Notification> & Pick<Notification, 'message' | 'type'>) => void;
   removeNotification: (id: string) => void;
+  addNotification: (notification: Notification) => void;
+  // ...他のstateやaction...
 }
 
 export const useNotificationStore = create<NotificationState>((set) => ({
   notifications: [],
-  addNotification: (notification)
-    set((state) => ({
-      notifications: [
-        ...state.notifications,
-        { ...notification, id: notification.id ?? crypto.randomUUID() },
-      ],
-    })),
-  removeNotification: (id) =>
-    set((state) => ({
-      notifications: state.notifications.filter((n) => n.id !== id),
-    })),
+  removeNotification: (id) => set((state) => ({
+    notifications: state.notifications.filter(n => n.id !== id)
+  })),
+  addNotification: (notification) => set((state) => ({
+    notifications: [...state.notifications, notification]
+  })),
+  // ...他のaction...
 }));
 
 // ラッパー関数としてshowNotificationを追加
-export function showNotification(notification: { type: 'success' | 'error'; message: string }) {
+export function showNotification(notification: Notification) {
   useNotificationStore.getState().addNotification(notification);
 }

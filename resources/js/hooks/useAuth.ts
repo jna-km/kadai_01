@@ -1,3 +1,22 @@
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '../stores/authStore';
 
-export const useAuth = () => useAuthStore();
+export function useAuth() {
+  const {
+    user,
+    operator,
+    role,
+    isLoading,
+    setAuthState,
+    setUserAndRole,
+    checkLoginStatus
+  } = useAuthStore();
+  return {
+    user,
+    operator,
+    role,
+    isLoading,
+    setAuthState,
+    setUserAndRole,
+    checkLoginStatus
+  };
+}
