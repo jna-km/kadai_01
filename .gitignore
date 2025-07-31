@@ -42,7 +42,11 @@ excluded/*
 
 # Vite
 /node_modules/.vite/
-/public/build/
 
 #docs
 /docs/and_more/*
+rules.md
+
+# Coverage reports
+coverage/*
+coverage-vitest/*

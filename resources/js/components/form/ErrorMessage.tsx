@@ -1,6 +1,7 @@
 import React from 'react';
 
 interface ErrorMessageProps {
+  id?: string;
   message?: string | null;
   className?: string;
 }

@@ -14,7 +14,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": "./resources/js",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": ["resources/js", "scripts/testAxios.js"],
   "exclude": ["node_modules"]

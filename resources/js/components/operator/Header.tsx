@@ -2,13 +2,20 @@ import React from 'react';
 import { FiLogOut } from 'react-icons/fi';
 import { useAuthStore } from '../../stores/authStore';
 
-const Header: React.FC = () => {
-  const setAuthState = useAuthStore(state => state.setAuthState);
+type HeaderProps = {
+  onLogout: () => Promise<void>;
+};
+
+const Header: React.FC<HeaderProps> = ({ onLogout }) => {
+  const setAuthState = useAuthStore.getState().setAuthState;
 
   const handleLogout = () => {
     // ここでAPIログアウト処理や状態クリアを実装
     setAuthState(null, null, null);
     // 必要に応じてリダイレクトなど
+    if (onLogout) {
+      onLogout();
+    }
   };
 
   return (
@@ -18,6 +25,7 @@ const Header: React.FC = () => {
         className="flex items-center gap-2 bg-white hover:bg-gray-100 text-blue-600 font-semibold px-3 py-1.5 rounded-md shadow transition"
         onClick={handleLogout}
       >
+        {/* @ts-ignore */}
         <FiLogOut size={18} />
         ログアウト
       </button>

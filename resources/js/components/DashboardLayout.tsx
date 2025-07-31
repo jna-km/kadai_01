@@ -2,9 +2,9 @@ import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import axios from 'axios';
-import Header from '../components/user/Header';
-import Sidebar from '../components/user/Sidebar';
-import Footer from '../components/user/Footer';
+import Header from './user/Header';
+import Sidebar from './user/Sidebar';
+import Footer from './user/Footer';
 
 const DashboardLayout: React.FC = () => {
   const { user, setUserAndRole, role } = useAuth();

@@ -7,8 +7,12 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     zip unzip curl git \
     libpq-dev libzip-dev \
+    build-essential autoconf automake libtool make gcc g++ \
+    pkg-config libxml2-dev zlib1g-dev libssl-dev \
     default-mysql-client \
     && docker-php-ext-install pdo pdo_mysql \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug \
     && curl -sL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && curl -sS https://getcomposer.org/installer | php \

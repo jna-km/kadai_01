@@ -19,6 +19,7 @@
 - [アクセシビリティガイド]({{prefix}}accessibility_guide.md) 
 - [Zustand 状態管理ガイド]({{prefix}}zustand_guide.md)
 - [Laravel + Supervisor 設定ガイド]({{prefix}}supervisor.md)
+- [Laravel & Vite 環境構築・テスト・デプロイまとめ]({{prefix}}laravel-vite-setup.md)
 - [画面遷移図（PDF）]({{prefix}}画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）]({{prefix}}ワイヤーフレーム.pdf)
 
@@ -38,6 +39,7 @@
 - [2025-07-28]({{prefix}}logs/2025-07-28.md)
 - [2025-07-29]({{prefix}}logs/2025-07-29.md)
 - [2025-07-30]({{prefix}}logs/2025-07-30.md)
+- [2025-07-31]({{prefix}}logs/2025-07-31.md)
 
 ### 色々やること
 - [今後のTODOメモ]({{prefix}}todo.md)

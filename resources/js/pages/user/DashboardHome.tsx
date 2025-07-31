@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuthStore } from '../../stores/authStore';
 
 const DashboardHome: React.FC = () => {
-  const user = useAuthStore(state => state.user);
+  const user = useAuthStore.getState().user;
 
   if (!user) {
     return <div>ユーザーがログインしていません。</div>;

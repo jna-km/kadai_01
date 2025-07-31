@@ -4,6 +4,11 @@ import { Link } from 'react-router-dom';
 import { Reservation } from '../../types/reservations';
 import { format, parseISO } from 'date-fns';
 
+interface ApiResponse<T> {
+  data: T;
+  // 他の必要なプロパティ
+}
+
 const Reservations: React.FC = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -13,7 +18,7 @@ const Reservations: React.FC = () => {
     const fetchReservations = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get('/api/my-reservations');
+        const response = await axios.get<ApiResponse<Reservation[]>>('/api/my-reservations');
         console.log(response.data.data)
         setReservations(response.data.data); // dataプロパティを指定
         setError(null);

@@ -6,9 +6,10 @@ import { useForm, Controller, useWatch } from 'react-hook-form';
 import { FormWrapper } from '@/components/form';
 import { Input, Select, DatePicker } from '@/components/ui';
 import { toast } from 'sonner';
+import { ApiResponse } from '../../types/api';
 
-type OperatorOption = { label: string; value: number };
-type ServiceOption = { label: string; value: number; duration: number };
+type SelectOption = { label: string; value: string };
+type ServiceOption = { label: string; value: string; duration: number };
 
 interface FormValues {
   operator_id: number | '';
@@ -25,11 +26,11 @@ const safeNumber = (val: string): number | '' => {
 };
 
 const ReservationCreate: React.FC = () => {
-  const [operatorOptions, setOperatorOptions] = useState<OperatorOption[]>([]);
+  const [operatorOptions, setOperatorOptions] = useState<SelectOption[]>([]);
   const [serviceOptions, setServiceOptions] = useState<ServiceOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
-  const user = useAuthStore(state => state.user);
+  const user = useAuthStore.getState().user;
   const navigate = useNavigate();
 
   const { control, handleSubmit, setValue } = useForm<FormValues>({
@@ -49,31 +50,29 @@ const ReservationCreate: React.FC = () => {
   const duration = useWatch({ control, name: 'duration' });
 
   useEffect(() => {
-    axios.get('/api/operators')
+    axios.get<ApiResponse<any[]>>('/api/operators')
       .then(res => {
         const ops = res.data.data || [];
-        setOperatorOptions(ops.map((op: any) => ({ label: op.name, value: op.id })));
+        setOperatorOptions(ops.map((op: any) => ({ label: op.name, value: String(op.id) })));
       })
       .catch(err => {
         setApiError('オペレーターの取得に失敗しました');
         console.error(err);
       })
-      .finally(() => setLoading(false));
+      .then(() => setLoading(false)); // finallyの代わりにthenでsetLoading
   }, []);
 
   // operator変更でサービス一覧を取得
-  const fetchServices = async (operatorId: number) => {
-    if (!operatorId || typeof operatorId !== 'number' || isNaN(operatorId)) return;
+  const fetchServices = async (operatorId: string) => {
+    if (!operatorId) return;
     try {
-      const res = await axios.get(`/api/public/operators/${operatorId}`);
-      console.log('API response for services:', res.data);
+      const res = await axios.get<ApiResponse<any>>(`/api/public/operators/${operatorId}`);
       const services = res.data.data?.services || [];
       setServiceOptions(services.map((s: any) => ({
         label: s.name,
-        value: s.id,
+        value: String(s.id),
         duration: s.duration
       })));
-      console.log('Fetched services:', services);
     } catch (err) {
       setApiError('サービス一覧の取得に失敗しました');
       console.error(err);
@@ -82,7 +81,7 @@ const ReservationCreate: React.FC = () => {
 
   // service選択時にdurationをローカルからセット
   const handleServiceChange = (serviceId: number) => {
-    const service = serviceOptions.find(opt => opt.value === serviceId);
+    const service = serviceOptions.find(opt => opt.value === String(serviceId));
     if (service) {
       setValue('duration', service.duration);
     }
@@ -160,12 +159,12 @@ const ReservationCreate: React.FC = () => {
             options={operatorOptions}
             placeholder="担当者を選択してください"
             error={fieldState.error?.message}
-            value={String(field.value ?? '')}
+            value={field.value ?? ''}
             onChange={(e) => {
-              const selectedId = safeNumber(e.target.value);
+              const selectedId = e.target.value;
               field.onChange(selectedId);
               if (selectedId !== '') {
-                fetchServices(selectedId as number);
+                fetchServices(selectedId);
                 setValue('service_id', '');
               } else {
                 setServiceOptions([]);
@@ -188,7 +187,7 @@ const ReservationCreate: React.FC = () => {
             options={serviceOptions}
             placeholder="サービスを選択してください"
             error={fieldState.error?.message}
-            value={String(field.value ?? '')}
+            value={field.value ?? ''}
             onChange={(e) => {
               const selectedId = safeNumber(e.target.value);
               field.onChange(selectedId);
@@ -231,7 +230,15 @@ const ReservationCreate: React.FC = () => {
             placeholder="日付を選択"
             error={fieldState.error?.message}
             selected={field.value ? new Date(field.value) : null}
-            onChange={(date) => field.onChange(date ? date.toISOString().split('T')[0] : '')}
+            onChange={(date) => {
+              let iso = '';
+              if (Array.isArray(date)) {
+                if (date[0] instanceof Date) iso = date[0].toISOString().split('T')[0];
+              } else if (date instanceof Date) {
+                iso = date.toISOString().split('T')[0];
+              }
+              field.onChange(date ? iso : '');
+            }}
           />
         )}
       />
