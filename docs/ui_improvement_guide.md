@@ -49,6 +49,7 @@
 - [アクセシビリティガイド](accessibility_guide.md) 
 - [Zustand 状態管理ガイド](zustand_guide.md)
 - [Laravel + Supervisor 設定ガイド](supervisor.md)
+- [Laravel & Vite 環境構築・テスト・デプロイまとめ](laravel-vite-setup.md)
 - [画面遷移図（PDF）](画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](ワイヤーフレーム.pdf)
 
