@@ -38,7 +38,11 @@ alias fresh="docker compose exec app php artisan migrate:fresh --seed"
 - [コーディングルール](coding-rules.md)
 - [APIレスポンス設計ガイドライン](api_response.md)
 - [ショートカット](shortcuts.md)
+- [バリデーション設計仕様](validation_spec.md)
+- [UIガイドライン](ui_guideline.md)
 - [UI改善ガイド](ui_improvement_guide.md)
+- [アクセシビリティガイド](accessibility_guide.md) 
+- [Zustand 状態管理ガイド](zustand_guide.md)
 - [Laravel + Supervisor 設定ガイド](supervisor.md)
 - [画面遷移図（PDF）](画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](ワイヤーフレーム.pdf)
@@ -58,6 +62,7 @@ alias fresh="docker compose exec app php artisan migrate:fresh --seed"
 - [2025-07-25](logs/2025-07-25.md)
 - [2025-07-28](logs/2025-07-28.md)
 - [2025-07-29](logs/2025-07-29.md)
+- [2025-07-30](logs/2025-07-30.md)
 
 ### 色々やること
 - [今後のTODOメモ](todo.md)

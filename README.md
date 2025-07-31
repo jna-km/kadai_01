@@ -288,7 +288,11 @@ API仕様は `openapi.yaml` に記述されており、変更は直接このフ�
 - [コーディングルール](docs/coding-rules.md)
 - [APIレスポンス設計ガイドライン](docs/api_response.md)
 - [ショートカット](docs/shortcuts.md)
+- [バリデーション設計仕様](docs/validation_spec.md)
+- [UIガイドライン](docs/ui_guideline.md)
 - [UI改善ガイド](docs/ui_improvement_guide.md)
+- [アクセシビリティガイド](docs/accessibility_guide.md) 
+- [Zustand 状態管理ガイド](docs/zustand_guide.md)
 - [Laravel + Supervisor 設定ガイド](docs/supervisor.md)
 - [画面遷移図（PDF）](docs/画面遷移図.pdf)
 - [ワイヤーフレーム（PDF）](docs/ワイヤーフレーム.pdf)
@@ -308,6 +312,7 @@ API仕様は `openapi.yaml` に記述されており、変更は直接このフ�
 - [2025-07-25](docs/logs/2025-07-25.md)
 - [2025-07-28](docs/logs/2025-07-28.md)
 - [2025-07-29](docs/logs/2025-07-29.md)
+- [2025-07-30](docs/logs/2025-07-30.md)
 
 ### 色々やること
 - [今後のTODOメモ](docs/todo.md)
