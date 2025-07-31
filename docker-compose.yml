@@ -7,6 +7,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./:/var/www
+      - ./php.ini:/usr/local/etc/php/php.ini
     # commandディレクティブを削除。コンテナ起動時のコマンドはDockerfileのENTRYPOINTとCMDで制御します。
     ports:
       - "9000:9000"
