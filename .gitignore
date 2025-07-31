@@ -47,4 +47,6 @@ excluded/*
 /docs/and_more/*
 rules.md
 
+# Coverage reports
 coverage/*
+coverage-vitest/*

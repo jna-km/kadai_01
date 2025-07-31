@@ -19,8 +19,17 @@ export default defineConfig({
     include: ["tests/js/**/*.test.{ts,tsx,js,jsx}"],
     css: true,
     testTimeout: 20000,
-    exclude: [
-      // 他に除外したいファイル・フォルダをここに追加可能
-    ],
+    coverage: {
+      provider: 'v8',                    // カバレッジ取得用プロバイダー
+      reporter: ['text', 'html'],        // コンソールとHTMLレポート両方
+      reportsDirectory: 'coverage-vitest', // レポートの出力ディレクトリ
+      include: ['resources/js/**/*.{ts,tsx,js,jsx}'], 
+      exclude: [
+        'node_modules/**',
+        // その他除外したいファイルやフォルダ
+      ],
+      all: true,                        // 全ファイルを対象に（テストしてないファイルも）
+    },
+
   },
 });

@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest --run",
+    "coverage": "NODE_OPTIONS=--max-old-space-size=0 vitest run --coverage --watch",
     "typecheck": "tsc --noEmit",
     "check": "npm run lint && npm run typecheck && npm run test"
   },
@@ -38,6 +39,8 @@
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.6.0",
     "@vitejs/plugin-react-swc": "^3.10.2",
+    "@vitest/coverage-istanbul": "^3.2.4",
+    "@vitest/coverage-v8": "^3.2.4",
     "autoprefixer": "^10.4.21",
     "axios": "^1.10.0",
     "eslint": "^8.57.0",
