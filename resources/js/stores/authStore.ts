@@ -1,12 +1,8 @@
-import { create, StoreApi } from 'zustand';
-import { createAuthMethods } from './authMethods';
-import { useUserStore } from './userStore';
-import { useOperatorStore } from './operatorStore';
+import { create } from 'zustand';
+import axios from 'axios';
 import { User } from '../types/user';
 import { Operator } from '../types/operator';
-
-// 既存のauthStoreOrg.tsをfallback用にimport（requireでも可）
-import { useAuthStore as useAuthStoreOrg } from './authStoreOrg';
+import { ApiResponse } from '../types/api';
 
 type Role = 'user' | 'operator' | null;
 
@@ -15,31 +11,83 @@ interface AuthState {
   operator: Operator | null;
   role: Role;
   isLoading: boolean;
-  setAuthState: (user: User | null, operator: Operator | null, role: Role, token?: string) => void;
-  setUserAndRole: (user: User | Operator | null, role: Role, token?: string) => void;
+  setAuthState: (user: User | null, operator: Operator | null, role: Role) => void;
+  setUserAndRole: (user: User | Operator | null, role: Role) => void;
   checkLoginStatus: () => Promise<void>;
 }
 
-// 新しいストアの初期化
-let _useAuthStore;
-try {
-  _useAuthStore = create<AuthState>((set) => {
-    const methods = createAuthMethods(set);
-    return {
-      user: null,
-      operator: null,
-      role: null,
-      isLoading: true,
-      setAuthState: methods.setAuthState,
-      setUserAndRole: methods.setUserAndRole,
-      checkLoginStatus: methods.checkLoginStatus,
-    };
-  });
-  useUserStore.getState();
-  useOperatorStore.getState();
-} catch (e) {
-  console.error('authStore新形式の初期化に失敗しました。org版を使用します。', e);
-  _useAuthStore = useAuthStoreOrg;
-}
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  operator: null,
+  role: null,
+  isLoading: true,
+  setAuthState: (user, operator, role) => {
+    // operator_tokenの管理
+    if (role === 'operator' && operator) {
+      sessionStorage.setItem('operator_token', operator.token || '');
+      axios.defaults.headers.common['Authorization'] = `Bearer ${operator.token}`;
+    } else {
+      sessionStorage.removeItem('operator_token');
+      delete axios.defaults.headers.common['Authorization'];
+    }
+    set({ user, operator, role, isLoading: false });
+  },
+  setUserAndRole: (user, role) => {
+    if (role === 'user') {
+      set({ user: user as User, operator: null, role, isLoading: false });
+      sessionStorage.removeItem('operator_token');
+      delete axios.defaults.headers.common['Authorization'];
+    } else if (role === 'operator' && user) {
+      set({ user: null, operator: user as Operator, role, isLoading: false });
+      if ((user as Operator).token) {
+        sessionStorage.setItem('operator_token', (user as Operator).token ?? '');
+        axios.defaults.headers.common['Authorization'] = `Bearer ${(user as Operator).token ?? ''}`;
+      }
+    } else {
+      set({ user: null, operator: null, role: null, isLoading: false });
+      sessionStorage.removeItem('operator_token');
+      delete axios.defaults.headers.common['Authorization'];
+    }
+  },
+  checkLoginStatus: async () => {
+    set({ isLoading: true });
+    try {
+      await axios.get('/sanctum/csrf-cookie');
 
-export const useAuthStore = _useAuthStore;
+      // operator認証チェック
+      try {
+        const operatorToken = sessionStorage.getItem('operator_token');
+        if (operatorToken) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${operatorToken}`;
+          const opRes = await axios.get<ApiResponse<Operator>>('/api/operator/me');
+          if (opRes.data?.data) {
+            set({ user: null, operator: opRes.data.data, role: 'operator', isLoading: false });
+            return;
+          }
+        }
+      } catch (operatorError: any) {
+        if (operatorError.response?.status !== 401) {
+          console.error(operatorError);
+        }
+      }
+
+      // user認証チェック
+      try {
+        delete axios.defaults.headers.common['Authorization'];
+        const userRes = await axios.get<ApiResponse<User>>('/api/me', { withCredentials: true });
+        if (userRes.data?.data) {
+          set({ user: userRes.data.data, operator: null, role: 'user', isLoading: false });
+          return;
+        }
+      } catch (userError: any) {
+        if (userError.response?.status !== 401) {
+          console.error(userError);
+        }
+      }
+
+      set({ user: null, operator: null, role: null, isLoading: false });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+}));

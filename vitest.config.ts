@@ -20,8 +20,6 @@ export default defineConfig({
     css: true,
     testTimeout: 20000,
     exclude: [
-      'tests/js/stores/useNotificationStore.test.ts',
-      'tests/js/components/ui/Notification.test.tsx',
       // 他に除外したいファイル・フォルダをここに追加可能
     ],
   },

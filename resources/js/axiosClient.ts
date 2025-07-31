@@ -1,8 +1,12 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: '/api',
-  withCredentials: true,
+  baseURL: "http://localhost:88", // nginxのサービス名（Docker Composeのservice名）
+  withCredentials: true, // CSRF Cookieやセッション維持に必要
+  headers: {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+  },
 });
 
 export function setOperatorToken(token: string | null) {
