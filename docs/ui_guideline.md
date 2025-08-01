@@ -24,23 +24,32 @@
 - PRレビュー時には本ガイドライン準拠のチェックを必須
 - 実装例や使用例は都度ドキュメントに追記
 
+---
+
 ## 5. コンポーネント設計例
 
 ### 5.1 Inputコンポーネント
+
 - ラベルは必ず関連付ける（`htmlFor` と `id`）
 - エラー時は赤枠＋赤テキストで明示
 - `className` は拡張可能にし、Tailwindユーティリティでスタイル管理
+- `type="password"`や`type="email"`なども対応
+- `onBlur`や`autoComplete`などのPropsも追加対応
+- エラー時は`aria-invalid`と`aria-describedby`を必ず付与
 
 #### Props設計
-| Prop名       | 型                                    | 必須 | 説明                       |
-|-------------|-------------------------------------|------|--------------------------|
-| `label`     | `string`                            | ❌   | フィールドラベル          |
-| `name`      | `string`                            | ✅   | フィールド名              |
-| `type`      | `string`                            | ❌   | デフォルトは `text`       |
-| `value`     | `string`                            | ✅   | 入力値                    |
-| `onChange`  | `(e: React.ChangeEvent<HTMLInputElement>) => void` | ✅   | 値変更ハンドラ            |
-| `placeholder` | `string`                          | ❌   | プレースホルダー          |
-| `error`     | `string`                            | ❌   | バリデーションエラーメッセージ |
+| Prop名         | 型                                    | 必須 | 説明                       |
+|----------------|-------------------------------------|------|--------------------------|
+| `label`        | `string`                            | ❌   | フィールドラベル          |
+| `name`         | `string`                            | ✅   | フィールド名              |
+| `type`         | `string`                            | ❌   | デフォルトは `text`       |
+| `value`        | `string`                            | ✅   | 入力値                    |
+| `onChange`     | `(e: React.ChangeEvent<HTMLInputElement>) => void` | ✅   | 値変更ハンドラ            |
+| `onBlur`       | `(e: React.FocusEvent<HTMLInputElement>) => void` | ❌   | フォーカスアウト時の処理   |
+| `placeholder`  | `string`                            | ❌   | プレースホルダー          |
+| `error`        | `string`                            | ❌   | バリデーションエラーメッセージ |
+| `autoComplete` | `string`                            | ❌   | オートコンプリート属性     |
+| `className`    | `string`                            | ❌   | 追加クラス名               |
 
 #### 実装例
 ```tsx
@@ -50,11 +59,16 @@ interface InputProps {
   type?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   placeholder?: string;
   error?: string;
+  autoComplete?: string;
+  className?: string;
 }
 
-export const Input: React.FC<InputProps> = ({ label, name, type = 'text', value, onChange, placeholder, error }) => (
+export const Input: React.FC<InputProps> = ({
+  label, name, type = 'text', value, onChange, onBlur, placeholder, error, autoComplete, className
+}) => (
   <div className="mb-4">
     {label && <label htmlFor={name}>{label}</label>}
     <input
@@ -63,29 +77,37 @@ export const Input: React.FC<InputProps> = ({ label, name, type = 'text', value,
       type={type}
       value={value}
       onChange={onChange}
+      onBlur={onBlur}
       placeholder={placeholder}
-      className={`border p-2 w-full ${error ? 'border-red-500' : 'border-gray-300'}`}
+      autoComplete={autoComplete}
+      className={`border p-2 w-full ${error ? 'border-red-500' : 'border-gray-300'} ${className ?? ''}`}
       aria-invalid={!!error}
       aria-describedby={error ? `${name}-error` : undefined}
     />
-    {error && <p id={`${name}-error`} className="text-red-500 text-sm">{error}</p>}
+    {error && <p id={`${name}-error`} className="text-red-500 text-sm" role="alert">{error}</p>}
   </div>
 );
 ```
 
 ### 5.2 Selectコンポーネント
+
 - ラベルと入力欄の関連付け必須
 - エラー時は赤枠＋赤メッセージ
+- `disabled`や`multiple`属性も対応
+- エラー時は`aria-invalid`と`aria-describedby`を必ず付与
 
 #### Props設計
 | Prop名      | 型                                  | 必須 | 説明                 |
-|------------|-----------------------------------|------|--------------------|
-| `label`    | `string`                          | ❌   | フィールドラベル      |
-| `name`     | `string`                          | ✅   | フィールド名          |
-| `options`  | `{ value: string; label: string }[]` | ✅   | 選択肢配列             |
-| `value`    | `string`                          | ✅   | 選択中の値             |
-| `onChange` | `(e: React.ChangeEvent<HTMLSelectElement>) => void` | ✅ | 値変更ハンドラ         |
-| `error`    | `string`                          | ❌   | バリデーションエラーメッセージ |
+|-------------|-----------------------------------|------|--------------------|
+| `label`     | `string`                          | ❌   | フィールドラベル      |
+| `name`      | `string`                          | ✅   | フィールド名          |
+| `options`   | `{ value: string; label: string }[]` | ✅   | 選択肢配列             |
+| `value`     | `string`                          | ✅   | 選択中の値             |
+| `onChange`  | `(e: React.ChangeEvent<HTMLSelectElement>) => void` | ✅ | 値変更ハンドラ         |
+| `error`     | `string`                          | ❌   | バリデーションエラーメッセージ |
+| `disabled`  | `boolean`                         | ❌   | 無効状態               |
+| `multiple`  | `boolean`                         | ❌   | 複数選択               |
+| `className` | `string`                          | ❌   | 追加クラス名           |
 
 #### 実装例
 ```tsx
@@ -96,9 +118,14 @@ interface SelectProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   error?: string;
+  disabled?: boolean;
+  multiple?: boolean;
+  className?: string;
 }
 
-export const Select: React.FC<SelectProps> = ({ label, name, options, value, onChange, error }) => (
+export const Select: React.FC<SelectProps> = ({
+  label, name, options, value, onChange, error, disabled, multiple, className
+}) => (
   <div className="mb-4">
     {label && <label htmlFor={name}>{label}</label>}
     <select
@@ -106,7 +133,9 @@ export const Select: React.FC<SelectProps> = ({ label, name, options, value, onC
       name={name}
       value={value}
       onChange={onChange}
-      className={`border p-2 w-full ${error ? 'border-red-500' : 'border-gray-300'}`}
+      disabled={disabled}
+      multiple={multiple}
+      className={`border p-2 w-full ${error ? 'border-red-500' : 'border-gray-300'} ${className ?? ''}`}
       aria-invalid={!!error}
       aria-describedby={error ? `${name}-error` : undefined}
     >
@@ -116,25 +145,30 @@ export const Select: React.FC<SelectProps> = ({ label, name, options, value, onC
         </option>
       ))}
     </select>
-    {error && <p id={`${name}-error`} className="text-red-500 text-sm">{error}</p>}
+    {error && <p id={`${name}-error`} className="text-red-500 text-sm" role="alert">{error}</p>}
   </div>
 );
 ```
 
 ### 5.3 DatePickerコンポーネント
+
 - 日付入力はカレンダー表示＋直接入力対応
 - エラー時は赤枠＋メッセージ
+- `minDate`・`maxDate`・`disabled`属性も対応
+- エラー時は`aria-invalid`と`aria-describedby`を必ず付与
 
 #### Props設計
 | Prop名       | 型                                    | 必須 | 説明                       |
-|-------------|-------------------------------------|------|--------------------------|
-| `label`     | `string`                            | ❌   | フィールドラベル          |
-| `name`      | `string`                            | ✅   | フィールド名              |
-| `value`     | `string`（ISO8601形式推奨）        | ✅   | 選択中の日付              |
-| `onChange`  | `(date: string) => void`            | ✅   | 日付変更ハンドラ          |
-| `minDate`   | `string`                           | ❌   | 選択可能な最小日付        |
-| `maxDate`   | `string`                           | ❌   | 選択可能な最大日付        |
-| `error`     | `string`                            | ❌   | バリデーションエラーメッセージ |
+|--------------|-------------------------------------|------|--------------------------|
+| `label`      | `string`                            | ❌   | フィールドラベル          |
+| `name`       | `string`                            | ✅   | フィールド名              |
+| `value`      | `string`（ISO8601形式推奨）        | ✅   | 選択中の日付              |
+| `onChange`   | `(date: string) => void`            | ✅   | 日付変更ハンドラ          |
+| `minDate`    | `string`                           | ❌   | 選択可能な最小日付        |
+| `maxDate`    | `string`                           | ❌   | 選択可能な最大日付        |
+| `error`      | `string`                            | ❌   | バリデーションエラーメッセージ |
+| `disabled`   | `boolean`                           | ❌   | 無効状態                   |
+| `className`  | `string`                            | ❌   | 追加クラス名               |
 
 #### 実装例
 ```tsx
@@ -146,9 +180,13 @@ interface DatePickerProps {
   minDate?: string;
   maxDate?: string;
   error?: string;
+  disabled?: boolean;
+  className?: string;
 }
 
-export const DatePicker: React.FC<DatePickerProps> = ({ label, name, value, onChange, minDate, maxDate, error }) => (
+export const DatePicker: React.FC<DatePickerProps> = ({
+  label, name, value, onChange, minDate, maxDate, error, disabled, className
+}) => (
   <div className="mb-4">
     {label && <label htmlFor={name}>{label}</label>}
     <input
@@ -159,19 +197,22 @@ export const DatePicker: React.FC<DatePickerProps> = ({ label, name, value, onCh
       onChange={e => onChange(e.target.value)}
       min={minDate}
       max={maxDate}
-      className={`border p-2 w-full ${error ? 'border-red-500' : 'border-gray-300'}`}
+      disabled={disabled}
+      className={`border p-2 w-full ${error ? 'border-red-500' : 'border-gray-300'} ${className ?? ''}`}
       aria-invalid={!!error}
       aria-describedby={error ? `${name}-error` : undefined}
     />
-    {error && <p id={`${name}-error`} className="text-red-500 text-sm">{error}</p>}
+    {error && <p id={`${name}-error`} className="text-red-500 text-sm" role="alert">{error}</p>}
   </div>
 );
 ```
 
 ### 5.4 Buttonコンポーネント
+
 - ホバー・フォーカス時に視覚的変化
 - 無効状態は操作不可デザイン
 - キーボード操作・スクリーンリーダー対応
+- `type`, `variant`, `onClick`, `disabled`, `children` 以外にも`className`や`aria-label`なども柔軟に対応
 
 #### Props設計
 | Prop名      | 型                       | 必須 | 説明                             |
@@ -181,6 +222,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({ label, name, value, onCh
 | `onClick`   | `() => void`             | ❌   | クリック時の処理                  |
 | `disabled`  | `boolean`                | ❌   | ボタンの有効/無効状態            |
 | `children`  | `React.ReactNode`        | ✅   | ボタン内の表示内容                |
+| `className` | `string`                 | ❌   | 追加クラス名                      |
+| `aria-label`| `string`                 | ❌   | アクセシビリティ用ラベル          |
 
 #### 実装例
 ```tsx
@@ -190,6 +233,8 @@ interface ButtonProps {
   onClick?: () => void;
   disabled?: boolean;
   children: React.ReactNode;
+  className?: string;
+  'aria-label'?: string;
 }
 
 const variantClasses = {
@@ -205,15 +250,18 @@ export const Button: React.FC<ButtonProps> = ({
   onClick,
   disabled = false,
   children,
+  className,
+  'aria-label': ariaLabel,
 }) => {
-  const className = disabled ? variantClasses.disabled : variantClasses[variant];
+  const btnClass = disabled ? variantClasses.disabled : variantClasses[variant];
   return (
     <button
       type={type}
-      className={`${className} px-4 py-2 rounded`}
+      className={`${btnClass} px-4 py-2 rounded ${className ?? ''}`}
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
       aria-disabled={disabled}
+      aria-label={ariaLabel}
     >
       {children}
     </button>
@@ -221,34 +269,57 @@ export const Button: React.FC<ButtonProps> = ({
 };
 ```
 
+---
+
 ## 6. アクセシビリティ対応基準
+
 - すべてのインタラクティブ要素に適切な`aria-*`属性を付与
 - キーボード操作が自然に行えるようにフォーカス管理を徹底
 - スクリーンリーダーでの読み上げ順序を意識したDOM構造
 - コントラスト比は4.5:1以上を推奨
+- エラー時は`role="alert"`や`aria-live="polite"`の活用も検討
+
+---
 
 ## 7. バリデーションUI
+
 - 入力エラーは色・アイコン・メッセージで明確に表示
 - エラーメッセージは入力フィールドの近傍に表示
-- リアルタイムバリデーションを実装
+- リアルタイムバリデーションを実装（現状はonBlur中心、今後onChange対応も検討）
+- エラー時は自動で該当フィールドにフォーカス移動（アクセシビリティ配慮）
 
-## 8. 今後の拡張
-- Inputに`type="password"`や`textarea`対応
-- Selectに`disabled`、`multiple`対応
+---
+
+## 8. 今後の拡張・強いて言えば
+
+- Inputに`type="password"`や`textarea`対応（現状は未対応、今後拡張予定）
+- Selectに`disabled`、`multiple`対応（Props設計・実装例に反映済み）
 - Textareaコンポーネントの追加と共通エラーハンドリング
 - フォームの自動保存・バリデーション即時表示機能の検討
 - Inputコンポーネント内で `type="textarea"` を指定した場合、自動で `<textarea>` を出力するように拡張
+- ボタンのローディング状態やアイコン表示対応
+- テーマ切り替えやダークモード対応
+- Storybook等によるUIカタログ・ドキュメント自動生成
+
+---
 
 ## 9. UIデザイン共通ガイドライン
+
 - カラーパレット、レイアウト、フォームUI、ボタン、レスポンシブ、余白、フォントなどは表形式で整理
 - 詳細は別途デザイン仕様書参照
 
+---
+
 ## 10. ドキュメント運用ルール
+
 - 本ガイドラインは実装に合わせて定期的に更新
 - PRレビューでは本ガイドラインの遵守を必須
 - すべてのコンポーネントは使用例・コードスニペットをドキュメントに追加
 
+---
+
 ## 用語整理
+
 - **運用ルール**：UIガイドライン全体の運用・レビュー・改善記録に関するルール
 - **ドキュメント運用ルール**：このガイドライン文書自体の更新・管理・記載方法に関するルール
 
@@ -294,6 +365,7 @@ export const Button: React.FC<ButtonProps> = ({
 - [2025-07-29](logs/2025-07-29.md)
 - [2025-07-30](logs/2025-07-30.md)
 - [2025-07-31](logs/2025-07-31.md)
+- [2025-08-01](logs/2025-08-01.md)
 
 ### 色々やること
 - [今後のTODOメモ](todo.md)
