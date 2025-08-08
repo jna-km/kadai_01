@@ -38,7 +38,7 @@ class ReservationTokenRepository implements ReservationTokenRepositoryInterface
     public function update(int $id, array $data): ?ReservationToken
     {
         $reservationToken = $this->model->find($id);
-        if (!$reservationToken) return false;
+        if (!$reservationToken) return null;
         $reservationToken->update($data);
         return $reservationToken;
     }
