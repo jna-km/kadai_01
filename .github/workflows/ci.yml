@@ -38,12 +38,19 @@ jobs:
       - name: Install composer dependencies
         run: composer install --no-progress --prefer-dist
 
+      - name: Install netcat
+        run: sudo apt-get update && sudo apt-get install -y netcat
+
       - name: Wait for MySQL to be ready
         run: |
           for i in {1..60}; do
-            mysqladmin ping -h db -u user -ppassword && break
-            echo "Waiting for MySQL..."
-            sleep 1
+            if nc -z db 3306; then
+              echo "MySQL is up!"
+              break
+            else
+              echo "Waiting for MySQL at host 'db'..."
+              sleep 1
+            fi
           done
 
       - name: Run migrations
