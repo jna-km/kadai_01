@@ -5,6 +5,7 @@ WORKDIR /var/www
 # Supervisorとその他必要なパッケージをインストール
 RUN apt-get update && apt-get install -y \
     supervisor \
+    vim \
     zip unzip curl git \
     libpq-dev libzip-dev \
     build-essential autoconf automake libtool make gcc g++ \

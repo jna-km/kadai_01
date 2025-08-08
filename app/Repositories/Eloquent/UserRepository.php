@@ -47,7 +47,7 @@ class UserRepository implements UserRepositoryInterface
      *
      * @param int $id
      * @param array $data
-     * @return bool
+     * @return ?User
      */
     public function update(int $id, array $data): ?User
     {

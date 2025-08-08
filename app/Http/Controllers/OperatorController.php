@@ -47,10 +47,10 @@ class OperatorController extends Controller
     /**
      * 指定IDのオペレーター詳細を取得
      *
-     * @param string $id
+     * @param int $id
      * @return JsonResponse
      */
-    public function show(string $id)
+    public function show(int $id)
     {
         $operator = $this->operatorService->getById($id);
         return response()->json([
@@ -63,10 +63,10 @@ class OperatorController extends Controller
      * 指定IDのオペレーター情報を更新
      *
      * @param UpdateOperatorRequest $request
-     * @param string $id
+     * @param int $id
      * @return JsonResponse
      */
-    public function update(UpdateOperatorRequest $request, string $id)
+    public function update(UpdateOperatorRequest $request, int $id)
     {
         $operator = $this->operatorService->update($id, $request->validated());
         return response()->json([
@@ -78,10 +78,10 @@ class OperatorController extends Controller
     /**
      * 指定IDのオペレーターを削除
      *
-     * @param string $id
+     * @param int $id
      * @return JsonResponse
      */
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
         $this->operatorService->delete($id);
         return response()->json(null, 204);
@@ -90,10 +90,10 @@ class OperatorController extends Controller
     /**
      * 公開用オペレーター情報を取得
      *
-     * @param string $id
+     * @param int $id
      * @return JsonResponse
      */
-    public function showPublic(string $id)
+    public function showPublic(int $id)
     {
         $operator = $this->operatorService->getPublicById($id);
 
