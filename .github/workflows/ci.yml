@@ -10,6 +10,8 @@ jobs:
     services:
       db:
         image: mysql:8.0
+        ports:
+          - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: laravel_test
@@ -33,18 +35,16 @@ jobs:
       - name: Install mysql-client (for mysqladmin)
         run: sudo apt-get update && sudo apt-get install -y mysql-client
 
+      - name: Install composer dependencies
+        run: composer install --no-progress --prefer-dist
+
       - name: Install netcat (nc)
         run: sudo apt-get update && sudo apt-get install -y netcat-openbsd
-
-      - name: Debug network (DNS and ping test)
-        run: |
-          ping -c 4 db || echo "Cannot ping db"
-          getent hosts db || echo "No DNS entry for db"
 
       - name: Wait for MySQL to be ready
         run: |
           for i in {1..60}; do
-            mysqladmin ping -h db -u user -ppassword && break
+            mysqladmin ping -h 127.0.0.1 -u user -ppassword && break
             echo "Waiting for MySQL..."
             sleep 1
           done
@@ -52,7 +52,7 @@ jobs:
       - name: Run migrations
         env:
           DB_CONNECTION: mysql
-          DB_HOST: db
+          DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: laravel_test
           DB_USERNAME: user
@@ -62,7 +62,7 @@ jobs:
       - name: Clear config cache
         env:
           DB_CONNECTION: mysql
-          DB_HOST: db
+          DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: laravel_test
           DB_USERNAME: user
@@ -74,7 +74,7 @@ jobs:
       - name: Run tests
         env:
           DB_CONNECTION: mysql
-          DB_HOST: db
+          DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_DATABASE: laravel_test
           DB_USERNAME: user
