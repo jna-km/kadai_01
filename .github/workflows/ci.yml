@@ -39,6 +39,19 @@ jobs:
       - name: Install netcat (nc)
         run: sudo apt-get update && sudo apt-get install -y netcat-openbsd
 
+      # - name: Wait for MySQL to be ready
+      #   run: |
+      #     for i in {1..60}; do
+      #       mysqladmin ping -h db -u user -ppassword && break
+      #       echo "Waiting for MySQL..."
+      #       sleep 1
+      #     done
+
+      - name: Debug network
+        run: |
+          ping -c 4 db || echo "Cannot ping db"
+          getent hosts db || echo "No DNS entry for db"
+
       - name: Wait for MySQL to be ready
         run: |
           for i in {1..60}; do
