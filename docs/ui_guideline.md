@@ -367,6 +367,7 @@ export const Button: React.FC<ButtonProps> = ({
 - [2025-07-31](logs/2025-07-31.md)
 - [2025-08-01](logs/2025-08-01.md)
 - [2025-07期まとめ](logs/2025-07.md)
+- [2025-08-08](logs/2025-08-08.md)
 
 ### 色々やること
 - [今後のTODOメモ](todo.md)
