@@ -53,8 +53,8 @@ jobs:
           getent hosts db || echo "No DNS entry for db"
 
       - name: Check MySQL connectivity
-      run: |
-        mysqladmin ping -h db -u user -ppassword || echo "MySQL ping failed"
+        run: |
+          mysqladmin ping -h db -u user -ppassword || echo "MySQL ping failed"
     
       # - name: Wait for MySQL to be ready
       #   run: |
