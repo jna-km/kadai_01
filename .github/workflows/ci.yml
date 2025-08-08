@@ -1,15 +1,19 @@
-name: CI Test
+name: CI with multiple jobs
 
 on:
   push:
   pull_request:
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - run: echo "ビルド処理をここに記述"
 
-      - name: Run a simple command
-        run: echo "Hello GitHub Actions!"
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "テスト処理をここに記述"
