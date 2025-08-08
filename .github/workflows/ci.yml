@@ -25,24 +25,32 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.3
           extensions: mbstring, pdo_mysql
+
+      - name: Install mysql-client (for mysqladmin)
+        run: sudo apt-get update && sudo apt-get install -y mysql-client
+
       - name: Install composer dependencies
         run: composer install --no-progress --prefer-dist
+
       - name: Wait for MySQL to be ready
         run: |
           for i in {1..30}; do
-            nc -z db 3306 && break
+            mysqladmin ping -h db -u user -ppassword && break
             echo "Waiting for MySQL..."
             sleep 1
           done
+
       - name: Clear config cache
         run: |
           php artisan config:clear
           php artisan cache:clear
+
       - name: Run migrations
         env:
           DB_CONNECTION: mysql
@@ -52,6 +60,7 @@ jobs:
           DB_USERNAME: user
           DB_PASSWORD: password
         run: php artisan migrate --no-interaction
+
       - name: Run tests
         env:
           DB_CONNECTION: mysql
