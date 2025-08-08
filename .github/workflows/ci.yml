@@ -38,8 +38,8 @@ jobs:
       - name: Install composer dependencies
         run: composer install --no-progress --prefer-dist
 
-      - name: Install netcat
-        run: sudo apt-get update && sudo apt-get install -y netcat
+      - name: Install netcat (nc)
+        run: sudo apt-get update && sudo apt-get install -y netcat-openbsd
 
       - name: Wait for MySQL to be ready
         run: |
