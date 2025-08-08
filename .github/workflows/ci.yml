@@ -47,6 +47,13 @@ jobs:
           done
 
       - name: Clear config cache
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: laravel_test
+          DB_USERNAME: user
+          DB_PASSWORD: password
         run: |
           php artisan config:clear
           php artisan cache:clear
